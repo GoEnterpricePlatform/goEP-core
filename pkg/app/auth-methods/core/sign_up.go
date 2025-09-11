@@ -1,11 +1,12 @@
 package core
 
 import (
-	"errors"
 	"strings"
 	"unicode"
-    "github.com/go-playground/validator/v10"
 
+	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/go-playground/validator/v10"
 )
 
 // SignUpReq represents the request structure for user registration
@@ -21,45 +22,40 @@ func (req *SignUpReq) IsSignUpValid() error {
 
 	// Validate email field is not empty
 	if strings.TrimSpace(req.Email) == "" {
-		return errors.New("email is required")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "email is required")
 	}
-    
+
 	// Validate email format using validator
 	validate := validator.New()
 	err := validate.Var(req.Email, "email")
 	if err != nil {
-		return errors.New("invalid email format")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "invalid email format")
 	}
 
 	// Validate password field is not empty
 	if strings.TrimSpace(req.Password) == "" {
-		return errors.New("password is required")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "password is required")
 	}
 
 	// Validate confirm password field is not empty
 	if strings.TrimSpace(req.ConfirmPassword) == "" {
-		return errors.New("confirm password is required")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "confirm password is required")
 	}
 
 	// Validate password minimum length
 	if len(req.Password) < 8 {
-		return errors.New("password must be at least 8 characters long")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "password must be at least 8 characters long")
 	}
 
 	// Validate password strength (at least one uppercase, one lowercase, one number)
 	if !isPasswordStrong(req.Password) {
-		return errors.New("password must contain at least one uppercase letter, one lowercase letter, and one number")
+		msg := "password must contain at least one uppercase letter, one lowercase letter, and one number"
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, msg)
 	}
 
 	// Validate passwords match
 	if req.Password != req.ConfirmPassword {
-		return errors.New("passwords do not match")
-	}
-
-	// Additional validation using validator library for password confirmation
-	err = validate.VarWithValue(req.Password, req.ConfirmPassword, "eqfield")
-	if err != nil {
-		return errors.New("passwords do not match")
+		return dShared.NewAppError(domain.ErrCodeInvalidParams, "passwords do not match")
 	}
 
 	return nil
