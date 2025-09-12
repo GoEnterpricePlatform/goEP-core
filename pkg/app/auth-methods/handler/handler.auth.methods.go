@@ -16,6 +16,7 @@ func NewAuthMethodHandler(server *http.ServeMux, authMethodSrv port.AuthMethodSr
 	}
 
 	server.HandleFunc("POST /auth/sign-up", h.SignUp)
+	server.HandleFunc("POST /auth/sign-in", h.SignIn)
 
 	return h
 }

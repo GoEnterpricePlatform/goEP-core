@@ -95,6 +95,18 @@ func ManageError(err error, msg string) error {
 			Code: ErrCodeUnauthorized,
 			Msg:  "invalid authorization header format",
 		}
+	case errors.Is(err, ErrAccountInactive):
+		log.Println("account is inactive")
+		appErr = AppError{
+			Code: ErrCodeUnauthorized,
+			Msg:  "account is inactive",
+		}
+	case errors.Is(err, ErrPassDoNotMatch):
+		log.Println("password does not match")
+		appErr = AppError{
+			Code: ErrCodeUnauthorized,
+			Msg:  "password does not match",
+		}
 
 	default:
 		log.Println(err.Error())

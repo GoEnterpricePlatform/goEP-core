@@ -7,6 +7,7 @@ import (
 )
 
 type UserRepo interface {
-	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	Insert(ctx context.Context, user *domain.User) error
+	FindByEmail(ctx context.Context, email string) (*domain.User, error)
+	ExistsByEmail(ctx context.Context, email string) (bool, error)
 }
