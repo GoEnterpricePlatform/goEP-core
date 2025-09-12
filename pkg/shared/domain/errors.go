@@ -31,4 +31,9 @@ var (
 	ErrInvalidRequestBody   = errors.New("invalid request body")
 )
 
+var (
+	ErrAccountInactive   = errors.New("account inactive")
+	ErrPassDoNotMatch    = errors.New("passwords do not match")
+)
+
 

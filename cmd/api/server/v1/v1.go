@@ -5,15 +5,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/amorindev/go-tmpl/internal/auth"
 	"github.com/amorindev/go-tmpl/internal/config"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
 	"github.com/amorindev/go-tmpl/pkg/app/admin/api/handler"
 	authMethodHandler "github.com/amorindev/go-tmpl/pkg/app/auth-methods/handler"
 	authMethodService "github.com/amorindev/go-tmpl/pkg/app/auth-methods/service"
+	sessionRepository "github.com/amorindev/go-tmpl/pkg/app/session/repository/mongo"
+	sessionService "github.com/amorindev/go-tmpl/pkg/app/session/service"
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
 	minioAdapter "github.com/amorindev/go-tmpl/pkg/file-storage/adapter/minio"
-	fileStgService  "github.com/amorindev/go-tmpl/pkg/file-storage/service"
+	fileStgService "github.com/amorindev/go-tmpl/pkg/file-storage/service"
 )
 
 func New() http.Handler {
@@ -40,15 +43,17 @@ func New() http.Handler {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	minioApt := minioAdapter.NewMinioAdt(minioC.Client,appEnvs.MinioBucketName)
+
+	minioApt := minioAdapter.NewMinioAdt(minioC.Client, appEnvs.MinioBucketName)
 	_ = fileStgService.NewFileStgSrv(minioApt)
 
 	// Collections
 	userColl := mongoDB.Collection("users")
+	sessionColl := mongoDB.Collection("sessions")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
+	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -57,7 +62,9 @@ func New() http.Handler {
 	}
 
 	// Services
-	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo)
+	authSrv := auth.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
+	sessionSrv := sessionService.NewSessionSrv(sessionRepo, authSrv)
+	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, sessionSrv)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
