@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 	"github.com/amorindev/go-tmpl/pkg/app/admin/api/handler"
 	authMethodHandler "github.com/amorindev/go-tmpl/pkg/app/auth-methods/handler"
 	authMethodService "github.com/amorindev/go-tmpl/pkg/app/auth-methods/service"
+	roleInitializer "github.com/amorindev/go-tmpl/pkg/app/roles/initializer"
+	roleRepository "github.com/amorindev/go-tmpl/pkg/app/roles/repository/mongo"
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/app/session/repository/mongo"
 	sessionService "github.com/amorindev/go-tmpl/pkg/app/session/service"
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
@@ -50,10 +53,12 @@ func New() http.Handler {
 	// Collections
 	userColl := mongoDB.Collection("users")
 	sessionColl := mongoDB.Collection("sessions")
+	roleColl := mongoDB.Collection("roles")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
 	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
+	roleRepo := roleRepository.NewRoleRepo(mongoConn.DB, roleColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -69,6 +74,12 @@ func New() http.Handler {
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
 	authMethodHandler.NewAuthMethodHandler(v1, authMethodSrv)
+
+	// Initializers
+	roleItz := roleInitializer.NewRoleItz(roleRepo)
+	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
+		log.Fatal(err)
+	}
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
