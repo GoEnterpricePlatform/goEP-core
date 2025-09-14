@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 	"fmt"
+	"io"
 	"path/filepath"
 	"time"
 )
 
-func (s *Service) UploadImage(ctx context.Context, imgPath string, file []byte, contentType string) (string, error) {
+func (s *Service) UploadImage(ctx context.Context, imgPath string, file io.Reader, contentType string) (string, error) {
 	fileName := imgPath[:len(imgPath)-len(filepath.Ext(imgPath))]
 	uniqueFileName := fmt.Sprintf("%s-%d%s", fileName, time.Now().UnixNano(), filepath.Ext(imgPath))
 
