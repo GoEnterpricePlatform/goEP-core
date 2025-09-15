@@ -9,13 +9,15 @@ import (
 var _ authMethodP.AuthMethodSrv = &Service{}
 
 type Service struct {
-	UserRepo   userP.UserRepo
-	SessionSrv sessionP.SessionSrv
+	UserRepo    userP.UserRepo
+	UserFileStg userP.UserFileStg
+	SessionSrv  sessionP.SessionSrv
 }
 
-func NewAuthMethodSrv(userRepo userP.UserRepo, sessionSrv sessionP.SessionSrv) *Service {
+func NewAuthMethodSrv(userRepo userP.UserRepo, userFileStg userP.UserFileStg, sessionSrv sessionP.SessionSrv) *Service {
 	return &Service{
-		UserRepo:   userRepo,
-		SessionSrv: sessionSrv,
+		UserRepo:    userRepo,
+		UserFileStg: userFileStg,
+		SessionSrv:  sessionSrv,
 	}
 }

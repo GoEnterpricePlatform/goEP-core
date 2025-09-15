@@ -25,6 +25,15 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 		return nil, nil, dShared.ManageError(err, "")
 	}
 
+	// If the user has an image path, retrieve the image URL and set it
+	if user.ImgPath != nil {
+		url, err := s.UserFileStg.GetImage(ctx, *user.ImgPath)
+		if err != nil {
+			return nil, nil, dShared.ManageError(err, "")
+		}
+		user.ImgUrl = &url
+	}
+
 	// Create session
 	session := sessionD.NewSession(user.ID.(string), rememberMe)
 
