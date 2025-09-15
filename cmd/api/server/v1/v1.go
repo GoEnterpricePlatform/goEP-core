@@ -21,8 +21,6 @@ import (
 	userHandler "github.com/amorindev/go-tmpl/pkg/app/users/handler"
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
 	userService "github.com/amorindev/go-tmpl/pkg/app/users/service"
-	minioAdapter "github.com/amorindev/go-tmpl/pkg/file-storage/adapter/minio"
-	fileStgService "github.com/amorindev/go-tmpl/pkg/file-storage/service"
 )
 
 func New() http.Handler {
@@ -49,9 +47,6 @@ func New() http.Handler {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	minioApt := minioAdapter.NewMinioAdt(minioC.Client, appEnvs.MinioBucketName)
-	_ = fileStgService.NewFileStgSrv(minioApt)
 
 	// Collections
 	userColl := mongoDB.Collection("users")
