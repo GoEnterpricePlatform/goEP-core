@@ -26,6 +26,7 @@ func NewAuthResp(user *userD.User, session *sessionD.Session) *AuthResp {
 			ID:            user.ID.(string),
 			Email:         user.Email,
 			EmailVerified: user.EmailVerified,
+			ImgUrl:        user.ImgUrl,
 			CreatedAt:     user.CreatedAt,
 			UpdatedAt:     user.UpdatedAt,
 		},

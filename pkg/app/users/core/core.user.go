@@ -11,6 +11,7 @@ type UserCore struct {
 	ID            string     `json:"id"`
 	Email         string     `json:"email"`
 	EmailVerified bool       `json:"email_verified"`
+	ImgUrl        *string    `json:"img_url"`
 	CreatedAt     *time.Time `json:"created_at"`
 	UpdatedAt     *time.Time `json:"updated_at"`
 }

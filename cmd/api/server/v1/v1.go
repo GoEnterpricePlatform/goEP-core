@@ -10,14 +10,17 @@ import (
 	"github.com/amorindev/go-tmpl/internal/config"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
-	"github.com/amorindev/go-tmpl/pkg/app/admin/api/handler"
+	adminHandler "github.com/amorindev/go-tmpl/pkg/app/admin/api/handler"
 	authMethodHandler "github.com/amorindev/go-tmpl/pkg/app/auth-methods/handler"
 	authMethodService "github.com/amorindev/go-tmpl/pkg/app/auth-methods/service"
 	roleInitializer "github.com/amorindev/go-tmpl/pkg/app/roles/initializer"
 	roleRepository "github.com/amorindev/go-tmpl/pkg/app/roles/repository/mongo"
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/app/session/repository/mongo"
 	sessionService "github.com/amorindev/go-tmpl/pkg/app/session/service"
+	userFileStorage "github.com/amorindev/go-tmpl/pkg/app/users/file-storage/minio"
+	userHandler "github.com/amorindev/go-tmpl/pkg/app/users/handler"
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
+	userService "github.com/amorindev/go-tmpl/pkg/app/users/service"
 	minioAdapter "github.com/amorindev/go-tmpl/pkg/file-storage/adapter/minio"
 	fileStgService "github.com/amorindev/go-tmpl/pkg/file-storage/service"
 )
@@ -66,14 +69,19 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
+	// File Storage
+	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
+
 	// Services
 	authSrv := auth.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, authSrv)
-	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, sessionSrv)
+	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, userFileStg, sessionSrv)
+	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
 	authMethodHandler.NewAuthMethodHandler(v1, authMethodSrv)
+	userHandler.NewUserHandler(v1, userSrv)
 
 	// Initializers
 	roleItz := roleInitializer.NewRoleItz(roleRepo)
@@ -98,7 +106,7 @@ func New() http.Handler {
 		http.Redirect(w, r, "/v1/admin/home", http.StatusFound)
 	})
 
-	handler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
+	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
 
 	return mux
 }
