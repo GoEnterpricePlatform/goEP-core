@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/amorindev/go-tmpl/internal/encryption"
 	"github.com/amorindev/go-tmpl/pkg/app/users/domain"
 	sharedDomain "github.com/amorindev/go-tmpl/pkg/shared/domain"
 )
@@ -21,12 +22,13 @@ func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
 	}
 
 	// Hash the user's password
-	err = user.UserPassAuth.HashPassword()
+	hashPass, err := encryption.HashPassword(user.UserPassAuth.Password)
 	if err != nil {
-		return sharedDomain.ManageError(err, "hashing password")
+		return sharedDomain.ManageError(err, "error hashing password")
 	}
+	user.UserPassAuth.PasswordHash = hashPass
 
-	// Create the  user
+	// Create the user
 	now := time.Now().UTC()
 	user.CreatedAt = &now
 	user.UpdatedAt = &now
