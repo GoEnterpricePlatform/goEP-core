@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/internal/auth"
+	"github.com/amorindev/go-tmpl/internal/tokens/service"
 	"github.com/amorindev/go-tmpl/internal/config"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
@@ -68,7 +68,7 @@ func New() http.Handler {
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
 	// Services
-	authSrv := auth.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
+	authSrv := service.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, authSrv)
 	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, userFileStg, sessionSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
