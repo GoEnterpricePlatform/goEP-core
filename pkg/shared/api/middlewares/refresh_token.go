@@ -26,7 +26,7 @@ func (m *AuthMiddleware) RefreshTokenMdw(next http.HandlerFunc) http.HandlerFunc
 			return
 		}
 
-		c, err := m.AuthSrv.ParseRefreshToken(req.RefreshToken)
+		c, err := m.TokenSrv.ParseRefreshToken(req.RefreshToken)
 		if err != nil {
 			core.RespondError(w, domain.ManageError(err, ""))
 			return

@@ -1,13 +1,13 @@
 package middlewares
 
-import "github.com/amorindev/go-tmpl/internal/auth"
+import "github.com/amorindev/go-tmpl/internal/tokens/port"
 
 type AuthMiddleware struct {
-	AuthSrv *auth.TokenSrv
+	TokenSrv port.TokenSrv
 }
 
-func NewAuthMdw(authSrv *auth.TokenSrv) *AuthMiddleware {
+func NewAuthMdw(tokenSrv port.TokenSrv) *AuthMiddleware {
 	return &AuthMiddleware{
-		AuthSrv: authSrv,
+		TokenSrv: tokenSrv,
 	}
 }

@@ -20,7 +20,7 @@ func (m *AuthMiddleware) AccessTokenMdw(next http.HandlerFunc) http.HandlerFunc 
 			return
 		}
 
-		c, err := m.AuthSrv.ParseAccessToken(tokenString)
+		c, err := m.TokenSrv.ParseAccessToken(tokenString)
 		if err != nil {
 			core.RespondError(w, domain.ManageError(err, ""))
 			return
