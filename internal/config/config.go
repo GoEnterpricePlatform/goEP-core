@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -28,7 +29,8 @@ type Config struct {
 	JWTRefreshRememberMeExpIn time.Duration
 
 	// App
-	Port string
+	Port           string
+	AllowedOrigins []string
 
 	// Templates
 	ApiBaseUrl string
@@ -73,6 +75,8 @@ func Load() *Config {
 	port := cmp.Or(os.Getenv("HTTP_SERVER_PORT"), "8000")
 	apiBaseUrl := cmp.Or(os.Getenv("API_BASE_URL"), "http://localhost:"+port)
 
+	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+
 	return &Config{
 		MongoDBUri:                mustGetEnv("MONGO_DB_URI"),
 		MongoInitDB:               mongoInitDB,
@@ -89,6 +93,7 @@ func Load() *Config {
 		JWTRefreshRememberMeExpIn: refreshRememberMeDur,
 		Port:                      port,
 		ApiBaseUrl:                apiBaseUrl,
+		AllowedOrigins:            allowedOrigins,
 	}
 }
 
