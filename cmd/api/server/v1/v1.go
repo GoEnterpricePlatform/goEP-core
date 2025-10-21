@@ -6,10 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/internal/tokens/service"
 	"github.com/amorindev/go-tmpl/internal/config"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
+	"github.com/amorindev/go-tmpl/internal/tokens/service"
 	adminHandler "github.com/amorindev/go-tmpl/pkg/app/admin/api/handler"
 	authMethodHandler "github.com/amorindev/go-tmpl/pkg/app/auth-methods/handler"
 	authMethodService "github.com/amorindev/go-tmpl/pkg/app/auth-methods/service"
@@ -21,16 +21,20 @@ import (
 	userHandler "github.com/amorindev/go-tmpl/pkg/app/users/handler"
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
 	userService "github.com/amorindev/go-tmpl/pkg/app/users/service"
+	"github.com/amorindev/go-tmpl/pkg/shared/api/middlewares"
 )
 
 func New() http.Handler {
 	mux := http.NewServeMux()
 
+	appEnvs := config.Load()
+
+	// Add global middlewares
+	muxWithCors := middlewares.CorsMiddleware(appEnvs.AllowedOrigins)(mux)
+
 	// Api version
 	v1 := http.NewServeMux()
 	mux.Handle("/v1/", http.StripPrefix("/v1", v1))
-
-	appEnvs := config.Load()
 
 	// MongoDB
 	mongoConn := mongoClient.New(appEnvs.MongoDBUri)
@@ -103,5 +107,5 @@ func New() http.Handler {
 
 	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
 
-	return mux
+	return muxWithCors
 }
