@@ -22,6 +22,7 @@ import (
 	userRepository "github.com/amorindev/go-tmpl/pkg/app/users/repository/mongo"
 	userService "github.com/amorindev/go-tmpl/pkg/app/users/service"
 	"github.com/amorindev/go-tmpl/pkg/shared/api/middlewares"
+	"github.com/amorindev/go-tmpl/pkg/shared/api/middlewares/logger"
 )
 
 func New() http.Handler {
@@ -29,8 +30,12 @@ func New() http.Handler {
 
 	appEnvs := config.Load()
 
-	// Add global middlewares
-	muxWithCors := middlewares.CorsMiddleware(appEnvs.AllowedOrigins)(mux)
+	zapLogger := logger.NewHttpLogger(appEnvs.AppEnv)
+
+	corsLogger := middlewares.CorsMiddleware(appEnvs.AllowedOrigins)
+
+	// Add global middlewares, the order matters (logger → CORS → router)
+	apiHandler := zapLogger.Middleware(corsLogger(mux))
 
 	// Api version
 	v1 := http.NewServeMux()
@@ -107,5 +112,5 @@ func New() http.Handler {
 
 	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
 
-	return muxWithCors
+	return apiHandler
 }

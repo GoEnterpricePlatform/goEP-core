@@ -30,6 +30,7 @@ type Config struct {
 
 	// App
 	Port           string
+	AppEnv         string
 	AllowedOrigins []string
 
 	// Templates
@@ -73,6 +74,7 @@ func Load() *Config {
 
 	// App
 	port := cmp.Or(os.Getenv("HTTP_SERVER_PORT"), "8000")
+	appEnv := cmp.Or(os.Getenv("APP_ENV"), "dev")
 	apiBaseUrl := cmp.Or(os.Getenv("API_BASE_URL"), "http://localhost:"+port)
 
 	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
@@ -92,6 +94,7 @@ func Load() *Config {
 		JWTRefreshExpIn:           refreshDur,
 		JWTRefreshRememberMeExpIn: refreshRememberMeDur,
 		Port:                      port,
+		AppEnv:                    appEnv,
 		ApiBaseUrl:                apiBaseUrl,
 		AllowedOrigins:            allowedOrigins,
 	}
