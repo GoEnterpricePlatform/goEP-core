@@ -10,4 +10,5 @@ import (
 type AuthSrv interface {
 	SignUp(ctx context.Context, user *userD.User) (string, error)
 	SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, error)
+	ResendVerifyEmail(ctx context.Context, email string) (string, error)
 }
