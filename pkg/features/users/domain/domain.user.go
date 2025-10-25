@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/features/auth-methods/domain"
+	"github.com/amorindev/go-tmpl/pkg/features/auth/domain"
 )
 
 // User represents a user in the system

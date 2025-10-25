@@ -11,8 +11,8 @@ import (
 	resendClient "github.com/amorindev/go-tmpl/internal/resend"
 	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
 	adminHandler "github.com/amorindev/go-tmpl/pkg/features/admin/api/handler"
-	authMethodHandler "github.com/amorindev/go-tmpl/pkg/features/auth-methods/handler"
-	authMethodService "github.com/amorindev/go-tmpl/pkg/features/auth-methods/service"
+	authHandler "github.com/amorindev/go-tmpl/pkg/features/auth/handler"
+	authService "github.com/amorindev/go-tmpl/pkg/features/auth/service"
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
 	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
@@ -86,16 +86,16 @@ func New() http.Handler {
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
 	// Services
-	authSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
-	sessionSrv := sessionService.NewSessionSrv(sessionRepo, authSrv)
+	tokenSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
+	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
 	mailerSrv := service.NewMailerSrv(mailerAdt, appEnvs.AppName)
-	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
+	authSrv := authService.NewAuthSrv(userRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
-	authMethodHandler.NewAuthMethodHandler(v1, authMethodSrv)
+	authHandler.NewAuthHandler(v1, authSrv)
 	userHandler.NewUserHandler(v1, userSrv)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {

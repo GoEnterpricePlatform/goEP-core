@@ -6,7 +6,7 @@ import (
 
 	cShared "github.com/amorindev/go-tmpl/pkg/shared/api/core"
 	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
-	"github.com/amorindev/go-tmpl/pkg/features/auth-methods/core"
+	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
 )
 
 // SignIn handles user authentication requests
@@ -29,7 +29,7 @@ func (h Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, session, err := h.AuthMethodSrv.SignIn(r.Context(), req.Email, req.Password, req.RememberMe)
+	user, session, err := h.AuthSrv.SignIn(r.Context(), req.Email, req.Password, req.RememberMe)
 	if err != nil {
 		cShared.RespondError(w, err)
 		return
