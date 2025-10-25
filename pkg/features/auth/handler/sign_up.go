@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/pkg/features/auth-methods/core"
+	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
 	"github.com/amorindev/go-tmpl/pkg/features/users/domain"
 	cShared "github.com/amorindev/go-tmpl/pkg/shared/api/core"
 	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
@@ -34,7 +34,7 @@ func (h Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	// Create a new user domain object
 	user := domain.NewUser(req.Email, req.Password)
 
-	otpID, err := h.AuthMethodSrv.SignUp(context.Background(), user)
+	otpID, err := h.AuthSrv.SignUp(context.Background(), user)
 	if err != nil {
 		cShared.RespondError(w, err)
 		return
