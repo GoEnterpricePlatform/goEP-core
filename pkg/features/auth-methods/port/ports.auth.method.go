@@ -8,6 +8,6 @@ import (
 )
 
 type AuthMethodSrv interface {
-	SignUp(ctx context.Context, user *userD.User) error
+	SignUp(ctx context.Context, user *userD.User) (string, error)
 	SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, error)
 }

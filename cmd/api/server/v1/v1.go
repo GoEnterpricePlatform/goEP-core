@@ -8,10 +8,15 @@ import (
 	"github.com/amorindev/go-tmpl/internal/config"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
-	"github.com/amorindev/go-tmpl/internal/tokens/service"
+	resendClient "github.com/amorindev/go-tmpl/internal/resend"
+	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
 	adminHandler "github.com/amorindev/go-tmpl/pkg/features/admin/api/handler"
 	authMethodHandler "github.com/amorindev/go-tmpl/pkg/features/auth-methods/handler"
 	authMethodService "github.com/amorindev/go-tmpl/pkg/features/auth-methods/service"
+	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
+	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
+	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
+	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
 
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/features/session/repository/mongo"
 	sessionService "github.com/amorindev/go-tmpl/pkg/features/session/service"
@@ -55,13 +60,18 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
+	// Resend
+	resendCli := resendClient.NewResendClient(appEnvs.ResendApiKey)
+
 	// Collections
 	userColl := mongoDB.Collection("users")
 	sessionColl := mongoDB.Collection("sessions")
+	otpCodeColl := mongoDB.Collection("opt-codes")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
 	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
+	otpCodeRepo := mongo.NewOtpCodeRepo(mongoConn.DB, otpCodeColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -69,13 +79,18 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
+	// Adapters
+	mailerAdt := resendAdapter.NewResendAdt(resendCli, appEnvs.EmailFrom)
+
 	// File Storage
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
 	// Services
-	authSrv := service.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
+	authSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, authSrv)
-	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, userFileStg, sessionSrv)
+	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
+	mailerSrv := service.NewMailerSrv(mailerAdt, appEnvs.AppName)
+	authMethodSrv := authMethodService.NewAuthMethodSrv(userRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// Handler

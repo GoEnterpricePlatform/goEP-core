@@ -20,6 +20,11 @@ type Config struct {
 	MinioUseSSL     bool
 	MinioBucketName string
 
+	// Resend
+	ResendApiKey string
+	EmailFrom    string
+	AppName      string
+
 	// Jwt
 	JWTAccessSecret           string
 	JWTRefreshSecret          string
@@ -87,6 +92,9 @@ func Load() *Config {
 		MinioSecretKey:            mustGetEnv("MINIO_SECRET_KEY"),
 		MinioUseSSL:               useSSLbool,
 		MinioBucketName:           minioBucketName,
+		ResendApiKey:              mustGetEnv("RESEND_API_KEY"),
+		EmailFrom:                 mustGetEnv("EMAIL_FROM"),
+		AppName:                   mustGetEnv("APP_NAME"),
 		JWTAccessSecret:           mustGetEnv("JWT_ACCESS_TOKEN"),
 		JWTRefreshSecret:          mustGetEnv("JWT_REFRESH_TOKEN"),
 		JWTIssuer:                 mustGetEnv("JWT_ISS"),
