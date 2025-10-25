@@ -16,11 +16,15 @@ type AuthResp struct {
 
 	// User contains user profile information (always present)
 	User *userC.UserCore `json:"user"`
+
+	// OtpID represents the ID of the OTP (One-Time Password) used for email verification.
+	// It is only present during sign-up before verification is completed.
+	OtpID *string `json:"otp_id"`
 }
 
 // NewAuthResp creates a new AuthResp with flexible field population
 // This function handles all authentication scenarios
-func NewAuthResp(user *userD.User, session *sessionD.Session) *AuthResp {
+func NewAuthResp(user *userD.User, session *sessionD.Session, otpID string) *AuthResp {
 	resp := &AuthResp{
 		User: &userC.UserCore{
 			ID:            user.ID.(string),
@@ -39,15 +43,20 @@ func NewAuthResp(user *userD.User, session *sessionD.Session) *AuthResp {
 			ExpiresIn:    session.RefreshTokenExpIn,
 		}
 	}
+
+	if otpID != "" {
+		resp.OtpID = &otpID
+	}
+
 	return resp
 }
 
 // NewSignUpResp creates response for user registration
-func NewSignUpResp(user *userD.User) *AuthResp {
-	return NewAuthResp(user, nil)
+func NewSignUpResp(user *userD.User, otpID string) *AuthResp {
+	return NewAuthResp(user, nil, otpID)
 }
 
 // NewSignInResp creates response for successful sign in
 func NewSignInResp(user *userD.User, session *sessionD.Session) *AuthResp {
-	return NewAuthResp(user, session)
+	return NewAuthResp(user, session, "")
 }
