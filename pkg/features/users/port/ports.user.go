@@ -9,11 +9,13 @@ import (
 )
 
 type UserRepo interface {
+	Find(ctx context.Context, id string) (*domain.User, error)
 	Insert(ctx context.Context, user *domain.User) error
 	FindByEmail(ctx context.Context, email string) (*domain.User, error)
 	Exists(ctx context.Context, id string) (bool, error)
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	UpdateAvatarPath(ctx context.Context, userID string, imgPath string, updatedAt time.Time) error
+	ConfirmEmail(ctx context.Context, userID string) error
 }
 
 type UserSrv interface {
