@@ -107,6 +107,25 @@ func ManageError(err error, msg string) error {
 			Code: ErrCodeUnauthorized,
 			Msg:  "password does not match",
 		}
+	case errors.Is(err, ErrInvalidOtpCode):
+		log.Println("invalid otp code")
+		appErr = AppError{
+			Code: ErrCodeInvalidParams,
+			Msg:  "Invalid OTP code",
+		}
+
+	case errors.Is(err, ErrOtpPurposeNotAllowed):
+		log.Println("otp purpose not allowed")
+		appErr = AppError{
+			Code: ErrCodeInvalidParams,
+			Msg:  "OTP not valid for this purpose",
+		}
+	case errors.Is(err, ErrOtpExpired):
+		log.Println("otp expired")
+		appErr = AppError{
+			Code: ErrCodeInvalidParams,
+			Msg:  "OTP code has expired",
+		}
 
 	default:
 		log.Println(err.Error())
