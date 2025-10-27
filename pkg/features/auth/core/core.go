@@ -40,7 +40,7 @@ func NewAuthResp(user *userD.User, session *sessionD.Session, otpID string) *Aut
 		resp.Session = &sessionC.SessionCore{
 			AccessToken:  session.AccessToken,
 			RefreshToken: session.RefreshToken,
-			ExpiresIn:    session.RefreshTokenExpIn,
+			ExpiresIn:    session.AccessTokenExpIn,
 		}
 	}
 

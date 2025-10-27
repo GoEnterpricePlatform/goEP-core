@@ -95,7 +95,7 @@ func New() http.Handler {
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
-	authHandler.NewAuthHandler(v1, authSrv)
+	authHandler.NewAuthHandler(v1, authSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {

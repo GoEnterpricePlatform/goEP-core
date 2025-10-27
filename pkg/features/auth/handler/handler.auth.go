@@ -8,11 +8,13 @@ import (
 
 type Handler struct {
 	AuthSrv port.AuthSrv
+	AppEnv  string
 }
 
-func NewAuthHandler(server *http.ServeMux, authSrv port.AuthSrv) *Handler {
+func NewAuthHandler(server *http.ServeMux, authSrv port.AuthSrv, appEnv string) *Handler {
 	h := &Handler{
 		AuthSrv: authSrv,
+		AppEnv:  appEnv,
 	}
 
 	server.HandleFunc("POST /auth/sign-up", h.SignUp)
