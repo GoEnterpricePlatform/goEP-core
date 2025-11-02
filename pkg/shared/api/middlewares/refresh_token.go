@@ -10,6 +10,13 @@ import (
 )
 
 // RefreshTokenMdw checks and validates refresh tokens from request body
+// NOTE: This middleware is no longer used because refresh tokens are now
+// retrieved directly from cookies and validated inside the corresponding
+// handlers (e.g., /auth/refresh and /auth/logout). Since only these two
+// endpoints require refresh token validation, it is simpler and clearer to
+// handle this logic directly in each handler rather than maintaining a
+// dedicated middleware. This code is kept for reference only and can be
+// safely removed later if not needed.
 func (m *AuthMiddleware) RefreshTokenMdw(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
