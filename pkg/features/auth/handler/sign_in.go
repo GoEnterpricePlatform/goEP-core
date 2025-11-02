@@ -35,23 +35,24 @@ func (h Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	secure := false
-	if h.AppEnv == "prod" {
-		secure = true
-	}
-
 	cookie := &http.Cookie{
 		Name:     "refreshToken",
 		Value:    session.RefreshToken,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   secure,
 		MaxAge:   int(session.RefreshTokenExpIn),
-		SameSite: http.SameSiteNoneMode,
+	}
+
+	if h.AppEnv == "prod" {
+		cookie.Secure = true
+		cookie.SameSite = http.SameSiteNoneMode
+	} else {
+		cookie.Secure = false
+		cookie.SameSite = http.SameSiteLaxMode
 	}
 
 	session.RefreshToken = ""
-	
+
 	// create response
 	resp := core.NewSignInResp(user, session)
 
