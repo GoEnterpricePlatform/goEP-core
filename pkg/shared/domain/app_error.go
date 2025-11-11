@@ -98,13 +98,13 @@ func ManageError(err error, msg string) error {
 	case errors.Is(err, ErrAccountInactive):
 		log.Println("account is inactive")
 		appErr = AppError{
-			Code: ErrCodeUnauthorized,
+			Code: ErrCodeForbidden,
 			Msg:  "account is inactive",
 		}
 	case errors.Is(err, ErrPassDoNotMatch):
 		log.Println("password does not match")
 		appErr = AppError{
-			Code: ErrCodeUnauthorized,
+			Code: ErrCodeInvalidParams,
 			Msg:  "password does not match",
 		}
 	case errors.Is(err, ErrInvalidOtpCode):
