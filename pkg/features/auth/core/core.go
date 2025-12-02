@@ -25,15 +25,17 @@ type AuthResp struct {
 // NewAuthResp creates a new AuthResp with flexible field population
 // This function handles all authentication scenarios
 func NewAuthResp(user *userD.User, session *sessionD.Session, otpID string) *AuthResp {
-	resp := &AuthResp{
-		User: &userC.UserCore{
+	resp := &AuthResp{}
+
+	if user != nil {
+		resp.User = &userC.UserCore{
 			ID:            user.ID.(string),
 			Email:         user.Email,
 			EmailVerified: user.EmailVerified,
 			ImgUrl:        user.ImgUrl,
 			CreatedAt:     user.CreatedAt,
 			UpdatedAt:     user.UpdatedAt,
-		},
+		}
 	}
 
 	if session != nil {
@@ -59,4 +61,9 @@ func NewSignUpResp(user *userD.User, otpID string) *AuthResp {
 // NewSignInResp creates response for successful sign in
 func NewSignInResp(user *userD.User, session *sessionD.Session) *AuthResp {
 	return NewAuthResp(user, session, "")
+}
+
+// NewRefreshTokenResp creates response for successful refresh token
+func NewRefreshTokenResp(session *sessionD.Session) *AuthResp {
+	return NewAuthResp(nil, session, "")
 }

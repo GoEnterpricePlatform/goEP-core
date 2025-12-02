@@ -1,0 +1,42 @@
+package service
+
+import (
+	"context"
+
+	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
+	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+)
+
+
+func (s *Service) RefreshToken(ctx context.Context, rTokenID string, userID string) (*sessionD.Session, error) {
+	session, err := s.SessionSrv.GetByRTokenID(ctx, rTokenID, userID)
+	if err != nil {
+		return nil, sharedD.ManageError(err, "")
+	}
+
+	if session.Revoked {
+		return nil, sharedD.ManageError(err, "")
+	}
+
+	err = s.SessionSrv.DeleteByRTokenID(ctx, rTokenID)
+	if err != nil {
+		return nil, sharedD.ManageError(err, "")
+	}
+
+	user, err := s.UserRepo.Find(ctx, userID)
+	if err != nil {
+		return nil, sharedD.ManageError(err, "")
+	}
+
+	// Create session
+	newSession := sessionD.NewSession(user.ID.(string), session.RememberMe)
+
+	err = s.SessionSrv.Create(ctx, newSession, nil, user.Email)
+	if err != nil {
+		return nil, sharedD.ManageError(err, "")
+	}
+
+	user.UserPassAuth = nil
+
+	return newSession, nil
+}
