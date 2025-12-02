@@ -26,6 +26,7 @@ func NewAuthHandler(server *http.ServeMux, authSrv port.AuthSrv, tokenSrv tokenP
 	server.HandleFunc("POST /auth/verify-email", h.VerifyEmail)
 	server.HandleFunc("POST /auth/sign-out", h.SignOut)
 	server.HandleFunc("POST /auth/refresh-token", h.RefreshToken)
+	server.HandleFunc("GET /auth/get-session", h.GetSession)
 
 	return h
 }
