@@ -6,6 +6,7 @@ import (
 
 	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
 	cShared "github.com/amorindev/go-tmpl/pkg/shared/api/core"
+	sharedH "github.com/amorindev/go-tmpl/pkg/shared/api/handler"
 	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
 )
 
@@ -35,21 +36,7 @@ func (h Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:     "refreshToken",
-		Value:    session.RefreshToken,
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   int(session.RefreshTokenExpIn),
-	}
-
-	if h.AppEnv == "prod" {
-		cookie.Secure = true
-		cookie.SameSite = http.SameSiteNoneMode
-	} else {
-		cookie.Secure = false
-		cookie.SameSite = http.SameSiteLaxMode
-	}
+	cookie := sharedH.CreateCookie(session.RefreshToken, int(session.RefreshTokenExpIn),h.AppEnv)
 
 	session.RefreshToken = ""
 
