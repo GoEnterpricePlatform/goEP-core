@@ -30,20 +30,21 @@ func (h Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, session, err := h.AuthSrv.SignIn(r.Context(), req.Email, req.Password, req.RememberMe)
+	user, session, otpID, err := h.AuthSrv.SignIn(r.Context(), req.Email, req.Password, req.RememberMe)
 	if err != nil {
 		cShared.RespondError(w, err)
 		return
 	}
 
-	cookie := sharedH.CreateCookie(session.RefreshToken, int(session.RefreshTokenExpIn),h.AppEnv)
-
-	session.RefreshToken = ""
+	if session != nil {
+		cookie := sharedH.CreateCookie(session.RefreshToken, int(session.RefreshTokenExpIn), h.AppEnv)
+		session.RefreshToken = ""
+		http.SetCookie(w, cookie)
+	}
 
 	// create response
-	resp := core.NewSignInResp(user, session)
+	resp := core.NewSignInResp(user, session, otpID)
 
-	http.SetCookie(w, cookie)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
