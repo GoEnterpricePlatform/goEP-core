@@ -38,6 +38,15 @@ func (s *Service) VerifyEmail(ctx context.Context, otpID string, otpCode string,
 		return nil, nil, sharedD.ManageError(err, "failed to retrieve user data")
 	}
 
+	// If the user has an image path, retrieve the image URL and set it
+	if user.ImgPath != nil {
+		url, err := s.UserFileStg.GetImage(ctx, *user.ImgPath)
+		if err != nil {
+			return nil, nil, sharedD.ManageError(err, "")
+		}
+		user.ImgUrl = &url
+	}
+
 	session := &sessionD.Session{
 		UserID:     user.ID.(string),
 		RememberMe: false,
