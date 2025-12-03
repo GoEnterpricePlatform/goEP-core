@@ -59,8 +59,8 @@ func NewSignUpResp(user *userD.User, otpID string) *AuthResp {
 }
 
 // NewSignInResp creates response for successful sign in
-func NewSignInResp(user *userD.User, session *sessionD.Session) *AuthResp {
-	return NewAuthResp(user, session, "")
+func NewSignInResp(user *userD.User, session *sessionD.Session,otpID string) *AuthResp {
+	return NewAuthResp(user, session, otpID)
 }
 
 // NewRefreshTokenResp creates response for successful refresh token

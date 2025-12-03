@@ -41,7 +41,7 @@ func (h Handler) GetSession(w http.ResponseWriter, r *http.Request) {
 	session.RefreshToken = ""
 
     // create response
-	resp := core.NewSignInResp(user, session)
+	resp := core.NewSignInResp(user, session,"")
 
 
 	w.Header().Set("Content-Type", "application/json")

@@ -39,7 +39,7 @@ func (h Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	session.RefreshToken = ""
 
 	// create response
-	resp := core.NewSignInResp(user, session)
+	resp := core.NewSignInResp(user, session,"")
 
 	http.SetCookie(w, cookie)
 	w.Header().Set("Content-Type", "application/json")
