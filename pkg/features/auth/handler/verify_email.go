@@ -6,6 +6,7 @@ import (
 
 	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
 	sharedC "github.com/amorindev/go-tmpl/pkg/shared/api/core"
+	sharedH "github.com/amorindev/go-tmpl/pkg/shared/api/handler"
 	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
 )
 
@@ -33,7 +34,14 @@ func (h Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cookie := sharedH.CreateCookie(session.RefreshToken, int(session.RefreshTokenExpIn), h.AppEnv)
+
+	session.RefreshToken = ""
+
+	// create response
 	resp := core.NewSignInResp(user, session)
+
+	http.SetCookie(w, cookie)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
