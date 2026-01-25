@@ -1,0 +1,67 @@
+{{ define "header" }}
+  <style>
+    header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .navbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #1f2937;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    nav a.active {
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: #2563eb;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      nav a {
+        margin-left: 10px;
+      }
+    }
+  </style>
+
+  <header>
+    <div class="navbar">
+      <a href="/" class="logo">GoTemplates</a>
+
+      <nav>
+        <a href="/" class="{{ if eq .ActivePage "landing" }}active{{ end }}">
+          Landing
+        </a>
+        <a href="/about_us" class="{{ if eq .ActivePage "about_us" }}active{{ end }}">
+          About Us
+        </a>
+      </nav>
+    </div>
+  </header>
+{{ end }}

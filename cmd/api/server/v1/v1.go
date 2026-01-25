@@ -10,13 +10,14 @@ import (
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-tmpl/internal/resend"
 	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
-	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
 	authHandler "github.com/amorindev/go-tmpl/pkg/features/auth/handler"
 	authService "github.com/amorindev/go-tmpl/pkg/features/auth/service"
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
 	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
+	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
+	publicHandler "github.com/amorindev/go-tmpl/web/public/api/handler"
 
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/features/session/repository/mongo"
 	sessionService "github.com/amorindev/go-tmpl/pkg/features/session/service"
@@ -116,6 +117,7 @@ func New() http.Handler {
 	})
 
 	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
+	publicHandler.NewPublicHandler(mux,appEnvs.ApiBaseUrl)
 
 	return apiHandler
 }
