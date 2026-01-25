@@ -7,8 +7,8 @@ import (
 
 func (h Handler) HomePage(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"pkg/app/admin/api/web/templates/base.html",
-		"pkg/app/admin/api/web/templates/home.html",
+		"pkg/features/admin/api/web/templates/base.html",
+		"pkg/features/admin/api/web/templates/home.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
