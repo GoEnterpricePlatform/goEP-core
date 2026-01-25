@@ -6,13 +6,16 @@ import (
 	"net/http"
 
 	"github.com/amorindev/go-tmpl/internal/config"
+	gmailSmtpClient "github.com/amorindev/go-tmpl/internal/gmail-smtp"
 	minioClient "github.com/amorindev/go-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-tmpl/internal/resend"
 	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
 	authHandler "github.com/amorindev/go-tmpl/pkg/features/auth/handler"
 	authService "github.com/amorindev/go-tmpl/pkg/features/auth/service"
+	gmailsmtp "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/gmail-smtp"
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
+	"github.com/amorindev/go-tmpl/pkg/features/mailer/port"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
 	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
@@ -32,7 +35,10 @@ import (
 func New() http.Handler {
 	mux := http.NewServeMux()
 
-	appEnvs := config.Load()
+	// define app Stack
+	appStack := config.NewAppStack(config.DBMongo, config.MailGmail)
+
+	appEnvs := config.Load(appStack)
 
 	zapLogger := logger.NewHttpLogger(appEnvs.AppEnv)
 
@@ -62,7 +68,15 @@ func New() http.Handler {
 	}
 
 	// Resend
-	resendCli := resendClient.NewResendClient(appEnvs.ResendApiKey)
+	var mailerAdt port.MailerAdt
+	switch appStack.Mail {
+	case config.MailResend:
+		resendCli := resendClient.NewResendClient(appEnvs.ResendApiKey)
+		mailerAdt = resendAdapter.NewResendAdt(resendCli, appEnvs.ResendEmailFrom)
+	case config.MailGmail:
+		gmailSmtp := gmailSmtpClient.NewGmailSmtpClient(appEnvs.GmailUsername, appEnvs.GmailPass, appEnvs.GmailHost)
+		mailerAdt = gmailsmtp.NewGmailSmtpAdt(gmailSmtp, appEnvs.GmailAddr, appEnvs.GmailFrom)
+	}
 
 	// Collections
 	userColl := mongoDB.Collection("users")
@@ -80,9 +94,6 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
-	// Adapters
-	mailerAdt := resendAdapter.NewResendAdt(resendCli, appEnvs.EmailFrom)
-
 	// File Storage
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
@@ -96,7 +107,7 @@ func New() http.Handler {
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
-	authHandler.NewAuthHandler(v1, authSrv, tokenSrv,appEnvs.AppEnv)
+	authHandler.NewAuthHandler(v1, authSrv, tokenSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +128,7 @@ func New() http.Handler {
 	})
 
 	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
-	publicHandler.NewPublicHandler(mux,appEnvs.ApiBaseUrl)
+	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl)
 
 	return apiHandler
 }
