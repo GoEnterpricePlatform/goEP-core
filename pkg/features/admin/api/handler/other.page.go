@@ -7,8 +7,8 @@ import (
 
 func (h Handler) OtherPage(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"pkg/app/admin/api/web/templates/base.html",
-		"pkg/app/admin/api/web/templates/other.html",
+		"pkg/features/admin/api/web/templates/base.html",
+		"pkg/features/admin/api/web/templates/other.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
