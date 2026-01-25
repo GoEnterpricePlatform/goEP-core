@@ -1,14 +1,15 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 )
 
 func (h Handler) HomePage(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"web/admin/api/web/templates/base.html",
-		"web/admin/api/web/templates/home.html",
+		"web/admin/templates/layout/base.html",
+		"web/admin/templates/components/sidebar.html",
+		"web/admin/templates/home.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -18,10 +19,8 @@ func (h Handler) HomePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		ApiBaseUrl string
 		ActivePage string
 	}{
-		ApiBaseUrl: h.ApiBaseUrl,
 		ActivePage: "home",
 	}
 

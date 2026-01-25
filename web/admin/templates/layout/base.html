@@ -1,0 +1,71 @@
+{{define "base"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin · {{template "title"}}</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+      }
+
+      /* ---------- LAYOUT ---------- */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ---------- MAIN ---------- */
+      main {
+        flex: 1;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      .page-header {
+        margin-bottom: 30px;
+      }
+
+      .page-header h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+      }
+
+      /* ---------- RESPONSIVE ---------- */
+      @media (max-width: 768px) {
+        .layout {
+          flex-direction: column;
+        }
+
+        main {
+          margin: 20px auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      {{template "sidebar" .}}
+
+      <!-- MAIN CONTENT -->
+      <main>
+        <div class="page-header">
+          <h1>{{template "title"}}</h1>
+        </div>
+
+        {{block "content" .}}{{end}}
+      </main>
+    </div>
+  </body>
+</html>
+{{end}}

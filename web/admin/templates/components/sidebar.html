@@ -1,0 +1,60 @@
+{{ define "sidebar" }}
+<style>
+    .sidebar {
+        width: 260px;
+        background-color: #ffffff;
+        border-right: 1px solid #e5e7eb;
+        padding: 24px 20px;
+        box-sizing: border-box;
+    }
+
+    .sidebar h1 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0 0 32px 0;
+        color: #1f2937;
+      }
+
+    .sidebar nav a {
+        display: block;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .sidebar nav a:hover {
+        background-color: #f3f4f6;
+        color: #2563eb;
+      }
+
+    .sidebar nav a.active {
+        background-color: #eff6ff;
+        color: #2563eb;
+        font-weight: bold;
+    }
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid #e5e7eb;
+        }
+    }
+
+</style>
+<aside class="sidebar">
+    <h1>Admin Panel</h1>
+    <nav>
+        <a href="/v1/admin/home" class="{{if eq .ActivePage "home"}}active{{end}}">
+            Home
+        </a>
+        <a href="/v1/admin/other" class="{{if eq .ActivePage "other"}}active{{end}}">
+            Other
+        </a>
+    </nav>
+</aside>
+{{ end }}

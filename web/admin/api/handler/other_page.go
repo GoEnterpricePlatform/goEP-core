@@ -1,14 +1,15 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 )
 
-func (h Handler) OtherPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler)OtherPage(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"web/admin/api/web/templates/base.html",
-		"web/admin/api/web/templates/other.html",
+		"web/admin/templates/layout/base.html",
+		"web/admin/templates/components/sidebar.html",
+		"web/admin/templates/other.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -18,10 +19,8 @@ func (h Handler) OtherPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		ApiBaseUrl string
 		ActivePage string
 	}{
-		ApiBaseUrl: h.ApiBaseUrl,
 		ActivePage: "other",
 	}
 
