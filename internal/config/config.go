@@ -21,9 +21,15 @@ type Config struct {
 	MinioBucketName string
 
 	// Resend
-	ResendApiKey string
-	EmailFrom    string
-	AppName      string
+	ResendApiKey    string
+	ResendEmailFrom string
+
+	// GmailSmtp
+	GmailUsername string
+	GmailPass     string
+	GmailFrom     string
+	GmailHost     string
+	GmailAddr     string
 
 	// Jwt
 	JWTAccessSecret           string
@@ -37,12 +43,13 @@ type Config struct {
 	Port           string
 	AppEnv         string
 	AllowedOrigins []string
+	AppName        string // send email resend, gmail
 
 	// Templates
 	ApiBaseUrl string
 }
 
-func Load() *Config {
+func Load(appStack *AppStack) *Config {
 	// Mongo DB
 	mongoInitDB := cmp.Or(os.Getenv("MONGO_INITDB_DATABASE"), "auth-tmpl")
 
@@ -83,6 +90,32 @@ func Load() *Config {
 	apiBaseUrl := cmp.Or(os.Getenv("API_BASE_URL"), "http://localhost:"+port)
 
 	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+	// "appname" appears in the email message
+	appName := mustGetEnv("APP_NAME") 
+
+	// mailer
+	// Resend
+	var resendApiKey string
+	var resendEmailFrom string
+
+	// GmailSmtp
+	var gmailUsername string
+	var gmailPass string
+	var gmailFrom string
+	var gmailHost string
+	var gmailAddr string
+
+	switch appStack.Mail {
+	case MailResend:
+		resendApiKey = mustGetEnv("RESEND_API_KEY")
+		resendEmailFrom = mustGetEnv("EMAIL_FROM")
+	case MailGmail:
+		gmailUsername = mustGetEnv("GMAIL_USERNAME")
+		gmailPass = mustGetEnv("GMAIL_PASS")
+		gmailFrom = cmp.Or(os.Getenv("GMAIL_FROM"), gmailUsername)
+		gmailHost = cmp.Or(os.Getenv("GMAIL_HOST"), "smtp.gmail.com")
+		gmailAddr = cmp.Or(os.Getenv("GMAIL_ADDR"), "smtp.gmail.com:587")
+	}
 
 	return &Config{
 		MongoDBUri:                mustGetEnv("MONGO_DB_URI"),
@@ -92,9 +125,14 @@ func Load() *Config {
 		MinioSecretKey:            mustGetEnv("MINIO_SECRET_KEY"),
 		MinioUseSSL:               useSSLbool,
 		MinioBucketName:           minioBucketName,
-		ResendApiKey:              mustGetEnv("RESEND_API_KEY"),
-		EmailFrom:                 mustGetEnv("EMAIL_FROM"),
-		AppName:                   mustGetEnv("APP_NAME"),
+		ResendApiKey:              resendApiKey,
+		ResendEmailFrom:           resendEmailFrom,
+		AppName:                   appName,
+		GmailUsername:             gmailUsername,
+		GmailPass:                 gmailPass,
+		GmailFrom:                 gmailFrom,
+		GmailHost:                 gmailHost,
+		GmailAddr:                 gmailAddr,
 		JWTAccessSecret:           mustGetEnv("JWT_ACCESS_TOKEN"),
 		JWTRefreshSecret:          mustGetEnv("JWT_REFRESH_TOKEN"),
 		JWTIssuer:                 mustGetEnv("JWT_ISS"),
