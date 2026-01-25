@@ -10,7 +10,7 @@ import (
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-tmpl/internal/resend"
 	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
-	adminHandler "github.com/amorindev/go-tmpl/pkg/features/admin/api/handler"
+	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
 	authHandler "github.com/amorindev/go-tmpl/pkg/features/auth/handler"
 	authService "github.com/amorindev/go-tmpl/pkg/features/auth/service"
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"

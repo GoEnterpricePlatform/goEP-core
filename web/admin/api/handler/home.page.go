@@ -5,10 +5,10 @@ import (
 	"text/template"
 )
 
-func (h Handler) OtherPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HomePage(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"pkg/features/admin/api/web/templates/base.html",
-		"pkg/features/admin/api/web/templates/other.html",
+		"web/admin/api/web/templates/base.html",
+		"web/admin/api/web/templates/home.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -22,7 +22,7 @@ func (h Handler) OtherPage(w http.ResponseWriter, r *http.Request) {
 		ActivePage string
 	}{
 		ApiBaseUrl: h.ApiBaseUrl,
-		ActivePage: "other",
+		ActivePage: "home",
 	}
 
 	err = ts.ExecuteTemplate(w, "base", data)
