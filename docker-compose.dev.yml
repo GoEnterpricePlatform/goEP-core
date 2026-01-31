@@ -20,3 +20,5 @@ services:
     ports:
       - "${MINIO_API_PORT}:${MINIO_API_PORT}"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+    volumes:
+    - ./data/minio_data:/data
