@@ -28,3 +28,5 @@ go.work.sum
 # Air live reload
 tmp/
 
+# docker data services, minio, mongo and others
+data/
