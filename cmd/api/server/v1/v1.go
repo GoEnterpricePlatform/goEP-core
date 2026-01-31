@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -17,8 +18,10 @@ import (
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/port"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
-	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
+	otpCodeRepository "github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
+	roleInitializer "github.com/amorindev/go-tmpl/pkg/features/roles/initializer"
+	roleRepository "github.com/amorindev/go-tmpl/pkg/features/roles/repository/mongo"
 	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
 	publicHandler "github.com/amorindev/go-tmpl/web/public/api/handler"
 
@@ -82,15 +85,23 @@ func New() http.Handler {
 	userColl := mongoDB.Collection("users")
 	sessionColl := mongoDB.Collection("sessions")
 	otpCodeColl := mongoDB.Collection("opt-codes")
+	roleColl := mongoDB.Collection("roles")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
 	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
-	otpCodeRepo := mongo.NewOtpCodeRepo(mongoConn.DB, otpCodeColl)
+	otpCodeRepo := otpCodeRepository.NewOtpCodeRepo(mongoConn.DB, otpCodeColl)
+	roleRepo := roleRepository.NewRoleRepo(mongoConn.DB, roleColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Before indexes, create initializers
+	roleItz := roleInitializer.NewRoleItz(roleRepo)
+	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
 		log.Fatal(err)
 	}
 
