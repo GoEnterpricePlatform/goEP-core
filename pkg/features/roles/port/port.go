@@ -9,4 +9,5 @@ import (
 type RoleRepo interface {
 	Insert(ctx context.Context, role *domain.Role) error
 	Exists(ctx context.Context, name string) (bool, error)
+	FindByName(ctx context.Context, name string) (*domain.Role, error)
 }

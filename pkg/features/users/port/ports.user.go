@@ -16,6 +16,10 @@ type UserRepo interface {
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	UpdateAvatarPath(ctx context.Context, userID string, imgPath string, updatedAt time.Time) error
 	ConfirmEmail(ctx context.Context, userID string) error
+	InsertWithRoles(ctx context.Context, user *domain.User) error
+
+	// Admin
+	ExistsAdmin(ctx context.Context) (bool, error)
 }
 
 type UserSrv interface {

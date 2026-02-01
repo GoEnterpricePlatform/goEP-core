@@ -19,8 +19,8 @@ func NewRoleItz(roleRepo port.RoleRepo) *Initializer {
 
 func (i *Initializer) SeedEssentialRoles(ctx context.Context) error {
 	roles := []*domain.Role{
-		domain.NewRole("Admin"),
-		domain.NewRole("User"),
+		domain.NewRole(string(domain.RoleAdmin)),
+		domain.NewRole(string(domain.RoleUser)),
 	}
 
 	for _, role := range roles {
