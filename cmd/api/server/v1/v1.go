@@ -12,17 +12,19 @@ import (
 	mongoClient "github.com/amorindev/go-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-tmpl/internal/resend"
 	tokenService "github.com/amorindev/go-tmpl/internal/tokens/service"
+	adminService "github.com/amorindev/go-tmpl/pkg/features/admin/service"
 	authHandler "github.com/amorindev/go-tmpl/pkg/features/auth/handler"
 	authService "github.com/amorindev/go-tmpl/pkg/features/auth/service"
 	gmailsmtp "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/gmail-smtp"
 	resendAdapter "github.com/amorindev/go-tmpl/pkg/features/mailer/adapter/resend"
 	"github.com/amorindev/go-tmpl/pkg/features/mailer/port"
-	"github.com/amorindev/go-tmpl/pkg/features/mailer/service"
+	mailerService "github.com/amorindev/go-tmpl/pkg/features/mailer/service"
 	otpCodeRepository "github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
 	roleInitializer "github.com/amorindev/go-tmpl/pkg/features/roles/initializer"
 	roleRepository "github.com/amorindev/go-tmpl/pkg/features/roles/repository/mongo"
 	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
+	adminRenderer "github.com/amorindev/go-tmpl/web/admin/renderer"
 	publicHandler "github.com/amorindev/go-tmpl/web/public/api/handler"
 
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/features/session/repository/mongo"
@@ -112,9 +114,12 @@ func New() http.Handler {
 	tokenSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
-	mailerSrv := service.NewMailerSrv(mailerAdt, appEnvs.AppName)
+	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
 	authSrv := authService.NewAuthSrv(userRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
+
+	// service - admin
+	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
@@ -133,12 +138,10 @@ func New() http.Handler {
 	})
 
 	// Templates
-	// Redirects requests from "/admin" to the admin home page under API v1
-	mux.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/v1/admin/home", http.StatusFound)
-	})
+	adminR := adminRenderer.NewAdminRenderer()
+	adminH := adminHandler.NewAdminHandler(adminSrv, appEnvs.ApiBaseUrl, adminR)
+	adminH.RegisterRoutes(mux, v1)
 
-	adminHandler.NewAdminHandler(v1, appEnvs.ApiBaseUrl)
 	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl)
 
 	return apiHandler

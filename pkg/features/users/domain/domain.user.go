@@ -15,6 +15,7 @@ type User struct {
 	ImgUrl        *string                  `bson:"-"`
 	ImgPath       *string                  `bson:"img_path"`
 	UserPassAuth  *domain.UserPasswordAuth `bson:"pass_method"`
+	RoleIDs       []interface{}            `bson:"role_ids"`
 	CreatedAt     *time.Time               `bson:"created_at"`
 	UpdatedAt     *time.Time               `bson:"updated_at"`
 }
