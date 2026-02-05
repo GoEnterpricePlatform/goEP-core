@@ -21,6 +21,8 @@ import (
 	mailerService "github.com/amorindev/go-tmpl/pkg/features/mailer/service"
 	otpCodeRepository "github.com/amorindev/go-tmpl/pkg/features/opt-codes/repository/mongo"
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
+	permissionInitializer "github.com/amorindev/go-tmpl/pkg/features/permissions/initializer"
+	permissionRepository "github.com/amorindev/go-tmpl/pkg/features/permissions/repository/mongo"
 	roleInitializer "github.com/amorindev/go-tmpl/pkg/features/roles/initializer"
 	roleRepository "github.com/amorindev/go-tmpl/pkg/features/roles/repository/mongo"
 	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
@@ -90,12 +92,14 @@ func New() http.Handler {
 	sessionColl := mongoDB.Collection("sessions")
 	otpCodeColl := mongoDB.Collection("opt-codes")
 	roleColl := mongoDB.Collection("roles")
+	permissionColl := mongoDB.Collection("permissions")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
 	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
 	otpCodeRepo := otpCodeRepository.NewOtpCodeRepo(mongoConn.DB, otpCodeColl)
 	roleRepo := roleRepository.NewRoleRepo(mongoConn.DB, roleColl)
+	permissionRepo := permissionRepository.NewPermissionRepo(mongoConn.DB, permissionColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -104,6 +108,12 @@ func New() http.Handler {
 	}
 
 	// Before indexes, create initializers
+	permissionItz := permissionInitializer.NewPermissionItz(permissionRepo)
+	_, err = permissionItz.SeedEssentialPermissions(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	roleItz := roleInitializer.NewRoleItz(roleRepo)
 	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
 		log.Fatal(err)
@@ -122,7 +132,7 @@ func New() http.Handler {
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// service - admin
-	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo,sessionSrv)
+	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, sessionSrv)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
@@ -142,7 +152,7 @@ func New() http.Handler {
 
 	// Templates
 	adminR := adminRenderer.NewAdminRenderer()
-	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv,appEnvs.ApiBaseUrl, adminR)
+	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR)
 	adminH.RegisterRoutes(mux, v1)
 
 	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl)
