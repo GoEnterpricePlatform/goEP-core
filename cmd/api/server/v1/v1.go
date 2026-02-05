@@ -27,6 +27,8 @@ import (
 	adminRenderer "github.com/amorindev/go-tmpl/web/admin/renderer"
 	publicHandler "github.com/amorindev/go-tmpl/web/public/api/handler"
 
+	cookieService "github.com/amorindev/go-tmpl/pkg/shared/api/handler/cookie/service"
+
 	sessionRepository "github.com/amorindev/go-tmpl/pkg/features/session/repository/mongo"
 	sessionService "github.com/amorindev/go-tmpl/pkg/features/session/service"
 	userFileStorage "github.com/amorindev/go-tmpl/pkg/features/users/file-storage/minio"
@@ -112,6 +114,7 @@ func New() http.Handler {
 
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
+	cookieSrv := cookieService.NewCookieSrv(appEnvs.AppEnv)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
@@ -119,7 +122,7 @@ func New() http.Handler {
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// service - admin
-	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo)
+	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo,sessionSrv)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
@@ -139,7 +142,7 @@ func New() http.Handler {
 
 	// Templates
 	adminR := adminRenderer.NewAdminRenderer()
-	adminH := adminHandler.NewAdminHandler(adminSrv, appEnvs.ApiBaseUrl, adminR)
+	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv,appEnvs.ApiBaseUrl, adminR)
 	adminH.RegisterRoutes(mux, v1)
 
 	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl)

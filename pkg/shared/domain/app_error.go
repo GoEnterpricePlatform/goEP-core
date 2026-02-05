@@ -107,6 +107,12 @@ func ManageError(err error, msg string) error {
 			Code: ErrCodeInvalidParams,
 			Msg:  "password does not match",
 		}
+	case errors.Is(err, ErrInvalidCredentials):
+		log.Println("invalid credentials")
+		appErr = AppError{
+			Code: ErrCodeUnauthorized,
+			Msg:  "invalid credentials",
+		}
 	case errors.Is(err, ErrInvalidOtpCode):
 		log.Println("invalid otp code")
 		appErr = AppError{

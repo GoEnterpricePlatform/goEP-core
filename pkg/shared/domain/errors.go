@@ -34,6 +34,7 @@ var (
 var (
 	ErrAccountInactive = errors.New("account inactive")
 	ErrPassDoNotMatch  = errors.New("passwords do not match")
+	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
 var (
