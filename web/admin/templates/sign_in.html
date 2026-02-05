@@ -1,13 +1,132 @@
 {{define "sign-in"}}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
-</head>
-<body>
-    <h1>Sign In page</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Sign In</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      form {
+        width: 100%;
+        max-width: 450px;
+        background-color: #ffffff;
+        padding: 32px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        box-sizing: border-box;
+      }
+
+      form h1 {
+        margin: 0 0 24px 0;
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #1f1f1f;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
+      }
+
+      .remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        margin-bottom: 20px;
+        color: #374151;
+      }
+
+      .remember input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #000;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background-color 0.2s,
+          transform 0.05s;
+      }
+
+      button:hover {
+        background-color: #0f0f0f;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .error {
+        background-color: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      @media (max-width: 480px) {
+        form {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form method="POST" action="/v1/admin/auth/sign-in">
+      <h1>Admin Sign In</h1>
+
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+
+      <label class="remember">
+        <input type="checkbox" name="remember" value="true" />
+        Remember me
+      </label>
+
+      {{if .ErrorMsg}}
+      <div class="error">{{.ErrorMsg}}</div>
+      {{end}}
+
+      <button type="submit">Sign in</button>
+    </form>
+  </body>
 </html>
 {{end}}

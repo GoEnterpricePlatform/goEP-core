@@ -3,20 +3,23 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/pkg/features/admin/port"
+	adminP "github.com/amorindev/go-tmpl/pkg/features/admin/port"
+	cookieP "github.com/amorindev/go-tmpl/pkg/shared/api/handler/cookie/port"
 	"github.com/amorindev/go-tmpl/web/admin/renderer"
 )
 
 type Handler struct {
-	AdminSrv      port.AdminSrv
+	AdminSrv      adminP.AdminSrv
+	CookieSrv     cookieP.CookieSrv
 	ApiBaseUrl    string
 	AdminRenderer *renderer.Renderer
 }
 
-func NewAdminHandler(adminSrv port.AdminSrv, apiBaseUrl string, adminRenderer *renderer.Renderer) *Handler {
+func NewAdminHandler(adminSrv adminP.AdminSrv, cookieSrv cookieP.CookieSrv, apiBaseUrl string, adminRenderer *renderer.Renderer) *Handler {
 	h := &Handler{
 		ApiBaseUrl:    apiBaseUrl,
 		AdminSrv:      adminSrv,
+		CookieSrv:     cookieSrv,
 		AdminRenderer: adminRenderer,
 	}
 
@@ -35,4 +38,5 @@ func (h Handler) RegisterRoutes(mux *http.ServeMux, muxV1 *http.ServeMux) {
 
 	// Actions - form submissions
 	muxV1.HandleFunc("POST /admin/auth/sign-up", h.SignUp)
+	muxV1.HandleFunc("POST /admin/auth/sign-in", h.SignIn)
 }
