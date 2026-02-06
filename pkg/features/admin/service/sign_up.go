@@ -39,7 +39,7 @@ func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
 	user.UserPassAuth.UpdatedAt = &now
 
 	// assign role admin
-	role, err := s.RoleRepo.FindByName(ctx, string(roleD.RoleAdmin))
+	role, err := s.RoleRepo.FindByName(ctx, string(roleD.RoleSystemAdmin))
 	if err != nil {
 		return sharedD.ManageError(err, "error finding the admin role")
 	}

@@ -21,7 +21,7 @@ func (r *Repository) ExistsAdmin(ctx context.Context) (bool, error) {
 		},
 		bson.D{
 			{Key: "$match", Value: bson.D{
-				{Key: "roles.name", Value: string(domain.RoleAdmin)},
+				{Key: "roles.name", Value: string(domain.RoleSystemAdmin)},
 			}},
 		},
 		bson.D{
