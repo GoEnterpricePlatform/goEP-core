@@ -23,6 +23,7 @@ import (
 	otpCodeService "github.com/amorindev/go-tmpl/pkg/features/opt-codes/service"
 	permissionInitializer "github.com/amorindev/go-tmpl/pkg/features/permissions/initializer"
 	permissionRepository "github.com/amorindev/go-tmpl/pkg/features/permissions/repository/mongo"
+	"github.com/amorindev/go-tmpl/pkg/features/roles/domain"
 	roleInitializer "github.com/amorindev/go-tmpl/pkg/features/roles/initializer"
 	roleRepository "github.com/amorindev/go-tmpl/pkg/features/roles/repository/mongo"
 	adminHandler "github.com/amorindev/go-tmpl/web/admin/api/handler"
@@ -109,13 +110,16 @@ func New() http.Handler {
 
 	// Before indexes, create initializers
 	permissionItz := permissionInitializer.NewPermissionItz(permissionRepo)
-	_, err = permissionItz.SeedEssentialPermissions(context.Background())
+	permissions, err := permissionItz.SeedEssentialPermissions(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	roleItz := roleInitializer.NewRoleItz(roleRepo)
 	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+	if err := roleItz.AddPermissionsToRole(context.Background(), string(domain.RoleSystemAdmin), permissions); err != nil {
 		log.Fatal(err)
 	}
 

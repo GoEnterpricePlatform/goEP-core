@@ -18,25 +18,31 @@ func NewPermissionItz(permissionRepo port.PermissionRepo) *Initializer {
 }
 
 func (i *Initializer) SeedEssentialPermissions(ctx context.Context) ([]*domain.Permission, error) {
-	permissions := []*domain.Permission{
-		domain.NewPermission(domain.PAdminAccess),
-		domain.NewPermission(domain.PAdminManage),
-		domain.NewPermission(domain.PUserRead),
-		domain.NewPermission(domain.PUserChangeActive),
-		domain.NewPermission(domain.PSettingsRead),
-		domain.NewPermission(domain.PSettingsUpdate),
+	permissionNames := []domain.PermissionName{
+		domain.PAdminAccess,
+		domain.PAdminManage,
+		domain.PUserRead,
+		domain.PUserChangeActive,
+		domain.PSettingsRead,
+		domain.PSettingsUpdate,
 	}
 
-	for _, permission := range permissions {
-		exists, err := i.PermissionRepo.Exists(ctx, permission.Name)
+	for _, name := range permissionNames {
+		exists, err := i.PermissionRepo.Exists(ctx, name)
 		if err != nil {
 			return nil, err
 		}
 		if !exists {
-			if err := i.PermissionRepo.Insert(ctx, permission); err != nil {
+			if err := i.PermissionRepo.Insert(ctx, domain.NewPermission(name)); err != nil {
 				return nil, err
 			}
 		}
 	}
+
+	permissions, err := i.PermissionRepo.FindByNames(ctx, permissionNames)
+	if err != nil {
+		return nil, err
+	}
+
 	return permissions, nil
 }

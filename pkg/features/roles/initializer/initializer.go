@@ -3,6 +3,7 @@ package initializer
 import (
 	"context"
 
+	permissionD "github.com/amorindev/go-tmpl/pkg/features/permissions/domain"
 	"github.com/amorindev/go-tmpl/pkg/features/roles/domain"
 	"github.com/amorindev/go-tmpl/pkg/features/roles/port"
 )
@@ -19,7 +20,7 @@ func NewRoleItz(roleRepo port.RoleRepo) *Initializer {
 
 func (i *Initializer) SeedEssentialRoles(ctx context.Context) error {
 	roles := []*domain.Role{
-		domain.NewRole(string(domain.RoleAdmin)),
+		domain.NewRole(string(domain.RoleSystemAdmin)),
 		domain.NewRole(string(domain.RoleUser)),
 	}
 
@@ -34,5 +35,18 @@ func (i *Initializer) SeedEssentialRoles(ctx context.Context) error {
 			}
 		}
 	}
+	return nil
+}
+
+func (i *Initializer) AddPermissionsToRole(ctx context.Context, roleName string, permissions []*permissionD.Permission) error {
+	permissionsIDs := make([]string, 0, len(permissions))
+	for _, permission := range permissions {
+		permissionsIDs = append(permissionsIDs, permission.ID.(string))
+	}
+	err := i.RoleRepo.AssignPermissions(ctx, string(domain.RoleSystemAdmin), permissionsIDs)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
