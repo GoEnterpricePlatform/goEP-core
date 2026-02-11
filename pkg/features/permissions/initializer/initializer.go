@@ -3,8 +3,8 @@ package initializer
 import (
 	"context"
 
-	"github.com/amorindev/go-tmpl/pkg/features/permissions/domain"
-	"github.com/amorindev/go-tmpl/pkg/features/permissions/port"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/permissions/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/permissions/port"
 )
 
 type Initializer struct {

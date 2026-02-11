@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-tmpl/pkg/features/mailer/port"
+import "github.com/amorindev/go-cms-tmpl/pkg/features/mailer/port"
 
 var _ port.MailerSrv = &Service{}
 

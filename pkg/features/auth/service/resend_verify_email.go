@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/domain"
-	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
+	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (s *Service) ResendVerifyEmail(ctx context.Context, email string) (string, error) {

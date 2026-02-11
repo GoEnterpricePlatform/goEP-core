@@ -1,6 +1,6 @@
 package service
 
-import port "github.com/amorindev/go-tmpl/pkg/features/opt-codes/port"
+import port "github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/port"
 
 var _ port.OtpCodeSrv = &Service{}
 

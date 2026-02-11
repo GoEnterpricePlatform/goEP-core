@@ -1,7 +1,7 @@
 package resend
 
 import (
-	"github.com/amorindev/go-tmpl/pkg/features/mailer/port"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/mailer/port"
 	"github.com/resend/resend-go/v2"
 )
 

@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/amorindev/go-tmpl/pkg/features/roles/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/roles/domain"
 )
 
 type RoleRepo interface {

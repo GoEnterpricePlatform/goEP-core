@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	cShared "github.com/amorindev/go-tmpl/pkg/shared/api/core"
-	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	cShared "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (h Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {

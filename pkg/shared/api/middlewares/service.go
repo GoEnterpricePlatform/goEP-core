@@ -1,6 +1,6 @@
 package middlewares
 
-import "github.com/amorindev/go-tmpl/internal/tokens/port"
+import "github.com/amorindev/go-cms-tmpl/internal/tokens/port"
 
 type AuthMiddleware struct {
 	TokenSrv port.TokenSrv

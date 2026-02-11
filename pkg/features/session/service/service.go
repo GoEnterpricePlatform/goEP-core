@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/amorindev/go-tmpl/internal/tokens/port"
-	sessionP "github.com/amorindev/go-tmpl/pkg/features/session/port"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/port"
+	sessionP "github.com/amorindev/go-cms-tmpl/pkg/features/session/port"
 )
 
 var _ sessionP.SessionSrv = &Service{}

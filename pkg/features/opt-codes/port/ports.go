@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
 )
 
 type OtpCodeRepo interface {

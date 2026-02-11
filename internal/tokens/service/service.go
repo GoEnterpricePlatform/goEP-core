@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/amorindev/go-tmpl/internal/tokens/port"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/port"
 )
 
 var _ port.TokenSrv = &Service{}

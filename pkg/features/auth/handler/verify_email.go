@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
-	sharedC "github.com/amorindev/go-tmpl/pkg/shared/api/core"
-	sharedH "github.com/amorindev/go-tmpl/pkg/shared/api/handler"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/core"
+	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	sharedH "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (h Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {

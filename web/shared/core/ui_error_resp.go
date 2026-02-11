@@ -3,7 +3,7 @@ package core
 import (
 	"errors"
 
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 const InternalServerErrorMessage = "Ooops! Something went wrong. Please help us by reporting this issue."

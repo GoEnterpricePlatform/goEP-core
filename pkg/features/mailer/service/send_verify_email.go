@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-tmpl/pkg/features/mailer/service/templates"
+import "github.com/amorindev/go-cms-tmpl/pkg/features/mailer/service/templates"
 
 type VerifyEmailData struct {
 	Name    string

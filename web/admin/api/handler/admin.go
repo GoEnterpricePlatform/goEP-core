@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/web/shared/core"
-	"github.com/amorindev/go-tmpl/web/shared/templates"
+	"github.com/amorindev/go-cms-tmpl/web/shared/core"
+	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
 )
 
 // Admin checks if an admin already exists and redirects

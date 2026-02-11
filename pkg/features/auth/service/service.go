@@ -1,11 +1,11 @@
 package service
 
 import (
-	authP "github.com/amorindev/go-tmpl/pkg/features/auth/port"
-	mailerP "github.com/amorindev/go-tmpl/pkg/features/mailer/port"
-	otpCodeP "github.com/amorindev/go-tmpl/pkg/features/opt-codes/port"
-	sessionP "github.com/amorindev/go-tmpl/pkg/features/session/port"
-	userP "github.com/amorindev/go-tmpl/pkg/features/users/port"
+	authP "github.com/amorindev/go-cms-tmpl/pkg/features/auth/port"
+	mailerP "github.com/amorindev/go-cms-tmpl/pkg/features/mailer/port"
+	otpCodeP "github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/port"
+	sessionP "github.com/amorindev/go-cms-tmpl/pkg/features/session/port"
+	userP "github.com/amorindev/go-cms-tmpl/pkg/features/users/port"
 )
 
 var _ authP.AuthSrv = &Service{}

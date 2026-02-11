@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/amorindev/go-tmpl/internal/tokens/service"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/service"
 	"github.com/stretchr/testify/require"
 )
 

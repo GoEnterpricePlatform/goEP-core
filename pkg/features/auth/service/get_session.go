@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
-	userD "github.com/amorindev/go-tmpl/pkg/features/users/domain"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	sessionD "github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	userD "github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (s *Service) GetSession(ctx context.Context, rTokenID string, userID string) (*userD.User,*sessionD.Session, error) {

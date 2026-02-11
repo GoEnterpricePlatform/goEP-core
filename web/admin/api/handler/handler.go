@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 
-	adminP "github.com/amorindev/go-tmpl/pkg/features/admin/port"
-	cookieP "github.com/amorindev/go-tmpl/pkg/shared/api/handler/cookie/port"
-	"github.com/amorindev/go-tmpl/web/admin/renderer"
+	adminP "github.com/amorindev/go-cms-tmpl/pkg/features/admin/port"
+	cookieP "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
+	"github.com/amorindev/go-cms-tmpl/web/admin/renderer"
 )
 
 type Handler struct {

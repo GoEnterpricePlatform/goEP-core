@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
-	"github.com/amorindev/go-tmpl/pkg/features/users/domain"
-	sharedC "github.com/amorindev/go-tmpl/web/shared/core"
-	"github.com/amorindev/go-tmpl/web/shared/templates"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/core"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
+	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
+	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
 )
 
 // SignUp handles the admin signup form submission.

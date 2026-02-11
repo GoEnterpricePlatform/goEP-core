@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/amorindev/go-tmpl/pkg/features/opt-codes/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
 )
 
 // Create generates a 6-digit one-time password (OTP) as a zero-padded string.

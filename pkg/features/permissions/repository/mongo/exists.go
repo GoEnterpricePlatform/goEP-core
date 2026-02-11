@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-tmpl/pkg/features/permissions/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/permissions/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

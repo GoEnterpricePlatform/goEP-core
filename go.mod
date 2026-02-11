@@ -1,4 +1,4 @@
-module github.com/amorindev/go-tmpl
+module github.com/amorindev/go-cms-tmpl
 
 go 1.23.0
 

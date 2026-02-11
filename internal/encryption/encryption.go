@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
