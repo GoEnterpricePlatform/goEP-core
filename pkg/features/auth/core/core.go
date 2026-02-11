@@ -1,10 +1,10 @@
 package core
 
 import (
-	sessionC "github.com/amorindev/go-tmpl/pkg/features/session/core"
-	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
-	userC "github.com/amorindev/go-tmpl/pkg/features/users/core"
-	userD "github.com/amorindev/go-tmpl/pkg/features/users/domain"
+	sessionC "github.com/amorindev/go-cms-tmpl/pkg/features/session/core"
+	sessionD "github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	userC "github.com/amorindev/go-cms-tmpl/pkg/features/users/core"
+	userD "github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
 )
 
 // AuthResp represents the unified authentication response structure

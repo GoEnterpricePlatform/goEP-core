@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	tokenP "github.com/amorindev/go-tmpl/internal/tokens/port"
-	"github.com/amorindev/go-tmpl/pkg/features/auth/port"
+	tokenP "github.com/amorindev/go-cms-tmpl/internal/tokens/port"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/port"
 )
 
 type Handler struct {

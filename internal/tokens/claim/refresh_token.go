@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )

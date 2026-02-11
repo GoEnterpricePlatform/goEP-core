@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-tmpl/internal/encryption"
-	otpCodeD "github.com/amorindev/go-tmpl/pkg/features/opt-codes/domain"
-	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
-	userD "github.com/amorindev/go-tmpl/pkg/features/users/domain"
-	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
-	sharedDomain "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/internal/encryption"
+	otpCodeD "github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
+	sessionD "github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	userD "github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
+	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (s *Service) SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, string, error) {

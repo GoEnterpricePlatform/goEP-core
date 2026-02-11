@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	otpCodeD "github.com/amorindev/go-tmpl/pkg/features/opt-codes/domain"
-	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
-	"github.com/amorindev/go-tmpl/pkg/features/users/domain"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	otpCodeD "github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
+	sessionD "github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (s *Service) VerifyEmail(ctx context.Context, otpID string, otpCode string, userID string) (*domain.User, *sessionD.Session, error) {

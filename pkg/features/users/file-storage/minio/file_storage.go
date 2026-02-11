@@ -3,7 +3,7 @@ package minio
 import (
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/features/users/port"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/users/port"
 	"github.com/minio/minio-go/v7"
 )
 

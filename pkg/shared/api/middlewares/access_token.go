@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/amorindev/go-tmpl/pkg/shared/api/core"
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 // AccessTokenMdw checks and validates access tokens from Authorization header

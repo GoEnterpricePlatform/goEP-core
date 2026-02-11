@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-tmpl/pkg/shared/api/handler/cookie/port"
+import "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
 
 var _ port.CookieSrv = &Service{}
 

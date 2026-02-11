@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 func (s *Service) SignOut(ctx context.Context, rTokenID string) error {

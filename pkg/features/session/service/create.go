@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/features/session/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
 )
 
 func (s *Service) Create(ctx context.Context, session *domain.Session, roles []string, email string) error {

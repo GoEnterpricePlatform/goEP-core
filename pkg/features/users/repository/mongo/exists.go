@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

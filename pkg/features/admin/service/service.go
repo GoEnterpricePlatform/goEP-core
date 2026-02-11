@@ -1,10 +1,10 @@
 package service
 
 import (
-	adminP "github.com/amorindev/go-tmpl/pkg/features/admin/port"
-	roleP "github.com/amorindev/go-tmpl/pkg/features/roles/port"
-	sessionP "github.com/amorindev/go-tmpl/pkg/features/session/port"
-	userP "github.com/amorindev/go-tmpl/pkg/features/users/port"
+	adminP "github.com/amorindev/go-cms-tmpl/pkg/features/admin/port"
+	roleP "github.com/amorindev/go-cms-tmpl/pkg/features/roles/port"
+	sessionP "github.com/amorindev/go-cms-tmpl/pkg/features/session/port"
+	userP "github.com/amorindev/go-cms-tmpl/pkg/features/users/port"
 )
 
 var _ adminP.AdminSrv = &Service{}

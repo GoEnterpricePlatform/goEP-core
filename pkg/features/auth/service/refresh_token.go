@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	sessionD "github.com/amorindev/go-tmpl/pkg/features/session/domain"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	sessionD "github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 

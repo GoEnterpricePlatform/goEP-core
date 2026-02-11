@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/amorindev/go-tmpl/internal/tokens/claim"
-	"github.com/amorindev/go-tmpl/internal/tokens/port"
-	"github.com/amorindev/go-tmpl/internal/tokens/service"
-	"github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/claim"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/port"
+	"github.com/amorindev/go-cms-tmpl/internal/tokens/service"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 )

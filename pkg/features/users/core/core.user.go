@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"github.com/amorindev/go-tmpl/pkg/features/users/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
 )
 
 // UserCore represents the user data returned to the client, omitting sensitive fields like passwords.

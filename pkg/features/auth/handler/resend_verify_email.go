@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-tmpl/pkg/features/auth/core"
-	cShared "github.com/amorindev/go-tmpl/pkg/shared/api/core"
-	dShared "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/core"
+	cShared "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 // ResendVerifyEmail handles the HTTP request to resend a verification email to the user.

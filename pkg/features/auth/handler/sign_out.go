@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	sharedC "github.com/amorindev/go-tmpl/pkg/shared/api/core"
-	"github.com/amorindev/go-tmpl/pkg/shared/api/handler"
-	sharedD "github.com/amorindev/go-tmpl/pkg/shared/domain"
+	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 )
 
 // SignOut handles user logout by removing the refresh token both
