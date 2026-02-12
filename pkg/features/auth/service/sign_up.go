@@ -70,5 +70,5 @@ func (s *Service) SignUp(ctx context.Context, user *domain.User) (string, error)
 	// Clear password hash from memory for security
 	user.UserPassAuth = nil
 
-	return otp.ID.(string), nil
+	return otp.ID, nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/model"
 	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -12,16 +13,13 @@ import (
 
 func (r *Repository) Insert(ctx context.Context, otp *domain.OtpCode) error {
 	id := bson.NewObjectID()
-	otp.ID = id
 
-	userOID, err := bson.ObjectIDFromHex(otp.UserID.(string))
+	optCodeModel, err := model.FromDomain(otp, id)
 	if err != nil {
-		return dShared.ErrIncorrectID
+		return fmt.Errorf("error mapping otpCode to mongo model: %w", err)
 	}
 
-	otp.UserID = userOID
-
-	_, err = r.Collection.InsertOne(ctx, otp)
+	_, err = r.Collection.InsertOne(ctx, optCodeModel)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return fmt.Errorf("%w: error inserting opt code: %w", dShared.ErrDuplicateKey, err)
@@ -29,8 +27,7 @@ func (r *Repository) Insert(ctx context.Context, otp *domain.OtpCode) error {
 		return fmt.Errorf("error inserting otp code: %w", err)
 	}
 
-	otp.ID = id.Hex()
-	otp.UserID = userOID.Hex()
+	optCodeModel.ToDomain(otp)
 
 	return nil
 }
