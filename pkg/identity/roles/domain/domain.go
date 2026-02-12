@@ -1,9 +1,9 @@
 package domain
 
 type Role struct {
-	ID            string   `json:"id" bson:"_id"`
-	Name          string        `json:"name" bson:"name"`
-	PermissionIDs []string `bson:"permission_ids"`
+	ID            string   `json:"id"`
+	Name          string   `json:"name"`
+	PermissionIDs []string 
 }
 
 // Initialize PermissionIDs as an empty slice to allow MongoDB $addToSet operations.

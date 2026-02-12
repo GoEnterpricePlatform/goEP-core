@@ -11,18 +11,20 @@ import (
 
 // AccessTokenClaims defines the payload for the access token
 type AccessTokenClaims struct {
-	UserID string   `json:"user_id"`
-	Email  string   `json:"email"`
-	Roles  []string `json:"role,omitempty"`
+	UserID      string   `json:"user_id"`
+	Email       string   `json:"email"`
+	Roles       []string `json:"role,omitempty"`
+	Permissions []string `json:"permissions,omitempty"`
 	jwt.RegisteredClaims
 }
 
 // NewAccessTokenClaim creates a new set of claims for an access token
-func NewAccessTokenClaim(userID string, email string, issuer string, roles []string, expiresIn time.Duration) *AccessTokenClaims {
+func NewAccessTokenClaim(userID string, email string, issuer string, roles []string, permissions []string, expiresIn time.Duration) *AccessTokenClaims {
 	return &AccessTokenClaims{
 		UserID: userID,
 		Email:  email,
 		Roles:  roles,
+		Permissions: permissions,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			Issuer:    issuer,

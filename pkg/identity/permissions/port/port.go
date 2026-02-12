@@ -15,4 +15,5 @@ type PermissionRepo interface {
 	Insert(ctx context.Context, permission *domain.Permission) error
 	Exists(ctx context.Context, name domain.PermissionName) (bool, error)
 	FindByNames(ctx context.Context, names []domain.PermissionName) ([]*domain.Permission, error)
+	FindByIDs(ctx context.Context, permissionsIDs []string) ([]*domain.Permission, error)
 }

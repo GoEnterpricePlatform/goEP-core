@@ -1,13 +1,15 @@
 package service_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/claim"
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/port"
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/service"
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +23,7 @@ func TestService_ParseAccessToken(t *testing.T) {
 	}{
 		"success": {
 			setup: func() (port.TokenSrv, string) {
-				token, _, err := sharedSrv.CreateAccessToken("123", "user@example.com", []string{"User"})
+				token, _, err := sharedSrv.CreateAccessToken("123", "user@example.com", []string{"User"}, []string{string(domain.PAdminAccess)})
 				require.NoError(t, err)
 				return sharedSrv, token
 			},
@@ -30,6 +32,10 @@ func TestService_ParseAccessToken(t *testing.T) {
 				require.Equal(subTest, "123", gotClaims.UserID)
 				require.Equal(subTest, "user@example.com", gotClaims.Email)
 				require.Contains(subTest, gotClaims.Roles, "User")
+				fmt.Println("----------------------")
+				fmt.Println(gotClaims.Permissions)
+				fmt.Println("----------------------")
+				require.Contains(subTest, gotClaims.Permissions, string(domain.PAdminAccess))
 				require.Equal(subTest, "my-app", gotClaims.Issuer)
 				require.Equal(subTest, "123", gotClaims.Subject)
 			},
@@ -37,7 +43,7 @@ func TestService_ParseAccessToken(t *testing.T) {
 		"expired token": {
 			setup: func() (port.TokenSrv, string) {
 				shortS := service.NewTokenSrv("a_secret", "r_secret", 1*time.Second, 1*time.Second, 1*time.Second, "my-app")
-				token, _, err := shortS.CreateAccessToken("123", "user@example.com", []string{"User"})
+				token, _, err := shortS.CreateAccessToken("123", "user@example.com", []string{"User"}, []string{string(domain.PAdminAccess)})
 				require.NoError(t, err)
 
 				time.Sleep(2 * time.Second)
@@ -46,20 +52,20 @@ func TestService_ParseAccessToken(t *testing.T) {
 			assertionFunc: func(subTest *testing.T, gotClaims *claim.AccessTokenClaims, gotErr error) {
 				require.Nil(subTest, gotClaims)
 				require.Error(subTest, gotErr)
-				require.ErrorIs(subTest, domain.ErrTokenExpired, gotErr)
+				require.ErrorIs(subTest, sharedD.ErrTokenExpired, gotErr)
 			},
 		},
 		"invalid signature": {
 			setup: func() (port.TokenSrv, string) {
 				badSrv := service.NewTokenSrv("a_wrong", "r_secret", time.Minute, time.Hour, 24*time.Minute, "my-app")
-				token, _, err := badSrv.CreateAccessToken("123", "user@example.com", []string{"User"})
+				token, _, err := badSrv.CreateAccessToken("123", "user@example.com", []string{"User"}, []string{string(domain.PAdminAccess)})
 				require.NoError(t, err)
 				return sharedSrv, token
 			},
 			assertionFunc: func(subTest *testing.T, gotClaims *claim.AccessTokenClaims, gotErr error) {
 				require.Nil(subTest, gotClaims)
 				require.Error(subTest, gotErr)
-				require.ErrorIs(subTest, domain.ErrTokenSignature, gotErr)
+				require.ErrorIs(subTest, sharedD.ErrTokenSignature, gotErr)
 			},
 		},
 		"malformed token or empty": {
@@ -69,13 +75,13 @@ func TestService_ParseAccessToken(t *testing.T) {
 			assertionFunc: func(subTest *testing.T, gotClaims *claim.AccessTokenClaims, gotErr error) {
 				require.Nil(subTest, gotClaims)
 				require.Error(subTest, gotErr)
-				require.ErrorIs(subTest, domain.ErrTokenMalformed, gotErr)
+				require.ErrorIs(subTest, sharedD.ErrTokenMalformed, gotErr)
 			},
 		},
 		"token not valid (nbf)": {
 			setup: func() (port.TokenSrv, string) {
 				c := claim.NewAccessTokenClaim("123", "user@example.com", "my-app",
-					[]string{"User"}, time.Minute)
+					[]string{"User"}, []string{string(domain.PAdminAccess)}, time.Minute)
 				// Force the NotBefore (nbf) field to one hour in the future.
 				// The token should not be considered valid until that time.
 				c.NotBefore = jwt.NewNumericDate(time.Now().Add(time.Hour))
