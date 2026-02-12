@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/permissions/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/permissions/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -25,29 +26,21 @@ func (r *Repository) FindByNames(ctx context.Context, names []domain.PermissionN
 	}
 	defer cursor.Close(ctx)
 
-	var permissions []*domain.Permission
+	var permissionsModel []*model.PermissionNoSqlModel
 
 	for cursor.Next(ctx) {
-		var raw struct {
-			ID   bson.ObjectID `bson:"_id"`
-			Name string        `bson:"name"`
-		}
+		var permssionModel model.PermissionNoSqlModel
 
-		if err := cursor.Decode(&raw); err != nil {
+		if err := cursor.Decode(&permssionModel); err != nil {
 			return nil, fmt.Errorf("error decoding permission document: %w", err)
 		}
 
-		p := &domain.Permission{
-			ID:   raw.ID.Hex(),
-			Name: raw.Name,
-		}
-
-		permissions = append(permissions, p)
+		permissionsModel = append(permissionsModel, &permssionModel)
 	}
 
 	if err := cursor.Err(); err != nil {
 		return nil, fmt.Errorf("cursor error while iterating permissions: %w", err)
 	}
 
-	return permissions, nil
+	return model.ToDomainList(permissionsModel), nil
 }
