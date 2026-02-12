@@ -48,7 +48,7 @@ func (s *Service) VerifyEmail(ctx context.Context, otpID string, otpCode string,
 	}
 
 	session := &sessionD.Session{
-		UserID:     user.ID.(string),
+		UserID:     user.ID,
 		RememberMe: false,
 	}
 

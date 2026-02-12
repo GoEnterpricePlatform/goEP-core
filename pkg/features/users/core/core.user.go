@@ -19,7 +19,7 @@ type UserCore struct {
 // NewFromUserDomain converts a domain.User object to a UserCore for API responses.
 func NewFromUserDomain(user *domain.User) UserCore {
 	return UserCore{
-		ID:            user.ID.(string),
+		ID:            user.ID,
 		Email:         user.Email,
 		EmailVerified: user.EmailVerified,
 		CreatedAt:     user.CreatedAt,
