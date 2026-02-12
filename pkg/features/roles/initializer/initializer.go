@@ -41,7 +41,7 @@ func (i *Initializer) SeedEssentialRoles(ctx context.Context) error {
 func (i *Initializer) AddPermissionsToRole(ctx context.Context, roleName string, permissions []*permissionD.Permission) error {
 	permissionsIDs := make([]string, 0, len(permissions))
 	for _, permission := range permissions {
-		permissionsIDs = append(permissionsIDs, permission.ID.(string))
+		permissionsIDs = append(permissionsIDs, permission.ID)
 	}
 	err := i.RoleRepo.AssignPermissions(ctx, string(domain.RoleSystemAdmin), permissionsIDs)
 	if err != nil {

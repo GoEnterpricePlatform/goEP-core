@@ -1,8 +1,8 @@
 package domain
 
 type Permission struct {
-	ID   interface{} `json:"id" bson:"_id"`
-	Name string      `json:"name" bson:"name"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 func NewPermission(name PermissionName) *Permission {
