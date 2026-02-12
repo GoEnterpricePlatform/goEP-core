@@ -29,7 +29,7 @@ func (s *Service) RefreshToken(ctx context.Context, rTokenID string, userID stri
 	}
 
 	// Create session
-	newSession := sessionD.NewSession(user.ID.(string), session.RememberMe)
+	newSession := sessionD.NewSession(user.ID, session.RememberMe)
 
 	err = s.SessionSrv.Create(ctx, newSession, nil, user.Email)
 	if err != nil {

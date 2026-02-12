@@ -8,16 +8,16 @@ import (
 
 // User represents a user in the system
 type User struct {
-	ID            interface{}              `bson:"_id"`
-	Email         string                   `bson:"email"`
-	EmailVerified bool                     `bson:"email_verified"`
-	IsActive      bool                     `bson:"is_active"`
-	ImgUrl        *string                  `bson:"-"`
-	ImgPath       *string                  `bson:"img_path"`
-	UserPassAuth  *domain.UserPasswordAuth `bson:"pass_method"`
-	RoleIDs       []interface{}            `bson:"role_ids"`
-	CreatedAt     *time.Time               `bson:"created_at"`
-	UpdatedAt     *time.Time               `bson:"updated_at"`
+	ID            string
+	Email         string
+	EmailVerified bool
+	IsActive      bool
+	ImgUrl        *string
+	ImgPath       *string
+	UserPassAuth  *domain.UserPasswordAuth
+	RoleIDs       []string
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
 }
 
 func NewUser(email string, password string) *User {

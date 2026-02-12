@@ -29,7 +29,7 @@ func NewAuthResp(user *userD.User, session *sessionD.Session, otpID string) *Aut
 
 	if user != nil {
 		resp.User = &userC.UserCore{
-			ID:            user.ID.(string),
+			ID:            user.ID,
 			Email:         user.Email,
 			EmailVerified: user.EmailVerified,
 			ImgUrl:        user.ImgUrl,

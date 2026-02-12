@@ -66,7 +66,7 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 	}
 
 	// Create session
-	session := sessionD.NewSession(user.ID.(string), rememberMe)
+	session := sessionD.NewSession(user.ID, rememberMe)
 
 	err = s.SessionSrv.Create(ctx, session, nil, email)
 	if err != nil {

@@ -32,7 +32,7 @@ func (s *Service) GetSession(ctx context.Context, rTokenID string, userID string
 	}
 
 	// Create session
-	newSession := sessionD.NewSession(user.ID.(string), session.RememberMe)
+	newSession := sessionD.NewSession(user.ID, session.RememberMe)
 
 	err = s.SessionSrv.Create(ctx, newSession, nil, user.Email)
 	if err != nil {
