@@ -43,7 +43,7 @@ func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
 	if err != nil {
 		return sharedD.ManageError(err, "error finding the admin role")
 	}
-	user.RoleIDs = []string{role.ID.(string)}
+	user.RoleIDs = []string{role.ID}
 
 	// save admin
 	err = s.UserRepo.Insert(ctx, user)

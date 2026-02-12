@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/roles/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/roles/model"
 	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -12,15 +13,21 @@ import (
 
 func (r *Repository) Insert(ctx context.Context, role *domain.Role) error {
 	id := bson.NewObjectID()
-	role.ID = id
+	
+	roleModel, err := model.FromDomain(role, id)
+	if err != nil {
+		return fmt.Errorf("error mapping role to mongo model: %w", err)
+	}
 
-	_, err := r.Collection.InsertOne(ctx, role)
+	_, err = r.Collection.InsertOne(ctx, roleModel)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return fmt.Errorf("%w: error inserting role: %w", sharedDomain.ErrDuplicateKey, err)
 		}
 		return fmt.Errorf("error inserting role: %w", err)
 	}
-	role.ID = id.Hex()
+	
+	roleModel.ToDomain(role)
+	
 	return nil
 }
