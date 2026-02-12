@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/session/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/session/model"
 	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -12,14 +13,13 @@ import (
 
 func (r *Repository) Insert(ctx context.Context, session *domain.Session) error {
 	id := bson.NewObjectID()
-	session.ID = id
 
-	userOID, err := bson.ObjectIDFromHex(session.UserID.(string))
+	userOID, err := bson.ObjectIDFromHex(session.UserID)
 	if err != nil {
 		return dShared.ErrIncorrectID
 	}
 
-	session.UserID = userOID
+	sessionModel := model.FromDomain(session, id, userOID)
 
 	_, err = r.Collection.InsertOne(ctx, session)
 	if err != nil {
@@ -29,8 +29,7 @@ func (r *Repository) Insert(ctx context.Context, session *domain.Session) error 
 		return fmt.Errorf("error inserting session: %w", err)
 	}
 
-	session.ID = id.Hex()
-	session.UserID = userOID.Hex()
+	sessionModel.ToDomain(session)
 
 	return nil
 }

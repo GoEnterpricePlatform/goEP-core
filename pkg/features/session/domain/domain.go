@@ -9,16 +9,16 @@ import "time"
 // RememberMe: Indicates whether to generate a new token with the same expiration
 // duration as the original one.
 type Session struct {
-	ID                interface{} `bson:"_id"`
-	UserID            interface{} `bson:"user_id" `
-	AccessToken       string      `bson:"-"`
-	AccessTokenExpIn  int64       `bson:"-"`
-	RefreshTokenID    string      `bson:"refresh_token_id"`
-	RefreshToken      string      `bson:"-"`
-	RefreshTokenExpIn int64       `bson:"refresh_token_expires_in"`
-	Revoked           bool        `bson:"revoked"`
-	RememberMe        bool        `bson:"remember_me"`
-	CreatedAt         *time.Time  `bson:"create_at"`
+	ID                string
+	UserID            string
+	AccessToken       string
+	AccessTokenExpIn  int64
+	RefreshTokenID    string
+	RefreshToken      string
+	RefreshTokenExpIn int64
+	Revoked           bool
+	RememberMe        bool
+	CreatedAt         *time.Time
 }
 
 func NewSession(userID string, rememberMe bool) *Session {

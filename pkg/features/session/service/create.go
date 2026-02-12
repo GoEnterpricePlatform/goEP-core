@@ -9,13 +9,13 @@ import (
 
 func (s *Service) Create(ctx context.Context, session *domain.Session, roles []string, email string) error {
 	// Create access token
-	aToken, aTokenExpIn, err := s.TokenSrv.CreateAccessToken(session.UserID.(string), email, roles)
+	aToken, aTokenExpIn, err := s.TokenSrv.CreateAccessToken(session.UserID, email, roles)
 	if err != nil {
 		return err
 	}
 
 	// Create refresh token
-	rTokenID, rToken, rTokenExpIn, err := s.TokenSrv.CreateRefreshToken(session.UserID.(string), session.RememberMe)
+	rTokenID, rToken, rTokenExpIn, err := s.TokenSrv.CreateRefreshToken(session.UserID, session.RememberMe)
 	if err != nil {
 		return err
 	}
