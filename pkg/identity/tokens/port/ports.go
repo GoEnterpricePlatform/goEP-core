@@ -1,6 +1,6 @@
 package port
 
-import "github.com/amorindev/go-cms-tmpl/internal/tokens/claim"
+import "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/claim"
 
 type TokenSrv interface {
 	CreateAccessToken(userID string, email string, roles []string) (string, int64, error)

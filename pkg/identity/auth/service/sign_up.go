@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/internal/encryption"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
 	otpCodeD "github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/domain"
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
 	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"

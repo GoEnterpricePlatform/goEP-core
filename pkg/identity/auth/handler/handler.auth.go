@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	tokenP "github.com/amorindev/go-cms-tmpl/internal/tokens/port"
+	tokenP "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/port"
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/port"
 )
 

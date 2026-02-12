@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/internal/encryption"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
 	sessionD "github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
 	userD "github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
 	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
