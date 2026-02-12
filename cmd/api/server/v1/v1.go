@@ -11,7 +11,7 @@ import (
 	minioClient "github.com/amorindev/go-cms-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-cms-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-cms-tmpl/internal/resend"
-	tokenService "github.com/amorindev/go-cms-tmpl/internal/tokens/service"
+	tokenService "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/service"
 	adminService "github.com/amorindev/go-cms-tmpl/pkg/identity/admin/service"
 	authHandler "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/handler"
 	authService "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/service"

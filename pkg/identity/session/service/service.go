@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/amorindev/go-cms-tmpl/internal/tokens/port"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/port"
 	sessionP "github.com/amorindev/go-cms-tmpl/pkg/identity/session/port"
 )
 
