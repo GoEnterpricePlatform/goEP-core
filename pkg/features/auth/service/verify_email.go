@@ -57,7 +57,7 @@ func (s *Service) VerifyEmail(ctx context.Context, otpID string, otpCode string,
 		return nil, nil, sharedD.ManageError(err, "failed to create user session")
 	}
 
-	err = s.OtpCodeSrv.Delete(ctx, otp.ID.(string))
+	err = s.OtpCodeSrv.Delete(ctx, otp.ID)
 	if err != nil {
 		return nil, nil, sharedD.ManageError(err, "failed to delete OTP code")
 	}

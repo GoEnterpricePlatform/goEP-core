@@ -39,5 +39,5 @@ func (s *Service) ResendVerifyEmail(ctx context.Context, email string) (string, 
 		return "", sharedD.ManageError(err, "error sending email")
 	}
 
-	return otp.ID.(string), nil
+	return otp.ID, nil
 }

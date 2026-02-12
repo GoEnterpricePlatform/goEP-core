@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/opt-codes/model"
 	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -26,8 +27,8 @@ func (r *Repository) Find(ctx context.Context, id, userID string) (*domain.OtpCo
 		{Key: "user_id", Value: userOID},
 	}
 
-	var otp domain.OtpCode
-	err = r.Collection.FindOne(ctx, filter).Decode(&otp)
+	var otpCodeModel model.OtpCodeNoSqlModel
+	err = r.Collection.FindOne(ctx, filter).Decode(&otpCodeModel)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, fmt.Errorf("%w: otp with id %s not found: %w", sharedD.ErrNotFound, id, err)
@@ -35,8 +36,9 @@ func (r *Repository) Find(ctx context.Context, id, userID string) (*domain.OtpCo
 		return nil, fmt.Errorf("error getting otpCode: %w", err)
 	}
 
-	otp.ID = oID.Hex()
-	otp.UserID = userOID.Hex()
+	
+	var otpCode domain.OtpCode
+	otpCodeModel.ToDomain(&otpCode)
 
-	return &otp, nil
+	return &otpCode, nil
 }

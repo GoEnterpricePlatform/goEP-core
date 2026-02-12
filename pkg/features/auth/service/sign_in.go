@@ -62,7 +62,7 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 		if err != nil {
 			return nil, nil, "", dShared.ManageError(err, "")
 		}
-		return user, nil, otp.ID.(string), nil
+		return user, nil, otp.ID, nil
 	}
 
 	// Create session
