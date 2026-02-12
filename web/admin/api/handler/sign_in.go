@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/core"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
 	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
 	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
 )
