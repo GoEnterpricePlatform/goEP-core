@@ -11,4 +11,5 @@ type RoleRepo interface {
 	Exists(ctx context.Context, name string) (bool, error)
 	FindByName(ctx context.Context, name string) (*domain.Role, error)
 	AssignPermissions(ctx context.Context, name string, permissionIDs []string) error
+	FindByIDs(ctx context.Context, roleIDs []string) ([]*domain.Role, error)
 }

@@ -13,7 +13,7 @@ type SessionRepo interface {
 }
 
 type SessionSrv interface {
-	Create(ctx context.Context, session *domain.Session, roles []string, email string) error
+	Create(ctx context.Context, session *domain.Session, roles []string, permissions []string, email string) error
 	DeleteByRTokenID(ctx context.Context, rTokenID string) error
 	GetByRTokenID(ctx context.Context, rTokenID, userID string) (*domain.Session, error)
 }

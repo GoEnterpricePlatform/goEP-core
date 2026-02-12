@@ -132,11 +132,11 @@ func New() http.Handler {
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
-	authSrv := authService.NewAuthSrv(userRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
+	authSrv := authService.NewAuthSrv(userRepo, roleRepo,permissionRepo,userFileStg,sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 
 	// service - admin
-	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, sessionSrv)
+	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo,sessionSrv)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1

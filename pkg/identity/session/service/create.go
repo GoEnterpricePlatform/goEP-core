@@ -7,9 +7,9 @@ import (
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
 )
 
-func (s *Service) Create(ctx context.Context, session *domain.Session, roles []string, email string) error {
+func (s *Service) Create(ctx context.Context, session *domain.Session, roles []string, permissions []string, email string) error {
 	// Create access token
-	aToken, aTokenExpIn, err := s.TokenSrv.CreateAccessToken(session.UserID, email, roles)
+	aToken, aTokenExpIn, err := s.TokenSrv.CreateAccessToken(session.UserID, email, roles, permissions)
 	if err != nil {
 		return err
 	}

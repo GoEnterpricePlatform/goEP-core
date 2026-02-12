@@ -3,8 +3,8 @@ package service
 import "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/claim"
 
 // CreateAccessToken generates a signed access token
-func (ts *Service) CreateAccessToken(userID string, email string, roles []string) (string, int64, error) {
-	claims := claim.NewAccessTokenClaim(userID, email, ts.Issuer, roles, ts.AccessExpiresIn)
+func (ts *Service) CreateAccessToken(userID string, email string, roles []string, permissions []string) (string, int64, error) {
+	claims := claim.NewAccessTokenClaim(userID, email, ts.Issuer, roles, permissions, ts.AccessExpiresIn)
 	token, err := claims.GetToken(ts.AccessSecret)
 	if err != nil {
 		return "", 0, err
