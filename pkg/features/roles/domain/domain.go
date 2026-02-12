@@ -1,16 +1,16 @@
 package domain
 
 type Role struct {
-	ID            interface{}   `json:"id" bson:"_id"`
+	ID            string   `json:"id" bson:"_id"`
 	Name          string        `json:"name" bson:"name"`
-	PermissionIDs []interface{} `bson:"permission_ids"`
+	PermissionIDs []string `bson:"permission_ids"`
 }
 
 // Initialize PermissionIDs as an empty slice to allow MongoDB $addToSet operations.
 func NewRole(name string) *Role {
 	return &Role{
 		Name:          name,
-		PermissionIDs: []interface{}{},
+		PermissionIDs: []string{},
 	}
 }
 

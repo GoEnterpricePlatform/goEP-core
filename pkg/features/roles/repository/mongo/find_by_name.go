@@ -5,17 +5,18 @@ import (
 	"fmt"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/features/roles/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/features/roles/model"
 	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func (r *Repository) FindByName(ctx context.Context, name string) (*domain.Role, error) {
-	var role domain.Role
+	var userModel model.RoleNoSqlModel
 
 	filter := bson.D{{Key: "name", Value: name}}
 
-	err := r.Collection.FindOne(ctx, filter).Decode(&role)
+	err := r.Collection.FindOne(ctx, filter).Decode(&userModel)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, fmt.Errorf("%w: role with name %s not found: %w", sharedD.ErrNotFound, name, err)
@@ -23,11 +24,9 @@ func (r *Repository) FindByName(ctx context.Context, name string) (*domain.Role,
 		return nil, fmt.Errorf("role with name %s not found: %w", name, err)
 	}
 
-	oID, ok := role.ID.(bson.ObjectID)
-	if !ok {
-		return nil, fmt.Errorf("role ID is not a bson.ObjectID")
-	}
-	role.ID = oID.Hex()
+	
+	var role domain.Role
+	userModel.ToDomain(&role)
 
 	return &role, nil
 }
