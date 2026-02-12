@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/features/auth/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/features/users/domain"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
+	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
 	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
 	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
 )
