@@ -23,10 +23,9 @@
       /* ---------- MAIN ---------- */
       main {
         flex: 1;
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 0 20px;
-        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 0;
       }
 
       .page-header {
@@ -37,6 +36,31 @@
         margin: 0;
         font-size: 26px;
         font-weight: 600;
+      }
+
+      /* ---------- PAGE HEADER ---------- */
+      .page-header {
+        background-color: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .page-header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 16px 20px; 
+      }
+
+      .page-header-inner h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      /* ---------- PAGE BODY ---------- */
+      .page-body {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
       }
 
       /* ---------- RESPONSIVE ---------- */
@@ -59,11 +83,19 @@
 
       <!-- MAIN CONTENT -->
       <main>
+        <!-- PAGE HEADER -->
         <div class="page-header">
-          <h1>{{template "title"}}</h1>
+          <div class="page-header-inner">
+            <h1>{{template "title"}}</h1>
+          </div>
         </div>
 
-        {{block "content" .}}{{end}}
+        <!-- PAGE BODY -->
+        <div class="page-body">
+          {{block "content" .}}
+          <p>No hay content</p>
+          {{end}}
+        </div>
       </main>
     </div>
   </body>

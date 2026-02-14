@@ -11,7 +11,6 @@ import (
 	minioClient "github.com/amorindev/go-cms-tmpl/internal/minio"
 	mongoClient "github.com/amorindev/go-cms-tmpl/internal/mongo"
 	resendClient "github.com/amorindev/go-cms-tmpl/internal/resend"
-	tokenService "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/service"
 	adminService "github.com/amorindev/go-cms-tmpl/pkg/identity/admin/service"
 	authHandler "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/handler"
 	authService "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/service"
@@ -26,7 +25,12 @@ import (
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/domain"
 	roleInitializer "github.com/amorindev/go-cms-tmpl/pkg/identity/roles/initializer"
 	roleRepository "github.com/amorindev/go-cms-tmpl/pkg/identity/roles/repository/mongo"
+	tokenService "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/service"
+	"github.com/amorindev/go-cms-tmpl/pkg/posts/handler"
+	postRepository "github.com/amorindev/go-cms-tmpl/pkg/posts/repository/mongo"
+	postService "github.com/amorindev/go-cms-tmpl/pkg/posts/service"
 	adminHandler "github.com/amorindev/go-cms-tmpl/web/admin/api/handler"
+	postHandler "github.com/amorindev/go-cms-tmpl/web/admin/api/posts/handler"
 	adminRenderer "github.com/amorindev/go-cms-tmpl/web/admin/renderer"
 	publicHandler "github.com/amorindev/go-cms-tmpl/web/public/api/handler"
 
@@ -94,6 +98,7 @@ func New() http.Handler {
 	otpCodeColl := mongoDB.Collection("opt-codes")
 	roleColl := mongoDB.Collection("roles")
 	permissionColl := mongoDB.Collection("permissions")
+	postColl := mongoDB.Collection("posts")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
@@ -101,6 +106,7 @@ func New() http.Handler {
 	otpCodeRepo := otpCodeRepository.NewOtpCodeRepo(mongoConn.DB, otpCodeColl)
 	roleRepo := roleRepository.NewRoleRepo(mongoConn.DB, roleColl)
 	permissionRepo := permissionRepository.NewPermissionRepo(mongoConn.DB, permissionColl)
+	postRepo := postRepository.NewPostRepo(mongoConn.DB, postColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -132,16 +138,18 @@ func New() http.Handler {
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
-	authSrv := authService.NewAuthSrv(userRepo, roleRepo,permissionRepo,userFileStg,sessionSrv, otpCodeSrv, mailerSrv)
+	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
+	postSrv := postService.NewPostSrv(postRepo)
 
 	// service - admin
-	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo,sessionSrv)
+	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
 
 	// Handler
 	// Note: all subsequent handlers should also be registered using v1
 	authHandler.NewAuthHandler(v1, authSrv, tokenSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
+	handler.NewPostApiHandler(v1, postSrv)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -156,10 +164,17 @@ func New() http.Handler {
 
 	// Templates
 	adminR := adminRenderer.NewAdminRenderer()
+
+	// Templates - admin
 	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR)
 	adminH.RegisterRoutes(mux, v1)
 
-	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl)
+	// Templates - post
+	postH := postHandler.NewPostWebHandler(postSrv, adminH.ApiBaseUrl, adminR)
+	postH.RegisterRoutes(v1)
+
+	// Templates - public
+	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl, postSrv)
 
 	return apiHandler
 }

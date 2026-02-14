@@ -1,0 +1,63 @@
+{{ define "post_list" }} {{range .Posts}}
+
+<div class="post-item">
+  {{if eq $.EditingID .ID}}
+
+  <!-- EDIT MODE -->
+  <form method="POST" action="/v1/admin/posts/update">
+    <input type="hidden" name="id" value="{{.ID}}" />
+
+    <input type="text" name="title" value="{{.Title}}" required />
+    <input type="text" name="desc" value="{{if .Desc}}{{.Desc}}{{end}}" />
+
+    <div class="actions">
+      <button type="submit" class="btn btn-update">Save</button>
+      <a href="/v1/admin/post" class="btn btn-cancel">Cancel</a>
+    </div>
+
+    {{if and $.UpdateErr (eq $.UpdateErrID .ID)}}
+    <div class="error update-error">{{$.UpdateErr}}</div>
+    {{end}}
+  </form>
+
+  {{else}}
+
+  <!-- VIEW MODE -->
+  <h3>{{.Title}}</h3>
+  <p>{{if .Desc}}{{.Desc}}{{end}}</p>
+
+  <div class="actions">
+    <form method="GET" action="/v1/admin/posts/edit" style="display: inline">
+      <input type="hidden" name="id" value="{{.ID}}" />
+      <button type="submit" class="btn btn-update">Update</button>
+    </form>
+
+    <form method="POST" action="/v1/admin/posts/delete" style="display: inline">
+      <input type="hidden" name="id" value="{{.ID}}" />
+      <button
+        type="submit"
+        class="btn btn-delete"
+        onclick="return confirm('Are you sure you want to delete this post?');"
+      >
+        Delete
+      </button>
+    </form>
+  </div>
+
+  {{end}}
+
+  {{if and $.DeleteErr (eq $.DeleteErrID .ID)}}
+  <div class="error delete-error">{{$.DeleteErr}}</div>
+  {{end}}
+</div>
+
+<style>
+  .delete-error {
+    margin-top: 10px;
+  }
+  .update-error {
+    margin-top: 10px;
+  }
+</style>
+
+{{end}} {{ end }}

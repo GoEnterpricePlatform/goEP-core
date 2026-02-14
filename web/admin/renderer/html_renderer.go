@@ -17,6 +17,7 @@ func NewAdminRenderer() *Renderer {
 	template.Must(t.ParseGlob("web/admin/templates/*.html"))
 	template.Must(t.ParseGlob("web/admin/templates/components/*.html"))
 	template.Must(t.ParseGlob("web/admin/templates/layout/*.html"))
+	template.Must(t.ParseGlob("web/admin/templates/posts/*.html"))
 	template.Must(t.ParseGlob("web/shared/templates/*.html"))
 
 	return &Renderer{
