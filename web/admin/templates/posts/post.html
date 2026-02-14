@@ -1,0 +1,151 @@
+{{ define "title"}} Post {{end}} {{define "content"}}
+
+<div class="container">
+  <!-- CREATE -->
+  <div class="card">
+    <h2>Create Post</h2>
+
+    <form method="POST" action="/v1/admin/posts" class="form">
+      <input type="text" name="title" placeholder="Title" required />
+      <input type="text" name="desc" placeholder="Description" />
+
+      {{if .CreateErr}}
+      <div class="error">{{.CreateErr}}</div>
+      {{end}}
+
+      <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    {{if .PageErr}}
+    <div class="error page-error">{{.PageErr}}</div>
+    {{end}}
+
+    <h2>Posts</h2>
+    {{ template "post_list" .}}
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+
+  .card {
+    background: #ffffff;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .card h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #111827;
+  }
+
+  .form input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .form input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  }
+
+  .post-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .post-item:last-child {
+    border-bottom: none;
+  }
+
+  .post-item h3 {
+    margin: 0 0 6px 0;
+    color: #1f2937;
+  }
+
+  .post-item p {
+    margin: 0;
+    color: #4b5563;
+  }
+
+  .actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .btn-primary {
+    background-color: #2563eb;
+    color: white;
+  }
+
+  .btn-update {
+    background-color: #f59e0b;
+    color: white;
+  }
+
+  .btn-delete {
+    background-color: #dc2626;
+    color: white;
+  }
+
+  .btn-cancel {
+    background-color: #6b7280;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  .page-error {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #ffe5e5;
+    color: #b00020;
+    border-radius: 6px;
+  }
+</style>
+
+{{end}}

@@ -1,4 +1,60 @@
 {{ define "title"}} Landing {{end}} {{define "content"}}
-<style></style>
-<h1>Landing</h1>
+
+<style>
+  .posts {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+  }
+
+  .post-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+  }
+
+  .post-card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+
+  .post-card h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #111827;
+  }
+
+  .post-card p {
+    margin: 0;
+    color: #4b5563;
+  }
+
+  @media (min-width: 768px) {
+    .posts {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .posts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
+
+<div class="posts">
+  {{if .Posts}} {{range .Posts}}
+  <div class="post-card">
+    <h2>{{.Title}}</h2>
+    <p>{{if .Desc}}{{.Desc}}{{end}}</p>
+  </div>
+  {{end}} {{else}}
+  <p>No hay posts disponibles.</p>
+  {{end}}
+</div>
+
 {{end}}
