@@ -41,9 +41,32 @@ This project is designed with scalability and clean architecture in mind, allowi
    go mod tidy
    ```
 
-3. Set environment variables, add a `.env` file based on `env.example`
+3. Get Gmail Credentials
 
-4. Run the project:
+   - Go to your [Google Account](https://myaccount.google.com/)
+   - Navigate to **Security**
+   - Enable **2-Step Verification** (required to create App Passwords)
+
+   > You can check the official guide here:  
+   > [Google Help Center](https://support.google.com/mail/answer/185833)
+
+   - Go to [Create and manage app passwords](https://myaccount.google.com/apppasswords)  
+     - Or access it from **Security → Signing in to Google → App passwords** (choose the method you prefer)
+
+   - Enter a name for your app
+   - Click **Create**
+   - Google will generate a password
+   - Copy the password and remove the spaces  
+   - Use it as `GMAIL_PASS`
+
+   ```env
+   GMAIL_USERNAME=my-email@gmail.com
+   GMAIL_PASS=xxxxxxxx
+   ```
+   
+5. Set environment variables, add a `.env` file based on `env.example`
+
+6. Run the project:
    ```bash
    make run
    ```
