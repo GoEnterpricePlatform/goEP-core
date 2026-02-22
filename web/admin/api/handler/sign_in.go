@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
 	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
@@ -40,11 +41,9 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	// so a valid session should always exist after sign-in.
 	// If email verification is added later and the session is missing,
 	// redirect the user to the email verification flow.
-	accessCookie := h.CookieSrv.CreateForTemplate("accessToken", session.AccessToken, int(session.AccessTokenExpIn))
-	http.SetCookie(w, accessCookie)
+	h.CookieSrv.SetAccessToken(w, session.AccessToken)
 
-	refreshCookie := h.CookieSrv.CreateForTemplate("refreshToken", session.RefreshToken, int(session.RefreshTokenExpIn))
-	http.SetCookie(w, refreshCookie)
+	h.CookieSrv.SetRefreshToken(w, session.RefreshToken, time.Duration(session.RefreshTokenExpIn))
 
 	http.Redirect(w, r, "/v1/admin/home", http.StatusFound)
 }

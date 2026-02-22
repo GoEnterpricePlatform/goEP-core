@@ -1,13 +1,21 @@
 package service
 
-import "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
+import (
+	"time"
+
+	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
+)
 
 var _ port.CookieSrv = &Service{}
 
 type Service struct {
-	appEnv string
+	appEnv              string
+	JwtAccessCookieDur  time.Duration
 }
 
-func NewCookieSrv(appEnv string) *Service {
-	return &Service{appEnv: appEnv}
+func NewCookieSrv(appEnv string, jwtAccessCookieDur time.Duration) *Service {
+	return &Service{
+		appEnv:              appEnv,
+		JwtAccessCookieDur:  jwtAccessCookieDur,
+	}
 }
