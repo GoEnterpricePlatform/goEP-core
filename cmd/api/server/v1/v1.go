@@ -44,6 +44,8 @@ import (
 	userService "github.com/amorindev/go-cms-tmpl/pkg/identity/users/service"
 	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/middlewares"
 	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/middlewares/logger"
+
+	middlewareServiceTmpl "github.com/amorindev/go-cms-tmpl/web/shared/api/middlewares"
 )
 
 func New() http.Handler {
@@ -134,7 +136,7 @@ func New() http.Handler {
 
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(appEnvs.JWTAccessSecret, appEnvs.JWTRefreshSecret, appEnvs.JWTAccessExpIn, appEnvs.JWTRefreshExpIn, appEnvs.JWTRefreshRememberMeExpIn, appEnvs.JWTIssuer)
-	cookieSrv := cookieService.NewCookieSrv(appEnvs.AppEnv)
+	cookieSrv := cookieService.NewCookieSrv(appEnvs.AppEnv,appEnvs.JwtAccessCookieDur)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
@@ -164,9 +166,10 @@ func New() http.Handler {
 
 	// Templates
 	adminR := adminRenderer.NewAdminRenderer()
+	mdwSrvTmpl := middlewareServiceTmpl.NewMdwSrvTmpl(tokenSrv, authSrv, cookieSrv)
 
 	// Templates - admin
-	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR)
+	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)
 	adminH.RegisterRoutes(mux, v1)
 
 	// Templates - post

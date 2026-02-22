@@ -21,7 +21,7 @@ func (r *Repository) Insert(ctx context.Context, session *domain.Session) error 
 
 	sessionModel := model.FromDomain(session, id, userOID)
 
-	_, err = r.Collection.InsertOne(ctx, session)
+	_, err = r.Collection.InsertOne(ctx, sessionModel)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return fmt.Errorf("%w: error inserting session: %w", dShared.ErrDuplicateKey, err)

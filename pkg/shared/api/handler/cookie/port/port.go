@@ -1,8 +1,13 @@
 package port
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type CookieSrv interface {
-	CreateForTemplate(name, value string, maxAge int) *http.Cookie
+	SetAccessToken(w http.ResponseWriter, token string)
+	SetRefreshToken(w http.ResponseWriter, token string, dur time.Duration)
+
 	ClearForTemplate(w http.ResponseWriter, name string)
 }

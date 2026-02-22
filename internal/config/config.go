@@ -38,6 +38,7 @@ type Config struct {
 	JWTAccessExpIn            time.Duration
 	JWTRefreshExpIn           time.Duration
 	JWTRefreshRememberMeExpIn time.Duration
+	JwtAccessCookieDur        time.Duration
 
 	// App
 	Port           string
@@ -84,6 +85,17 @@ func Load(appStack *AppStack) *Config {
 		log.Fatalf("Invalid JWT_REFRESH_EXP_IN_REMEMBER format: %v", err)
 	}
 
+	// Cookies
+	// JWT_ACCESS_COOKIE_EXP_IN defines how long the access token cookie
+	// stays in the browser. It must be greater than JWT_ACCESS_EXP_IN
+	// so the backend can detect an expired JWT and refresh it before
+	// the browser removes the cookie automatically.
+	jwtAccessCookieExpIn := cmp.Or(os.Getenv("JWT_ACCESS_COOKIE_EXP_IN"), "20m")
+	jwtAccessCookieDur, err := time.ParseDuration(jwtAccessCookieExpIn)
+	if err != nil {
+		log.Fatalf("Invalid JWT_ACCESS_EXP_IN format: %v", err)
+	}
+
 	// App
 	port := cmp.Or(os.Getenv("HTTP_SERVER_PORT"), "8000")
 	appEnv := cmp.Or(os.Getenv("APP_ENV"), "dev")
@@ -91,7 +103,7 @@ func Load(appStack *AppStack) *Config {
 
 	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 	// "appname" appears in the email message
-	appName := mustGetEnv("APP_NAME") 
+	appName := mustGetEnv("APP_NAME")
 
 	// mailer
 	// Resend
@@ -139,6 +151,7 @@ func Load(appStack *AppStack) *Config {
 		JWTAccessExpIn:            accessDur,
 		JWTRefreshExpIn:           refreshDur,
 		JWTRefreshRememberMeExpIn: refreshRememberMeDur,
+		JwtAccessCookieDur:        jwtAccessCookieDur,
 		Port:                      port,
 		AppEnv:                    appEnv,
 		ApiBaseUrl:                apiBaseUrl,
