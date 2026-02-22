@@ -64,9 +64,41 @@ This project is designed with scalability and clean architecture in mind, allowi
    GMAIL_PASS=xxxxxxxx
    ```
    
-5. Set environment variables, add a `.env` file based on `env.example`
+4. Set environment variables, add a `.env` file based on `env.example`, MINIO_ACCESS_KEY and MINIO_SECRET_KEY will be assigned in the following steps.
+   
+5. Starts the development environment using Docker Compose.
+   ```bash
+   make compose-dev
+   ```
+   Notes:
+   - On Windows, Docker Desktop must be open.
+   - Skips this step if the containers are already running.
 
-6. Run the project:
+6. MinIO Configuration
+   
+   Newer versions of MinIO don’t allow creating credentials via the UI, so we’ll use the (MinIO Client)[https://github.com/minio/mc]
+   ```bash
+   go install github.com/minio/mc@latest
+   ```
+   Establish a connection to the MinIO using the MINIO_ROOT_USER and MINIO_ROOT_PASSWORD from the .env file:
+   ```bash
+   mc alias set local http://localhost:9000 user "123456()Secret"
+   ```
+   Creates a new user
+   ```bash
+   mc admin user add local appuser appusersecret
+   ```
+   Grant read/write permissions on all buckets to the user (appuser) for simplicity.
+   ```bash
+   mc admin policy attach local readwrite --user=appuser
+   ```
+   Set the new MinIO user credentials in the .env file:
+   ```
+   MINIO_ACCESS_KEY=appuser
+   MINIO_SECRET_KEY=appusersecret
+   ```
+
+8. Run the project:
    ```bash
    make run
    ```
