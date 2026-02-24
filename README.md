@@ -1,8 +1,10 @@
-# Go CMS Template
+# GoEP core
 
-CMS backend template built with **Golang**, designed to be used as a base for scalable and maintainable applications.
+GoEp Core is a modular enterprise system template built with Golang.
 
-This project is designed with scalability and clean architecture in mind, allowing easy integration with web frontends and other clients.
+It provides a scalable foundation composed of independent business modules that a modern enterprise platform requires — such as identity, authorization, content & Information Management.
+
+Designed with clean architecture principles, it enables teams to extend, fork, and evolve the system into fully customized enterprise solutions with long-term maintainability in mind.
 
 | Imagen 1                                                                                                  | Imagen 2                                                                                                |
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -33,7 +35,7 @@ This project is designed with scalability and clean architecture in mind, allowi
 
    ```bash
    git clone https://github.com/GoEnterpricePlatform/goEP-core
-   cd go-cms-tmpl
+   cd goEP-core
    ```
 
 2. Download dependencies:
