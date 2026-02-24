@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

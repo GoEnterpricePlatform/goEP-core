@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/service"
 	"github.com/stretchr/testify/require"
 )
 

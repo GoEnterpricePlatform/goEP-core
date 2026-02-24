@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )
 
 func (h Handler) PostPage(w http.ResponseWriter, r *http.Request) {

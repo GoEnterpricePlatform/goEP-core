@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -21,9 +21,9 @@ type AccessTokenClaims struct {
 // NewAccessTokenClaim creates a new set of claims for an access token
 func NewAccessTokenClaim(userID string, email string, issuer string, roles []string, permissions []string, expiresIn time.Duration) *AccessTokenClaims {
 	return &AccessTokenClaims{
-		UserID: userID,
-		Email:  email,
-		Roles:  roles,
+		UserID:      userID,
+		Email:       email,
+		Roles:       roles,
 		Permissions: permissions,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,

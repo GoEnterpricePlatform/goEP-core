@@ -3,16 +3,16 @@ package middlewares
 import (
 	"time"
 
-	authP "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/port"
-	tokenP "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/port"
-	cookieP "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
+	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
+	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
 )
 
 type MdwSrvTmpl struct {
-	TokenSrv            tokenP.TokenSrv
-	AuthSrv             authP.AuthSrv
-	CookieSrv           cookieP.CookieSrv
-	JwtAccessCookieDur  time.Duration
+	TokenSrv           tokenP.TokenSrv
+	AuthSrv            authP.AuthSrv
+	CookieSrv          cookieP.CookieSrv
+	JwtAccessCookieDur time.Duration
 }
 
 func NewMdwSrvTmpl(
@@ -21,8 +21,8 @@ func NewMdwSrvTmpl(
 	cookieSrv cookieP.CookieSrv,
 ) *MdwSrvTmpl {
 	return &MdwSrvTmpl{
-		TokenSrv:           tokenSrv,
-		AuthSrv:            authSrv,
-		CookieSrv:          cookieSrv,
+		TokenSrv:  tokenSrv,
+		AuthSrv:   authSrv,
+		CookieSrv: cookieSrv,
 	}
 }

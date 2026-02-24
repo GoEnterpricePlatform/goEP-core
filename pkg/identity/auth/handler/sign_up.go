@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
-	cShared "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // Signup handles user registration, validates input, creates a new user, and returns a JSON response.

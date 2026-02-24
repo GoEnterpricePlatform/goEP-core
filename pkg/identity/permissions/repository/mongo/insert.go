@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/model"
-	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/model"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -23,7 +23,7 @@ func (r *Repository) Insert(ctx context.Context, permission *domain.Permission) 
 		}
 		return fmt.Errorf("error inserting permission: %w", err)
 	}
-	
+
 	permissionModel.ToDomain(permission)
 
 	return nil

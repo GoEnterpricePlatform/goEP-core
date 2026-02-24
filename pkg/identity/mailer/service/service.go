@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-cms-tmpl/pkg/identity/mailer/port"
+import "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/port"
 
 var _ port.MailerSrv = &Service{}
 
@@ -12,7 +12,6 @@ type Service struct {
 func NewMailerSrv(mailerAdt port.MailerAdt, appName string) *Service {
 	return &Service{
 		MailerAdt: mailerAdt,
-        AppName: appName,
+		AppName:   appName,
 	}
 }
-

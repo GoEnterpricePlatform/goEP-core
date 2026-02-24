@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	v1 "github.com/amorindev/go-cms-tmpl/cmd/api/server/v1"
+	v1 "github.com/GoEnterpricePlatform/goEP-core/cmd/api/server/v1"
 )
 
 type HttpServer struct {

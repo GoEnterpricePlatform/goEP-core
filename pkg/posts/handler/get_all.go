@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
 )
 
 func (h Handler) GetAll(w http.ResponseWriter, r *http.Request) {

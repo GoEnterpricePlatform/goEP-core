@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
-	otpCodeD "github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
-	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
+	otpCodeD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // SignUp registers a new user, hashes the password, and saves it to the repository and return otpID

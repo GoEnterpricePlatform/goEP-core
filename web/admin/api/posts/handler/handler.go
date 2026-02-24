@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	postP "github.com/amorindev/go-cms-tmpl/pkg/posts/port"
-	"github.com/amorindev/go-cms-tmpl/web/admin/renderer"
+	"github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
+	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
 )
 
 type Handler struct {

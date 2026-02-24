@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/port"
 )
 
 type Handler struct {

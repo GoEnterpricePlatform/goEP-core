@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/model"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/model"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

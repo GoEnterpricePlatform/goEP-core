@@ -1,11 +1,10 @@
 package main
 
-
 import (
 	"cmp"
 	"os"
 
-	"github.com/amorindev/go-cms-tmpl/cmd/api/server"
+	"github.com/GoEnterpricePlatform/goEP-core/cmd/api/server"
 )
 
 func main() {

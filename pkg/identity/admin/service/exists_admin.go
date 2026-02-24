@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) ExistsAdmin(ctx context.Context) (bool, error) {

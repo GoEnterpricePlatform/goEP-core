@@ -3,8 +3,8 @@ package initializer
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/port"
 )
 
 type Initializer struct {

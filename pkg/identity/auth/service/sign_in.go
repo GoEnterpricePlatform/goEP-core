@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
-	otpCodeD "github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/domain"
-	sessionD "github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
-	userD "github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
-	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
+	otpCodeD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
+	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
+	userD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, string, error) {
@@ -68,7 +68,7 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 	// get Roles
 	roles, err := s.RoleRepo.FindByIDs(ctx, user.RoleIDs)
 	if err != nil {
-		return nil, nil, "",sharedD.ManageError(err, "")
+		return nil, nil, "", sharedD.ManageError(err, "")
 	}
 
 	roleNames := make([]string, 0, len(roles))
@@ -94,7 +94,7 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 	// Get permissions
 	permissions, err := s.PermissionRepo.FindByIDs(ctx, permissionIDs)
 	if err != nil {
-		return nil, nil, "",sharedD.ManageError(err, "")
+		return nil, nil, "", sharedD.ManageError(err, "")
 	}
 
 	permissionNames := make([]string, 0, len(permissions))
@@ -106,7 +106,7 @@ func (s *Service) SignIn(ctx context.Context, email string, password string, rem
 	// Create session
 	session := sessionD.NewSession(user.ID, rememberMe)
 
-	err = s.SessionSrv.Create(ctx, session, roleNames,permissionNames, email)
+	err = s.SessionSrv.Create(ctx, session, roleNames, permissionNames, email)
 	if err != nil {
 		return nil, nil, "", sharedD.ManageError(err, "")
 	}

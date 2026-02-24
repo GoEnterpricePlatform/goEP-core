@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-cms-tmpl/pkg/posts/port"
+import "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
 
 var _ port.PostSrv = &Service{}
 

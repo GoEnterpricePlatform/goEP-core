@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
 )
 
 type UserRepo interface {

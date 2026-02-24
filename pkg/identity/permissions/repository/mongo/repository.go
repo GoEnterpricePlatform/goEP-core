@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/port"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -13,8 +13,8 @@ type Repository struct {
 }
 
 func NewPermissionRepo(client *mongo.Client, collection *mongo.Collection) *Repository {
-    return &Repository{
-		Client:       client,
-		Collection:   collection,
+	return &Repository{
+		Client:     client,
+		Collection: collection,
 	}
 }

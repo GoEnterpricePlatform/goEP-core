@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/model"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/model"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -24,7 +24,6 @@ func (r *Repository) FindByName(ctx context.Context, name string) (*domain.Role,
 		return nil, fmt.Errorf("role with name %s not found: %w", name, err)
 	}
 
-	
 	var role domain.Role
 	userModel.ToDomain(&role)
 

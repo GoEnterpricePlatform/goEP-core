@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
 )
 
 type PostRepo interface {

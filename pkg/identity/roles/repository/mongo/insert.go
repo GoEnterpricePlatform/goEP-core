@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/model"
-	sharedDomain "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func (r *Repository) Insert(ctx context.Context, role *domain.Role) error {
 	id := bson.NewObjectID()
-	
+
 	roleModel, err := model.FromDomain(role, id)
 	if err != nil {
 		return fmt.Errorf("error mapping role to mongo model: %w", err)
@@ -26,8 +26,8 @@ func (r *Repository) Insert(ctx context.Context, role *domain.Role) error {
 		}
 		return fmt.Errorf("error inserting role: %w", err)
 	}
-	
+
 	roleModel.ToDomain(role)
-	
+
 	return nil
 }

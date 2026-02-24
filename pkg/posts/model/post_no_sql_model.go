@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -34,7 +34,7 @@ func FromDomain(p *domain.Post, id bson.ObjectID) *PostNoSqlModel {
 
 	return &PostNoSqlModel{
 		ID:        id,
-		Title:      p.Title,
+		Title:     p.Title,
 		Desc:      p.Desc,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,

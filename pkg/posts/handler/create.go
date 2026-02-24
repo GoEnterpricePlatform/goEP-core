@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/core"
 )
 
 func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func (h Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	post := &domain.Post{
 		Title: req.Title,
-		Desc: req.Desc,
+		Desc:  req.Desc,
 	}
 
 	if err := h.PostSrv.Create(context.Background(), post); err != nil {

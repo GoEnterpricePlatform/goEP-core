@@ -3,10 +3,9 @@ package service
 import (
 	"context"
 
-	sessionD "github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
-
 
 func (s *Service) RefreshToken(ctx context.Context, rTokenID string, userID string) (*sessionD.Session, error) {
 	session, err := s.SessionSrv.GetByRTokenID(ctx, rTokenID, userID)
@@ -69,7 +68,7 @@ func (s *Service) RefreshToken(ctx context.Context, rTokenID string, userID stri
 	// Create session
 	newSession := sessionD.NewSession(user.ID, session.RememberMe)
 
-	err = s.SessionSrv.Create(ctx, newSession, roleNames,permissionNames, user.Email)
+	err = s.SessionSrv.Create(ctx, newSession, roleNames, permissionNames, user.Email)
 	if err != nil {
 		return nil, sharedD.ManageError(err, "")
 	}

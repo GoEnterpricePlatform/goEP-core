@@ -3,8 +3,8 @@ package port
 import (
 	"context"
 
-	sessionD "github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
+	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
 )
 
 type AdminSrv interface {
