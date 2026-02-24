@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
-	sessionD "github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
-	userD "github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
+	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
+	userD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, error) {

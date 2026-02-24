@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
 )
 
 func (h Handler) Update(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func (h Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var req core.UpdatePostReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		sharedC.RespondError(w, sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "invalid request body"))
-		return 
+		return
 	}
 
 	defer r.Body.Close()
@@ -34,7 +34,7 @@ func (h Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	post := &domain.Post{
 		Title: req.Title,
-		Desc: req.Desc,
+		Desc:  req.Desc,
 	}
 
 	if err := h.PostSrv.Update(context.Background(), id, post); err != nil {

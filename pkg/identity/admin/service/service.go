@@ -1,11 +1,11 @@
 package service
 
 import (
-	adminP "github.com/amorindev/go-cms-tmpl/pkg/identity/admin/port"
-	permissionP "github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/port"
-	roleP "github.com/amorindev/go-cms-tmpl/pkg/identity/roles/port"
-	sessionP "github.com/amorindev/go-cms-tmpl/pkg/identity/session/port"
-	userP "github.com/amorindev/go-cms-tmpl/pkg/identity/users/port"
+	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
+	permissionP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/port"
+	roleP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/port"
+	sessionP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/port"
+	userP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/port"
 )
 
 var _ adminP.AdminSrv = &Service{}

@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (h Handler) Delete(w http.ResponseWriter, r *http.Request) {

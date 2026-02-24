@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/claim"
+import "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 
 // CreateRefreshToken generates a signed refresh token
 func (ts *Service) CreateRefreshToken(userID string, rememberMe bool) (string, string, int64, error) {

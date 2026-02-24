@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
 )
 
 func (s *Service) GetByRTokenID(ctx context.Context, rTokenID, userID string) (*domain.Session, error) {

@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/session/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/port"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 

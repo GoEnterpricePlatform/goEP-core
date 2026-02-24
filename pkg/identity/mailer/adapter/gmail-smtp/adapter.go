@@ -3,7 +3,7 @@ package gmailsmtp
 import (
 	"net/smtp"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/mailer/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/port"
 )
 
 var _ port.MailerAdt = &Adapter{}

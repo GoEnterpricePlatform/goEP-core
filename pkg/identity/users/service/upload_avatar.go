@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) UploadAvatar(ctx context.Context, img string, file io.Reader, userID string, contentType string) error {

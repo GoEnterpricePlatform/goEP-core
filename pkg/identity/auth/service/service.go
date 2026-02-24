@@ -1,13 +1,13 @@
 package service
 
 import (
-	authP "github.com/amorindev/go-cms-tmpl/pkg/identity/auth/port"
-	mailerP "github.com/amorindev/go-cms-tmpl/pkg/identity/mailer/port"
-	otpCodeP "github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/port"
-	permissionP "github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/port"
-	roleP "github.com/amorindev/go-cms-tmpl/pkg/identity/roles/port"
-	sessionP "github.com/amorindev/go-cms-tmpl/pkg/identity/session/port"
-	userP "github.com/amorindev/go-cms-tmpl/pkg/identity/users/port"
+	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
+	mailerP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/port"
+	otpCodeP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/port"
+	permissionP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/port"
+	sessionP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/port"
+	userP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/port"
+	roleP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/port"
 )
 
 var _ authP.AuthSrv = &Service{}

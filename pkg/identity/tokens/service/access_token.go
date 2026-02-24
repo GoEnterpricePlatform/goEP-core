@@ -1,6 +1,6 @@
 package service
 
-import "github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/claim"
+import "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 
 // CreateAccessToken generates a signed access token
 func (ts *Service) CreateAccessToken(userID string, email string, roles []string, permissions []string) (string, int64, error) {

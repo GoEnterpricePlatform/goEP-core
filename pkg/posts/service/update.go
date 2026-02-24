@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
 )
 
 func (h *Service) Update(ctx context.Context, id string, post *domain.Post) error {

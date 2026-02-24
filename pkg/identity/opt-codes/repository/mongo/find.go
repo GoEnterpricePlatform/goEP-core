@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/model"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/model"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -36,7 +36,6 @@ func (r *Repository) Find(ctx context.Context, id, userID string) (*domain.OtpCo
 		return nil, fmt.Errorf("error getting otpCode: %w", err)
 	}
 
-	
 	var otpCode domain.OtpCode
 	otpCodeModel.ToDomain(&otpCode)
 

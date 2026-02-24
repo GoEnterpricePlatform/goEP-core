@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	sharedC "github.com/amorindev/go-cms-tmpl/web/shared/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {

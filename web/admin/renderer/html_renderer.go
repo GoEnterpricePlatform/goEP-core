@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/templates"
 )
 
 type Renderer struct {

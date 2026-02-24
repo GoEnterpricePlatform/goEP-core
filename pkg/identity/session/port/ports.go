@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/session/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
 )
 
 type SessionRepo interface {

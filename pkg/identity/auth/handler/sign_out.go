@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // SignOut handles user logout by removing the refresh token both
@@ -45,5 +45,3 @@ func (h Handler) SignOut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
-
-

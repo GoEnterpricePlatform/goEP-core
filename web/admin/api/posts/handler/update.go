@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	"github.com/amorindev/go-cms-tmpl/web/shared/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {

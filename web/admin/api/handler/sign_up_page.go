@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/web/shared/templates"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/templates"
 )
 
 func (h Handler) SignUpPage(w http.ResponseWriter, r *http.Request) {

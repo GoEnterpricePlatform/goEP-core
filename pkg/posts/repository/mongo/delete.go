@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -19,9 +19,9 @@ func (r *Repository) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("error deleting post: %w", err)
 	}
 
-    if result.DeletedCount == 0 {
-        return domain.ErrNotFound
-    }
+	if result.DeletedCount == 0 {
+		return domain.ErrNotFound
+	}
 
 	return nil
 }

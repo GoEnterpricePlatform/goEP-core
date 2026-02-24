@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/tokens/port"
-	sessionP "github.com/amorindev/go-cms-tmpl/pkg/identity/session/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
+	sessionP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/port"
 )
 
 var _ sessionP.SessionSrv = &Service{}

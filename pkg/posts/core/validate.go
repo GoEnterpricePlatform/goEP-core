@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // ValidateCreate checks the fields required for creating a post

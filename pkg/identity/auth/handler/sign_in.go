@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
-	cShared "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	sharedH "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
-	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
+	sharedH "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
 )
 
 // SignIn handles user authentication requests

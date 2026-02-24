@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/model"
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/model"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -25,7 +25,7 @@ func (r *Repository) Get(ctx context.Context, id string) (*domain.Post, error) {
 		}
 		return nil, fmt.Errorf("error getting post: %w", err)
 	}
-	
+
 	var post domain.Post
 	postModel.ToDomain(&post)
 

@@ -1,4 +1,4 @@
-module github.com/amorindev/go-cms-tmpl
+module github.com/GoEnterpricePlatform/goEP-core
 
 go 1.23.0
 

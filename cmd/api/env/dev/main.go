@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/amorindev/go-cms-tmpl/cmd/api/server"
+	"github.com/GoEnterpricePlatform/goEP-core/cmd/api/server"
 	"github.com/joho/godotenv"
 )
 

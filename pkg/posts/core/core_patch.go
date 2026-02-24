@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // Note: We use pointers for both fields to distinguish between "not provided" and "explicitly empty".
@@ -13,7 +13,7 @@ import (
 // This allows partial updates without accidentally overwriting fields with zero values.
 type PatchPostReq struct {
 	Title *string `json:"title"`
-	Desc *string `json:"desc"`
+	Desc  *string `json:"desc"`
 }
 
 func (req PatchPostReq) Validate() error {

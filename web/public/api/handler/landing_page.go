@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
 )
 
 func (h Handler) LandingPage(w http.ResponseWriter, r *http.Request) {

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	sharedH "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	sharedH "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
 )
 
 func (h Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +39,7 @@ func (h Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	session.RefreshToken = ""
 
 	// create response
-	resp := core.NewSignInResp(user, session,"")
+	resp := core.NewSignInResp(user, session, "")
 
 	http.SetCookie(w, cookie)
 	w.Header().Set("Content-Type", "application/json")

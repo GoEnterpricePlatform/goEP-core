@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"github.com/amorindev/go-cms-tmpl/pkg/posts/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 

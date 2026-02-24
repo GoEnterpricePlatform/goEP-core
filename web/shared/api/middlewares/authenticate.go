@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {

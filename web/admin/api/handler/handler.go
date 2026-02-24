@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	adminP "github.com/amorindev/go-cms-tmpl/pkg/identity/admin/port"
-	cookieP "github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler/cookie/port"
-	"github.com/amorindev/go-cms-tmpl/web/admin/renderer"
-	"github.com/amorindev/go-cms-tmpl/web/shared/api/middlewares"
+	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
+	"github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
 
 type Handler struct {
@@ -34,7 +34,6 @@ func NewAdminHandler(
 
 	return h
 }
-
 
 func (h Handler) RegisterRoutes(mux *http.ServeMux, muxV1 *http.ServeMux) {
 	// Redirect

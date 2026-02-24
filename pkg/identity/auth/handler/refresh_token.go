@@ -6,10 +6,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/core"
-	sharedC "github.com/amorindev/go-cms-tmpl/pkg/shared/api/core"
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/api/handler"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 // RefreshToken renews the user's session.

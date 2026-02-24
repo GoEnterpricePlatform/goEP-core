@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/auth/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/domain"
 )
 
 type UserPasswordNoSqlModel struct {

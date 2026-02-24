@@ -4,8 +4,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
-	dShared "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"github.com/go-playground/validator/v10"
 )
 

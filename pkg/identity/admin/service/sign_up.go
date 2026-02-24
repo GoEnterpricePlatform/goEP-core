@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/encryption"
-	roleD "github.com/amorindev/go-cms-tmpl/pkg/identity/roles/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/users/domain"
-	sharedD "github.com/amorindev/go-cms-tmpl/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
+	roleD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) SignUp(ctx context.Context, user *domain.User) error {

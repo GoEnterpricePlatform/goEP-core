@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/domain"
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/roles/model"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

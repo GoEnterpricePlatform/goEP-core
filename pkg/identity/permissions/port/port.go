@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/permissions/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/permissions/domain"
 )
 
 // PermissionRepo manages system-defined permissions.

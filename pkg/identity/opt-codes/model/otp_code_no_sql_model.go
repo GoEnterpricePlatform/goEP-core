@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/amorindev/go-cms-tmpl/pkg/identity/opt-codes/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
