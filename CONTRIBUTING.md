@@ -24,8 +24,8 @@ Be sure to regularly synchronize your fork with the original (upstream) reposito
 
 2. **Clone the Repository**: Clone your forked repository to your local machine.
       ```sh
-      git clone https://github.com/Tmplx/go-cms-tmpl
-      cd go-cms-tmpl
+      git clone https://github.com/GoEnterpricePlatform/goEP-core
+      cd goEP-core
       ```
 
 3. **Create a Branch**: Create a new branch for your feature or bugfix.
@@ -51,7 +51,7 @@ Be sure to regularly synchronize your fork with the original (upstream) reposito
 7. **Wait for Review**: Your pull request will be reviewed by the maintainers. Be responsive to feedback and make necessary adjustments.
 
 ## How to Claim an Issue
-1. **Check Existing Issues**: Before starting work, check the [Issues](https://github.com/Tmplx/go-cms-tmpl/issues) section to see if the issue you want to work on is already claimed or in progress.
+1. **Check Existing Issues**: Before starting work, check the [Issues](https://github.com/GoEnterpricePlatform/goEP-core/issues) section to see if the issue you want to work on is already claimed or in progress.
 
 2. **Comment on the Issue**: If the issue is not already assigned, comment on the issue expressing your interest in working on it. Example:
 
