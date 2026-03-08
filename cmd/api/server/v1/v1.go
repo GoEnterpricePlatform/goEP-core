@@ -11,9 +11,14 @@ import (
 	minioClient "github.com/GoEnterpricePlatform/goEP-core/internal/minio"
 	mongoClient "github.com/GoEnterpricePlatform/goEP-core/internal/mongo"
 	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/resend"
+	openaiClient "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/adapter/open-ai"
+	aiTCItz "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/initializer"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/service"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/service"
 	authHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/handler"
+	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
 	gmailsmtp "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/gmail-smtp"
+	resendAdapter "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/resend"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/port"
 	mailerService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/service"
 	otpCodeRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/repository/mongo"
@@ -24,15 +29,19 @@ import (
 	roleInitializer "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/initializer"
 	roleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/repository/mongo"
 	tokenService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/service"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/handler"
+	postAI "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/ai"
+	postHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/handler"
 	postRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/repository/mongo"
 	postService "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/service"
 	adminHandler "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/handler"
-	postHandler "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/posts/handler"
+	postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/posts/handler"
 	adminRenderer "github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
+	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/handler"
+	"github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/posts/handler"
+	toolCallingRenderer "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/renderer"
 	publicHandler "github.com/GoEnterpricePlatform/goEP-core/web/public/api/handler"
-	resendAdapter "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/resend"
-	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
 
@@ -94,6 +103,12 @@ func New() http.Handler {
 		mailerAdt = gmailsmtp.NewGmailSmtpAdt(gmailSmtp, appEnvs.GmailAddr, appEnvs.GmailFrom)
 	}
 
+	client := openai.NewClient(
+		option.WithAPIKey("OPENAI_API_KEY"), // defaults to os.LookupEnv("OPENAI_API_KEY")
+	)
+	toolCallingAdapter := openaiClient.NewToolCallingAdt(client)
+
+
 	// Collections
 	userColl := mongoDB.Collection("users")
 	sessionColl := mongoDB.Collection("sessions")
@@ -131,6 +146,19 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
+	// AI - initializer
+	aiTCInitializer := aiTCItz.NewAIItz()
+	
+	// AI - Providers
+	postAIprovider := postAI.NewPostAiProvider()
+	
+	// AI - register
+	aiTCInitializer.RegisterTool(postAIprovider)
+
+	// Set Tools Beofore register Register ALl modules
+	toolCallingAdapter.SetTools(aiTCInitializer)
+
+
 	// File Storage
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
@@ -142,6 +170,7 @@ func New() http.Handler {
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
 	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
+	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter)
 	postSrv := postService.NewPostSrv(postRepo)
 
 	// service - admin
@@ -151,7 +180,7 @@ func New() http.Handler {
 	// Note: all subsequent handlers should also be registered using v1
 	authHandler.NewAuthHandler(v1, authSrv, tokenSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
-	handler.NewPostApiHandler(v1, postSrv)
+	postHandler.NewPostApiHandler(v1, postSrv)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -172,8 +201,18 @@ func New() http.Handler {
 	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)
 	adminH.RegisterRoutes(mux, v1)
 
+	// Templates - chat tool calling
+	toolCalllingR := toolCallingRenderer.NewToolCallingRenderer()
+	toolCallingH := chatToolCallingHandler.NewChatToolCallingHandler(toolCallingSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl, postSrv)
+	toolCallingH.RegisterRoutes(mux, v1)
+
+	// tool Calling posts
+
+	toolCallingPostsH := handler.NewPostWebAiHandler(postSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl)
+	toolCallingPostsH.RegisterRoutes(v1)
+
 	// Templates - post
-	postH := postHandler.NewPostWebHandler(postSrv, adminH.ApiBaseUrl, adminR)
+	postH := postHandlerWeb.NewPostWebHandler(postSrv, adminH.ApiBaseUrl, adminR)
 	postH.RegisterRoutes(v1)
 
 	// Templates - public

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/templates"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/templates"
 )
 
 // SignIn handles the admin sign-in request from the form,
@@ -45,5 +45,5 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	h.CookieSrv.SetRefreshToken(w, session.RefreshToken, time.Duration(session.RefreshTokenExpIn))
 
-	http.Redirect(w, r, "/v1/admin/home", http.StatusFound)
+	http.Redirect(w, r, "/v1/admin/assistant", http.StatusFound)
 }

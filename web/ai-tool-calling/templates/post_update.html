@@ -1,0 +1,61 @@
+{{define "content"}}
+<style>
+  .edit-badge {
+    display: inline-block;
+    font-size: 12px;
+    background: #e0f2fe;
+    color: #075985;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    box-shadow: 0 0 0 2px #d1d5db;
+    background: #ffffff;
+  }
+
+  .confirm-update {
+    margin-top: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .confirm-update:hover {
+    background: #1d4ed8;
+  }
+</style>
+
+<div class="generated">
+  <h2>Confirmar actualización de Post</h2>
+
+  {{if .Error}}
+  <div class="alert alert-error">{{.Error}}</div>
+  {{end}}
+
+  <div class="edit-badge">Editando ID {{.ID}}</div>
+
+  <form method="POST" action="/admin/ai/posts/update">
+    <input type="hidden" name="action" value="update_post" />
+    <input type="hidden" name="id" value="{{.ID}}" />
+
+    <div class="field">
+      <input type="text" name="title" value="{{.Title}}" placeholder="Título" />
+    </div>
+
+    <div class="field">
+      <textarea name="desc" rows="4" placeholder="Descripción">
+        {{.Desc}}
+      </textarea>
+    </div>
+
+    <button type="submit" class="confirm-update">Actualizar Post</button>
+  </form>
+</div>
+{{end}}

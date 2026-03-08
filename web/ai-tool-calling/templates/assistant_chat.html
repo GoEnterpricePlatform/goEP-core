@@ -1,0 +1,52 @@
+{{define "content"}}
+
+<div class="chat-box">
+  {{range .Messages}} {{if eq .Role "user"}}
+
+  <div class="msg-user"><strong>Tú:</strong> {{.Content}}</div>
+
+  {{else}}
+
+  <div class="msg-ai">
+    {{if .Content}}
+    <strong>Assistant:</strong> {{.Content}} {{end}} {{if .Table}}
+
+    <div class="table-box">
+      <table class="ai-table">
+        {{$cols := .Table.Columns}}
+
+        <thead>
+          <tr>
+            {{range $cols}}
+            <th>{{.}}</th>
+            {{end}}
+          </tr>
+        </thead>
+
+        <tbody>
+          {{range .Table.Rows}} {{$row := .}}
+
+          <tr>
+            {{range $cols}}
+
+            <td>{{index $row .}}</td>
+
+            {{end}}
+          </tr>
+
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hint">
+      Escribe <b>crear</b> para ejecutar o escribe nuevos valores en el prompt.
+    </div>
+
+    {{end}}
+  </div>
+
+  {{end}} {{end}}
+</div>
+
+{{end}}
