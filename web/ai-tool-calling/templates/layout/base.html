@@ -14,12 +14,21 @@
         color: #111827;
         display: flex;
         justify-content: center;
-        padding: 80px 20px;
+        padding: 40px 20px 120px 20px;
       }
 
       .container {
         width: 720px;
         max-width: 100%;
+      }
+
+      .prompt-wrapper {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 720px;
+        max-width: calc(100% - 40px);
       }
 
       .prompt-box {
@@ -29,6 +38,7 @@
         background: #f3f4f6;
         padding: 12px 16px;
         border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
       }
 
       .prompt-box input {
@@ -53,43 +63,6 @@
         cursor: pointer;
       }
 
-      .generated {
-        margin-top: 40px;
-      }
-
-      .generated h2 {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        color: #6b7280;
-      }
-
-      .field {
-        margin-bottom: 14px;
-      }
-
-      .field input,
-      .field textarea {
-        width: 100%;
-        padding: 14px 16px;
-        border-radius: 14px;
-        border: none;
-        background: #f3f4f6;
-        font-size: 14px;
-        outline: none;
-      }
-
-      .confirm {
-        margin-top: 10px;
-        background: #111827;
-        color: #ffffff;
-        border: none;
-        border-radius: 14px;
-        padding: 12px 20px;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
       .error {
         margin-top: 20px;
         color: red;
@@ -99,7 +72,13 @@
 
   <body>
     <div class="container">
-      <!-- Prompt -->
+      {{if .Error}}
+      <div class="error">{{.Error}}</div>
+      {{end}} {{block "content" .}}{{end}}
+    </div>
+
+    <!-- Prompt fijo -->
+    <div class="prompt-wrapper">
       <form method="POST" action="/v1/admin/assistant">
         <div class="prompt-box">
           <input
@@ -113,10 +92,6 @@
           <button type="submit" class="send-btn">↑</button>
         </div>
       </form>
-
-      {{if .Error}}
-      <div class="error">{{.Error}}</div>
-      {{end}}  {{block "content" .}}{{end}}
     </div>
   </body>
 </html>

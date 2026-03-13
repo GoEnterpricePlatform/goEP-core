@@ -15,6 +15,7 @@ func mapToOpenAITools(defs []contract.ToolDefinition) []responses.ToolUnionParam
 				Name:        def.Name,
 				Description: param.Opt[string]{Value: def.Description},
 				Parameters:  def.Schemma,
+				
 			},
 		})
 	}

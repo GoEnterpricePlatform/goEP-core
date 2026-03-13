@@ -15,42 +15,24 @@ import (
 
 // ! no se si deba poner el required por que se enviará al handler y el lo validará
 // ! un usuario se puede leiminar mediante id o email
-func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSelectionResult, error) {
+func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage) (*domain.ToolSelectionResult, error) {
+	// Elusuario debe recibir feeback del recurso a crear eliinar
+	// Cunado el usuario use palabras como crealo actualizalo donde
+	// require una modificacion del sistema entonces usamos create_post_execute
+	// aqui ya no quiero que modifiques los campos por ningun motivo sino llamar al
+	// operacion adecuada
+
+	// El detalle es no se si estoy
+
 	resp, err := a.Client.Responses.New(ctx, responses.ResponseNewParams{
 		Model: openai.ChatModelGPT5Mini,
 		Input: responses.ResponseNewParamsInputUnion{
-			OfInputItemList: []responses.ResponseInputItemUnionParam{
-				{
-					OfInputMessage: &responses.ResponseInputItemMessageParam{
-						Role: "system",
-						Content: []responses.ResponseInputContentUnionParam{
-							{
-								OfInputText: &responses.ResponseInputTextParam{
-									Text: "You are a command parser. Only extract the values explicitly mentioned by the user. Do not invent any values.",
-								},
-							},
-						},
-					},
-				},
-				{
-					OfInputMessage: &responses.ResponseInputItemMessageParam{
-						Role: "user",
-						Content: []responses.ResponseInputContentUnionParam{
-							{
-								OfInputText: &responses.ResponseInputTextParam{
-									Text: prompt,
-								},
-							},
-						},
-					},
-				},
-			},
-			
+			OfInputItemList: buildConversation(messages),
 		},
 		Tools: a.tools,
 		ToolChoice: responses.ResponseNewParamsToolChoiceUnion{
 			OfToolChoiceMode: param.Opt[responses.ToolChoiceOptions]{
-				Value: responses.ToolChoiceOptionsRequired,
+				Value: responses.ToolChoiceOptionsAuto,
 			},
 		},
 	})
@@ -69,7 +51,6 @@ func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSe
 
 		if item.Type != "function_call" {
 			fmt.Println("-----------------------------------------------f")
-
 			continue
 		}
 
@@ -81,6 +62,12 @@ func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSe
 			return nil, err
 		}
 		fmt.Println(args)
+
+		// 👇 EXTRAER ACTION
+		action := getString(args, "action")
+
+		// 👇 opcional: quitar action de los argumentos
+		delete(args, "action")
 
 		// Extraemos la definición de la herramienta
 		var toolDef contract.ToolDefinition
@@ -97,14 +84,16 @@ func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSe
 		fmt.Println("**************************************")
 
 		properties, ok := toolDef.Schemma["properties"].(map[string]interface{})
-		requiredList, _ := toolDef.Schemma["required"].([]string)
+		requiredRaw, _ := toolDef.Schemma["required"].([]string)
+		fmt.Println(properties)
+		fmt.Println(requiredRaw)
 		requiredMap := make(map[string]bool)
-		for _, r := range requiredList {
+		for _, r := range requiredRaw {
 			requiredMap[r] = true
 		}
 
 		fmt.Println(properties)
-		fmt.Println(requiredList)
+		fmt.Println(requiredRaw)
 		fmt.Println(ok)
 		fmt.Println(requiredMap)
 		fmt.Println("**************************************2")
@@ -116,6 +105,15 @@ func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSe
 			//fmt.Println(val)
 			val := getString(args, name)
 
+			var prompt string
+
+			for i := len(messages) - 1; i >= 0; i-- {
+				if messages[i].Role == "user" {
+					prompt = messages[i].Content
+					break
+				}
+			}
+
 			val = extractFieldFromText(prompt, name, val)
 
 			//fmt.Println(val)
@@ -124,27 +122,20 @@ func (a *Adapter) SelectTool(ctx context.Context, prompt string) (*domain.ToolSe
 				Value:    val,
 				Required: requiredMap[name],
 			})
-			fmt.Println(fields)
 		}
-
-		// Validamos campos faltantes
-		missing := []string{}
-		for _, f := range fields {
-			if f.Required && f.Value == "" {
-				missing = append(missing, f.Name)
-			}
-		}
+		fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+		fmt.Println(fields)
+		fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
 		fmt.Println("**************************************3")
 
-		//missing := validateMissing(args, required)
 		fmt.Println("-----------------------------------------------g")
-		fmt.Println(missing)
 		fmt.Println(toolCall.Name)
 		resp := &domain.ToolSelectionResult{
 			Operation:    toolCall.Name,
+			Action:       action,
 			Arguments:    args,
-			Missing:      missing,
+			Required:     requiredRaw,
 			NeedsConfirm: true,
 		}
 		// Reconstruir Arguments si quieres mantenerlo
@@ -172,23 +163,66 @@ func extractFieldFromText(prompt, keyword, current string) string {
 	return ""
 }
 
-func validateMissing(args map[string]any, required []string) []string {
-	var missing []string
-
-	for _, field := range required {
-		v, ok := args[field]
-		if !ok || v == nil || v == "" {
-			missing = append(missing, field)
-		}
-	}
-
-	return missing
-}
-
 func getString(m map[string]any, key string) string {
 	v, ok := m[key]
 	if !ok {
 		return ""
 	}
 	return fmt.Sprintf("%v", v)
+}
+
+func buildConversation(messages []*domain.ChatMessage) []responses.ResponseInputItemUnionParam {
+
+	items := []responses.ResponseInputItemUnionParam{
+		{
+			OfInputMessage: &responses.ResponseInputItemMessageParam{
+				Role: "system",
+				Content: []responses.ResponseInputContentUnionParam{
+					{
+						OfInputText: &responses.ResponseInputTextParam{
+							Text: `
+							You are an admin assistant that manages system resources using tools.
+
+							Rules:
+								- If the user wants to delete or update a resource but no ID is provided, call the tool that lists the resources first.
+								- Do not repeat the same listing tool if it was already executed in the previous step unless the user explicitly asks again.
+								- Use the conversation context to decide the next step.
+
+							Action rules: 
+								- When collecting or editing fields, set action="prepare".
+								- When the user confirms the operation (for example: yes, create it, go ahead, execute), set action="execute".
+								- Do not execute operations unless the user clearly confirms.
+								
+							Never repeat a previous tool unless the user explicitly asks for it.
+							`,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, m := range messages {
+
+		if m.Content == "" {
+			continue
+		}
+
+		items = append(items,
+			responses.ResponseInputItemUnionParam{
+				OfInputMessage: &responses.ResponseInputItemMessageParam{
+					Role: m.Role,
+					Content: []responses.ResponseInputContentUnionParam{
+						{
+							OfInputText: &responses.ResponseInputTextParam{
+								Text: m.Content,
+							},
+						},
+					},
+				},
+			},
+		)
+	}
+
+	return items
 }

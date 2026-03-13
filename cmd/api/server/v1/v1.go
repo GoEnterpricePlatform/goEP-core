@@ -108,7 +108,6 @@ func New() http.Handler {
 	)
 	toolCallingAdapter := openaiClient.NewToolCallingAdt(client)
 
-
 	// Collections
 	userColl := mongoDB.Collection("users")
 	sessionColl := mongoDB.Collection("sessions")
@@ -148,16 +147,6 @@ func New() http.Handler {
 
 	// AI - initializer
 	aiTCInitializer := aiTCItz.NewAIItz()
-	
-	// AI - Providers
-	postAIprovider := postAI.NewPostAiProvider()
-	
-	// AI - register
-	aiTCInitializer.RegisterTool(postAIprovider)
-
-	// Set Tools Beofore register Register ALl modules
-	toolCallingAdapter.SetTools(aiTCInitializer)
-
 
 	// File Storage
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
@@ -170,8 +159,8 @@ func New() http.Handler {
 	mailerSrv := mailerService.NewMailerSrv(mailerAdt, appEnvs.AppName)
 	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
-	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter)
 	postSrv := postService.NewPostSrv(postRepo)
+	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer)
 
 	// service - admin
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
@@ -181,6 +170,15 @@ func New() http.Handler {
 	authHandler.NewAuthHandler(v1, authSrv, tokenSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
 	postHandler.NewPostApiHandler(v1, postSrv)
+
+	// AI - Providers
+	postAIprovider := postAI.NewPostAiProvider(postSrv)
+
+	// AI - register
+	aiTCInitializer.RegisterTool(postAIprovider)
+
+	// Set Tools Beofore register Register ALl modules
+	toolCallingAdapter.SetTools(aiTCInitializer)
 
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

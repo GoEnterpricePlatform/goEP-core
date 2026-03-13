@@ -1,15 +1,20 @@
 package service
 
-import "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/port"
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/initializer"
+	tcP "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/port"
+)
 
-var _ port.ToolCallingSrv = &Service{}
+var _ tcP.ToolCallingSrv = &Service{}
 
 type Service struct {
-	ToolCallingAdt port.ToolCallingAdt
+	ToolCallingAdt tcP.ToolCallingAdt
+	ToolCallingItz *initializer.Initializer
 }
 
-func NewToolCallingSrv(toolCallingAdt port.ToolCallingAdt) *Service {
+func NewToolCallingSrv(toolCallingAdt tcP.ToolCallingAdt, toolCallingItz *initializer.Initializer) *Service {
 	return &Service{
 		ToolCallingAdt: toolCallingAdt,
+		ToolCallingItz: toolCallingItz,
 	}
 }
