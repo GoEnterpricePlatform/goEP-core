@@ -13,7 +13,9 @@ import (
 	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/resend"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/service"
 	authHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/handler"
+	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
 	gmailsmtp "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/gmail-smtp"
+	resendAdapter "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/resend"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/port"
 	mailerService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/service"
 	otpCodeRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/repository/mongo"
@@ -31,8 +33,6 @@ import (
 	postHandler "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/posts/handler"
 	adminRenderer "github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
 	publicHandler "github.com/GoEnterpricePlatform/goEP-core/web/public/api/handler"
-	resendAdapter "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/mailer/adapter/resend"
-	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
 
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
 
@@ -112,6 +112,10 @@ func New() http.Handler {
 
 	// Indexes
 	err = userRepo.CreateIndexes()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = postRepo.CreateIndexes()
 	if err != nil {
 		log.Fatal(err)
 	}

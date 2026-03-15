@@ -20,6 +20,7 @@ func NewPostApiHandler(muxV1 *http.ServeMux, postSrv port.PostSrv) *Handler {
 	muxV1.HandleFunc("PUT /posts/{id}", h.Update)
 	muxV1.HandleFunc("PATCH /posts/{id}", h.Patch)
 	muxV1.HandleFunc("DELETE /posts/{id}", h.Delete)
+	muxV1.HandleFunc("GET /posts/search", h.Search)
 
 	return h
 }
