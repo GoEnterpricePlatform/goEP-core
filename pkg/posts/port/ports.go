@@ -12,6 +12,7 @@ type PostRepo interface {
 	FindAll(ctx context.Context) ([]*domain.Post, error)
 	Update(ctx context.Context, id string, post *domain.Post) error
 	Delete(ctx context.Context, id string) error
+	Search(ctx context.Context, query string, limit int) ([]*domain.Post, error)
 }
 
 type PostSrv interface {
@@ -20,4 +21,5 @@ type PostSrv interface {
 	Update(ctx context.Context, id string, post *domain.Post) error
 	Delete(ctx context.Context, id string) error
 	Patch(ctx context.Context, id string, post *domain.Post) (*domain.Post, error)
+	Search(ctx context.Context, query string, limit int) ([]*domain.Post, error)
 }

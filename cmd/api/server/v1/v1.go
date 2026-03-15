@@ -129,6 +129,10 @@ func New() http.Handler {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = postRepo.CreateIndexes()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Before indexes, create initializers
 	permissionItz := permissionInitializer.NewPermissionItz(permissionRepo)
