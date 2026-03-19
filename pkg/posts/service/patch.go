@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Service) Patch(ctx context.Context, id string, post *domain.Post) (*domain.Post, error) {
-	existing, err := s.PostRepo.Get(ctx, id)
+	existing, err := s.PostRepo.Find(ctx, id)
 	if err != nil {
 		return nil, sharedD.ManageError(err, "")
 	}
