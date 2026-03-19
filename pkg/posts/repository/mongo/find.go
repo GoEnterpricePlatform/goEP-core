@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func (r *Repository) Get(ctx context.Context, id string) (*domain.Post, error) {
+func (r *Repository) Find(ctx context.Context, id string) (*domain.Post, error) {
 	oID, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, sharedD.ErrIncorrectID
