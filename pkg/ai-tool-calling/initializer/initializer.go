@@ -1,6 +1,9 @@
 package initializer
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
 )
 
@@ -34,4 +37,13 @@ func (i *Initializer) GetAllTools() []contract.ToolDefinition {
 		tools = append(tools, t)
 	}
 	return tools
+}
+
+func (i *Initializer) GetSystemPrompt() (string, error) {
+	name := "pkg/ai-tool-calling/initializer/system_prompt/admin_tool_selection/admin_tool_selection.md"
+	body, err := os.ReadFile(name)
+	if err != nil {
+		return "", fmt.Errorf("Failed to read admin_tool_selection.md: %w", err)
+	}
+	return string(body), nil
 }

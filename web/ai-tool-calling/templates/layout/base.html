@@ -67,17 +67,31 @@
         margin-top: 20px;
         color: red;
       }
+
+      .top-nav {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+      }
+
+      .home-btn {
+        text-decoration: none;
+        background: #111827;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+      }
+
+      .home-btn:hover {
+        background: #374151;
+      }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      {{if .Error}}
-      <div class="error">{{.Error}}</div>
-      {{end}} {{block "content" .}}{{end}}
-    </div>
-
-    <!-- Prompt fijo -->
     <div class="prompt-wrapper">
       <form method="POST" action="/v1/admin/assistant">
         <div class="prompt-box">
@@ -92,6 +106,14 @@
           <button type="submit" class="send-btn">↑</button>
         </div>
       </form>
+    </div>
+    <div class="top-nav">
+      <a href="/v1/admin/home" class="home-btn">← Home</a>
+    </div>
+    <div class="container">
+      {{block "content" .}}{{end}} {{if .Error}}
+      <div class="error">{{.Error}}</div>
+      {{end}}
     </div>
   </body>
 </html>

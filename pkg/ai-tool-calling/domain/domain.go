@@ -1,13 +1,13 @@
 package domain
 
-// ! ver con que nos vamos a quedar
 type ToolSelectionResult struct {
-	Operation    string         `json:"operation"`
-	Action       string         `json:"action"`
-	Arguments    map[string]any `json:"arguments"`
-	Fields       []FieldInfo    `json:"fields"`
-	Required     []string       `json:"required"`
-	NeedsConfirm bool           `json:"needs_confirm"`
+	Operation    string
+	Action       string
+	Arguments    map[string]any
+	Fields       []FieldInfo
+	Required     []string
+	NeedsConfirm bool
+	Message      string
 }
 
 type FieldInfo struct {

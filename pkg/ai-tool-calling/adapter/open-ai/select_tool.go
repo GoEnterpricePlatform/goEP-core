@@ -3,27 +3,20 @@ package openai
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
 )
 
-// ! no se si deba poner el required por que se enviará al handler y el lo validará
-// ! un usuario se puede leiminar mediante id o email
-func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage) (*domain.ToolSelectionResult, error) {
-	// Elusuario debe recibir feeback del recurso a crear eliinar
-	// Cunado el usuario use palabras como crealo actualizalo donde
-	// require una modificacion del sistema entonces usamos create_post_execute
-	// aqui ya no quiero que modifiques los campos por ningun motivo sino llamar al
-	// operacion adecuada
-
-	// El detalle es no se si estoy
-
+// "action" and "delete" are internal fields; we remove them so they are not displayed in the table.
+func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage, systemPrompt string) (*domain.ToolSelectionResult, error) {
 	resp, err := a.Client.Responses.New(ctx, responses.ResponseNewParams{
 		Model: openai.ChatModelGPT5Mini,
 		Input: responses.ResponseNewParamsInputUnion{
@@ -36,21 +29,22 @@ func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage
 			},
 		},
 	})
-	fmt.Println("-----------------------------------------------b")
 
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, err
+		var apiErr *openai.Error
+		if errors.As(err, &apiErr) {
+			if apiErr.Code == "invalid_api_key" {
+				return nil, fmt.Errorf("%w: invalid openai api key: %w", sharedD.ErrInvalidApiKey, err)
+			}
+		}
+		return nil, fmt.Errorf("openai request failed: %w", err)
 	}
-	fmt.Println("-----------------------------------------------c")
 
 	for _, item := range resp.Output {
-		fmt.Printf("TYPE: %s\n", item.Type)
-		/* fmt.Printf("RAW ITEM: %+v\n", item) */
-		fmt.Println("-----------------------------------------------d")
+
+		// fmt.Printf("TYPE: %s\n", item.Type)
 
 		if item.Type != "function_call" {
-			fmt.Println("-----------------------------------------------f")
 			continue
 		}
 
@@ -58,18 +52,18 @@ func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage
 
 		var args map[string]any
 		if err := json.Unmarshal([]byte(toolCall.Arguments), &args); err != nil {
-			fmt.Println(err.Error())
 			return nil, err
 		}
-		fmt.Println(args)
 
-		// 👇 EXTRAER ACTION
+		// fmt.Println(args)
+
+		// EXTRACT ACTION
 		action := getString(args, "action")
 
-		// 👇 opcional: quitar action de los argumentos
+		// remove action from arguments
 		delete(args, "action")
 
-		// Extraemos la definición de la herramienta
+		// We extract the definition of the tool
 		var toolDef contract.ToolDefinition
 		for _, t := range a.tools {
 			if t.OfFunction != nil && t.OfFunction.Name == toolCall.Name {
@@ -81,28 +75,22 @@ func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage
 				break
 			}
 		}
-		fmt.Println("**************************************")
 
-		properties, ok := toolDef.Schemma["properties"].(map[string]interface{})
+		properties, _ := toolDef.Schemma["properties"].(map[string]interface{})
 		requiredRaw, _ := toolDef.Schemma["required"].([]string)
-		fmt.Println(properties)
-		fmt.Println(requiredRaw)
 		requiredMap := make(map[string]bool)
 		for _, r := range requiredRaw {
 			requiredMap[r] = true
 		}
 
-		fmt.Println(properties)
-		fmt.Println(requiredRaw)
-		fmt.Println(ok)
-		fmt.Println(requiredMap)
-		fmt.Println("**************************************2")
+		// fmt.Println(properties)
+		//fmt.Println(requiredRaw)
+		//fmt.Println(ok)
+		//fmt.Println(requiredMap)
 
 		fields := make([]domain.FieldInfo, 0)
 		for name := range properties {
-			// Extraemos del prompt si no hay valor
-			// Aca podria ser dejarlo vacio
-			//fmt.Println(val)
+			// We extract the value from the prompt if there is no value
 			val := getString(args, name)
 
 			var prompt string
@@ -116,41 +104,33 @@ func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage
 
 			val = extractFieldFromText(prompt, name, val)
 
-			//fmt.Println(val)
 			fields = append(fields, domain.FieldInfo{
 				Name:     name,
 				Value:    val,
 				Required: requiredMap[name],
 			})
 		}
-		fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-		fmt.Println(fields)
-		fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
-		fmt.Println("**************************************3")
+		// fmt.Println(toolCall.Name)
 
-		fmt.Println("-----------------------------------------------g")
-		fmt.Println(toolCall.Name)
+		message := getString(args, "message")
+		delete(args, "message")
+
 		resp := &domain.ToolSelectionResult{
 			Operation:    toolCall.Name,
 			Action:       action,
 			Arguments:    args,
+			Message:      message,
 			Required:     requiredRaw,
 			NeedsConfirm: true,
 		}
-		// Reconstruir Arguments si quieres mantenerlo
-		resp.Arguments = make(map[string]any)
-		for _, f := range fields {
-			resp.Arguments[f.Name] = f.Value
-		}
-		fmt.Printf("Resp: %+v", resp)
 		return resp, nil
 	}
 
 	return nil, nil
 }
 
-// Extrae valor del prompt si no está en args
+// Extract value from prompt if not in args
 func extractFieldFromText(prompt, keyword, current string) string {
 	if current != "" {
 		return current
@@ -202,11 +182,15 @@ func buildConversation(messages []*domain.ChatMessage) []responses.ResponseInput
 		},
 	}
 
+	// fmt.Println("------------------------- Build Conversation")
 	for _, m := range messages {
 
 		if m.Content == "" {
 			continue
 		}
+
+		// fmt.Printf("Role: %s\n", m.Role)
+		//fmt.Printf("Content: %s\n", m.Content)
 
 		items = append(items,
 			responses.ResponseInputItemUnionParam{
@@ -223,6 +207,7 @@ func buildConversation(messages []*domain.ChatMessage) []responses.ResponseInput
 			},
 		)
 	}
+	// fmt.Println("------------------------- Build Conversation end")
 
 	return items
 }

@@ -41,8 +41,7 @@ func (r *Renderer) Render(w http.ResponseWriter, name string, data any) {
 
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
-		fmt.Println("TEMPLATE ERROR:", err) // Para debug
-
+		// fmt.Println("TEMPLATE ERROR:", err) // for debug
 		w.WriteHeader(http.StatusInternalServerError)
 		r.Templates.ExecuteTemplate(w, "error", templates.ErrorData{
 			ErrorMsg: "Internal Server Error",

@@ -4,23 +4,29 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/repository/memory"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
 func (s *Service) SelectTool(ctx context.Context, prompt string) error {
-	fmt.Println("############################################")
 	memory.Messages = append(memory.Messages, &domain.ChatMessage{
 		Role:    "user",
 		Content: prompt,
 	})
 	messages := memory.Messages
-	result, err := s.ToolCallingAdt.SelectTool(ctx, messages)
+
+	// We have attached the table to provide context to the llm
+	chatMessageWithTable := BuildLLMMessages(memory.Messages)
+
+	result, err := s.ToolCallingAdt.SelectTool(ctx, chatMessageWithTable, s.SystemPrompt)
 	if err != nil {
-		return err
+		return sharedD.ManageError(err, "")
 	}
-	fmt.Println("############################################2")
+
+	//fmt.Printf("Result from service: %+v\n", result)
 
 	if result == nil {
 		memory.Messages = append(messages, &domain.ChatMessage{
@@ -29,11 +35,15 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 		})
 		return nil
 	}
-	fmt.Println("############################################3")
+
+	tool, ok := s.ToolCallingItz.GetTool(result.Operation)
+	if !ok {
+		return errors.New("tool not found")
+	}
+
+	// fmt.Printf("Arguments: %v\n", result.Arguments)
 
 	if result.Action == "prepare" {
-		fmt.Println("############################################4")
-
 		table := ArgumentsToTable(
 			result.Operation,
 			result.Arguments,
@@ -41,8 +51,8 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 		)
 
 		msgContent := fmt.Sprintf(
-			"Preparing %s operation. Please review the fields.",
-			result.Operation,
+			"Preparing %s operation. %s",
+			result.Operation, result.Message,
 		)
 
 		memory.Messages = append(messages, &domain.ChatMessage{
@@ -53,13 +63,6 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 
 		return nil
 	}
-	fmt.Println("############################################5")
-
-	tool, ok := s.ToolCallingItz.GetTool(result.Operation)
-	if !ok {
-		return errors.New("tool not found")
-	}
-	fmt.Println("############################################6")
 
 	data, err := tool.Handler(ctx, result.Arguments)
 	if err != nil {
@@ -67,11 +70,10 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 	}
 
 	table := MapToTable(data)
-	fmt.Println("############################################7")
 
 	msgContent := fmt.Sprintf(
-		"Tool %s executed successfully. The following table shows the result.",
-		result.Operation,
+		"Tool %s executed successfully. %s ",
+		result.Operation, result.Message,
 	)
 
 	memory.Messages = append(messages, &domain.ChatMessage{
@@ -94,6 +96,40 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 	}
 
 	return nil
+}
+
+func TableToString(table *domain.TableView) string {
+	if table == nil {
+		return ""
+	}
+
+	var sb strings.Builder
+
+	// Header row
+	sb.WriteString("| ")
+	for _, col := range table.Columns {
+		sb.WriteString(col + " | ")
+	}
+	sb.WriteString("\n")
+
+	// Separator
+	sb.WriteString("| ")
+	for range table.Columns {
+		sb.WriteString("--- | ")
+	}
+	sb.WriteString("\n")
+
+	// Rows
+	for _, row := range table.Rows {
+		sb.WriteString("| ")
+		for _, col := range table.Columns {
+			val := fmt.Sprintf("%v", row[col])
+			sb.WriteString(val + " | ")
+		}
+		sb.WriteString("\n")
+	}
+
+	return sb.String()
 }
 
 func MapToTable(data map[string]any) *domain.TableView {
@@ -134,4 +170,23 @@ func ArgumentsToTable(
 		Columns: []string{"field", "value", "required"},
 		Rows:    rows,
 	}
+}
+
+func BuildLLMMessages(messages []*domain.ChatMessage) []*domain.ChatMessage {
+	var result []*domain.ChatMessage
+
+	for _, m := range messages {
+		content := m.Content
+
+		// Here you add the table ONLY for the LLM
+		if m.Table != nil {
+			content += "\n\nTable:\n" + TableToString(m.Table)
+		}
+		result = append(result, &domain.ChatMessage{
+			Role:    m.Role,
+			Content: content,
+		})
+	}
+
+	return result
 }

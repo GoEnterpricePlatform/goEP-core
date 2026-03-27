@@ -47,7 +47,7 @@
       .page-header-inner {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 16px 20px; 
+        padding: 16px 20px;
       }
 
       .page-header-inner h1 {
@@ -73,6 +73,28 @@
           margin: 20px auto;
         }
       }
+
+      .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .assistant-btn {
+        text-decoration: none;
+        background: #111827;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .assistant-btn:hover {
+        background: #374151;
+      }
     </style>
   </head>
 
@@ -85,8 +107,11 @@
       <main>
         <!-- PAGE HEADER -->
         <div class="page-header">
-          <div class="page-header-inner">
+          <div class="page-header-inner header-flex">
             <h1>{{template "title"}}</h1>
+            <a href="/v1/admin/assistant" class="assistant-btn">
+              ✨ Assistant
+            </a>
           </div>
         </div>
 

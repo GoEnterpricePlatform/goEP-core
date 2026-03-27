@@ -76,7 +76,7 @@
 <div class="chat-box">
   {{range .Messages}} {{if eq .Role "user"}}
 
-  <div class="msg-user"><strong>Tú:</strong> {{.Content}}</div>
+  <div class="msg-user"><strong>You:</strong> {{.Content}}</div>
 
   {{else}}
 
@@ -112,9 +112,15 @@
       </table>
     </div>
 
+<<<<<<< HEAD
     <div class="hint">
       Escribe <b>crear</b> para ejecutar o escribe nuevos valores en el prompt.
     </div>
+=======
+    <!-- <div class="hint">
+      Type <b>create</b> to execute or type new values ​​at the prompt.
+    </div> -->
+>>>>>>> 2905323 (feat #40 (ai): implement OpenAI assistant tool calling with rules and UI)
 
     {{end}}
   </div>

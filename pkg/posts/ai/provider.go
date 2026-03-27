@@ -3,7 +3,6 @@ package ai
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/core"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
@@ -31,6 +30,11 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 					"desc": map[string]interface{}{
 						"type":        "string",
 						"description": "Description of the post",
+					},
+					"message": map[string]interface{}{
+						"type":        "string",
+						"description": "Message to show to the user",
+						"message":     "",
 					},
 				},
 				"required": []string{"title"},
@@ -79,6 +83,48 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 			},
 		},
 		{
+			Name:        "get_post_by_id",
+			Description: "Retrieve a single post by its ID.",
+			Category:    contract.ToolCategoryRead,
+			Schemma: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"id": map[string]interface{}{
+						"type":        "string",
+						"description": "ID of the post to retrieve.",
+					},
+					"message": map[string]interface{}{
+						"type":        "string",
+						"description": "Message to show to the user",
+						"message":     "",
+					},
+				},
+				"required": []string{"id"},
+			},
+			Handler: func(ctx context.Context, args map[string]any) (map[string]any, error) {
+				id, ok := args["id"].(string)
+				if !ok || id == "" {
+					return nil, errors.New("missing post id")
+				}
+
+				post, err := p.PostSrv.Get(ctx, id)
+				if err != nil {
+					return nil, err
+				}
+
+				return map[string]any{
+					"columns": []string{"id", "title", "desc"},
+					"rows": []map[string]any{
+						{
+							"id":    post.ID,
+							"title": post.Title,
+							"desc":  deref(post.Desc),
+						},
+					},
+				}, nil
+			},
+		},
+		{
 			Name:        "update_post",
 			Description: "Update an post in the system.",
 			Category:    contract.ToolCategoryWrite,
@@ -101,6 +147,11 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 					"desc": map[string]interface{}{
 						"type":        "string",
 						"description": "Updated description of the post.",
+					},
+					"message": map[string]interface{}{
+						"type":        "string",
+						"description": "Message to show to the user",
+						"message":     "",
 					},
 				},
 				"required": []string{"id"},
@@ -146,7 +197,7 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 						{
 							"id":    updated.ID,
 							"title": updated.Title,
-							"desc":  updated.Desc,
+							"desc":  deref(updated.Desc),
 						},
 					},
 				}, nil
@@ -167,10 +218,9 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 				"required": []string{"id"},
 			},
 			Handler: func(ctx context.Context, args map[string]any) (map[string]any, error) {
-				id := args["id"].(string)
-
-				if id == "" {
-					return nil, errors.New("missing post id from handler")
+				id, ok := args["id"].(string)
+				if !ok || id == "" {
+					return nil, errors.New("missing post id")
 				}
 
 				err := p.PostSrv.Delete(ctx, id)
@@ -197,14 +247,11 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 				"properties": map[string]interface{}{},
 			},
 			Handler: func(ctx context.Context, args map[string]any) (map[string]any, error) {
-				fmt.Println("############################################7")
-
 				posts, err := p.PostSrv.GetAll(ctx)
 				if err != nil {
 					return nil, err
 				}
 				rows := []map[string]any{}
-				fmt.Println("############################################8")
 
 				for _, p := range posts {
 					rows = append(rows, map[string]any{
@@ -213,7 +260,64 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 						"desc":  p.Desc,
 					})
 				}
-				fmt.Println("############################################9")
+				return map[string]any{
+					"columns": []string{"id", "title", "desc"},
+					"rows":    rows,
+				}, nil
+			},
+		},
+		{
+			Name:        "search_posts",
+			Description: "Search posts by title or description.",
+			Category:    contract.ToolCategoryWrite,
+			Schemma: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"query": map[string]interface{}{
+						"type":        "string",
+						"description": "Keyword to search in post title or description",
+					},
+					"limit": map[string]interface{}{
+						"type":        "integer",
+						"description": "Maximum number of results",
+					},
+					"message": map[string]interface{}{
+						"type":        "string",
+						"description": "Message to show to the user",
+						"message":     "",
+					},
+				},
+				"required": []string{"query"},
+			},
+			Handler: func(ctx context.Context, args map[string]any) (map[string]any, error) {
+				query := args["query"].(string)
+
+				limit := 5
+				if v, ok := args["limit"].(int); ok {
+					limit = v
+				}
+
+				if query == "" {
+					return nil, errors.New("missing query parameter")
+				}
+
+				// fmt.Println(limit)
+				//fmt.Println(query)
+
+				posts, err := p.PostSrv.Search(context.Background(), query, limit)
+				if err != nil {
+					return nil, err
+				}
+
+				rows := []map[string]any{}
+
+				for _, post := range posts {
+					rows = append(rows, map[string]any{
+						"id":    post.ID,
+						"title": post.Title,
+						"desc":  deref(post.Desc),
+					})
+				}
 
 				return map[string]any{
 					"columns": []string{"id", "title", "desc"},
@@ -221,5 +325,93 @@ func (p *Provider) GetAITools() []contract.ToolDefinition {
 				}, nil
 			},
 		},
+		{
+			Name:        "ask_user",
+			Description: "Ask the user for missing information.",
+			Schemma: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"message": map[string]interface{}{
+						"type":        "string",
+						"description": "Message to show to the user",
+						"example":     "Para continuar necesito identificar el post.",
+						"message":     "",
+					},
+					"fields": map[string]interface{}{
+						"type":        "array",
+						"description": "Fields the user can provide",
+						"items": map[string]interface{}{
+							"type": "object",
+							"properties": map[string]interface{}{
+								"name": map[string]interface{}{
+									"type":    "string",
+									"example": "12345",
+								},
+								"description": map[string]interface{}{
+									"type":    "string",
+									"example": "Identificador único del post",
+								},
+								"example": map[string]interface{}{
+									"type":    "string",
+									"example": "12345",
+								},
+							},
+							"required": []string{"name", "description"},
+						},
+						"example": []map[string]interface{}{
+							{
+								"name":        "id",
+								"description": "Identificador único del post",
+								"example":     "12345",
+							},
+							{
+								"name":        "title",
+								"description": "Título del post",
+								"example":     "Create http server",
+							},
+							{
+								"name":        "description",
+								"description": "Palabra clave en la descripción",
+								"example":     "servidor HTTP",
+							},
+						},
+					},
+				},
+				"required": []string{"message", "fields"},
+			},
+			Handler: func(ctx context.Context, args map[string]any) (map[string]any, error) {
+				msg, _ := args["message"].(string)
+				fieldsRaw, _ := args["fields"].([]any)
+
+				rows := []map[string]any{}
+
+				for _, f := range fieldsRaw {
+					field := f.(map[string]any)
+
+					rows = append(rows, map[string]any{
+						"field":       field["name"],
+						"description": field["description"],
+						"example":     field["example"],
+					})
+				}
+
+				return map[string]any{
+					"message": msg,
+					"columns": []string{"field", "description", "example"},
+					"rows":    rows,
+				}, nil
+			},
+		},
 	}
+}
+
+// deref converts a string pointer (*string) into a regular string.
+// If the pointer is nil, it returns an empty string ("") to avoid panics.
+// Useful when working with optional fields (pointers) and you want to
+// expose or show the actual value instead of the memory address.
+func deref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

@@ -15,7 +15,7 @@ func main() {
 		log.Fatalf("Failed to load .env file: %v", err)
 	}
 
-	hsp := cmp.Or(os.Getenv("HTTP_SERVER_PORT"), "8001")
+	hsp := cmp.Or(os.Getenv("HTTP_SERVER_PORT"), "8000")
 
 	httpSrv := server.NewHttpServer(hsp)
 	httpSrv.Start()

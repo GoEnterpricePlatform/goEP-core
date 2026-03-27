@@ -8,9 +8,9 @@ import (
 
 type ToolCallingSrv interface {
 	SelectTool(ctx context.Context, prompt string) error
-	GetAll(ctx context.Context) ([]*domain.ChatMessage,error)
+	GetAll(ctx context.Context) ([]*domain.ChatMessage, error)
 }
 
 type ToolCallingAdt interface {
-	SelectTool(ctx context.Context, messages []*domain.ChatMessage) (*domain.ToolSelectionResult, error)
+	SelectTool(ctx context.Context, messages []*domain.ChatMessage, systemPrompt string) (*domain.ToolSelectionResult, error)
 }

@@ -19,6 +19,12 @@ type ToolDefinition struct {
 	Handler     ToolHandler
 }
 
+type ResourceField struct {
+	Name        string
+	Description string
+	Type        string
+}
+
 type ToolProvider interface {
 	GetAITools() []ToolDefinition
 }

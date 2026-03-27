@@ -10,6 +10,7 @@ var _ tcP.ToolCallingSrv = &Service{}
 type Service struct {
 	ToolCallingAdt tcP.ToolCallingAdt
 	ToolCallingItz *initializer.Initializer
+	SystemPrompt   string
 }
 
 func NewToolCallingSrv(toolCallingAdt tcP.ToolCallingAdt, toolCallingItz *initializer.Initializer) *Service {
