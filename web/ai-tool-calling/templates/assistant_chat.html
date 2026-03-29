@@ -1,0 +1,125 @@
+{{define "content"}}
+<style>
+  .chat-box {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .msg-user {
+    align-self: flex-end;
+    background: #111827;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 80%;
+    font-size: 14px;
+  }
+
+  .msg-ai {
+    align-self: flex-start;
+    background: #f3f4f6;
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  .msg-ai strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #374151;
+  }
+
+  .table-box {
+    margin-top: 10px;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+  }
+
+  .ai-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .ai-table thead {
+    background: #f3f4f6;
+    text-align: left;
+  }
+
+  .ai-table th,
+  .ai-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .ai-table th {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .ai-table tbody tr:hover {
+    background: #f9fafb;
+  }
+
+  /* .hint {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #6b7280;
+  } */
+</style>
+
+<div class="chat-box">
+  {{range .Messages}} {{if eq .Role "user"}}
+
+  <div class="msg-user"><strong>You:</strong> {{.Content}}</div>
+
+  {{else}}
+
+  <div class="msg-ai">
+    {{if .Content}}
+    <strong>Assistant:</strong> {{.Content}} {{end}} {{if .Table}}
+
+    <div class="table-box">
+      <table class="ai-table">
+        {{$cols := .Table.Columns}}
+
+        <thead>
+          <tr>
+            {{range $cols}}
+            <th>{{.}}</th>
+            {{end}}
+          </tr>
+        </thead>
+
+        <tbody>
+          {{range .Table.Rows}} {{$row := .}}
+
+          <tr>
+            {{range $cols}}
+
+            <td>{{index $row .}}</td>
+
+            {{end}}
+          </tr>
+
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <div class="hint">
+      Type <b>create</b> to execute or type new values ​​at the prompt.
+    </div> -->
+
+    {{end}}
+  </div>
+
+  {{end}} {{end}}
+</div>
+
+{{end}}

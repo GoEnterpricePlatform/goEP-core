@@ -18,8 +18,8 @@ func NewHttpServer(port string) *HttpServer {
 	server := &http.Server{
 		Addr:         ":" + port,
 		Handler:      apiV1,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 
 	serv := &HttpServer{

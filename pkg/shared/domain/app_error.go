@@ -133,6 +133,13 @@ func ManageError(err error, msg string) error {
 			Msg:  "OTP code has expired",
 		}
 
+	case errors.Is(err, ErrInvalidApiKey):
+		log.Println("invalid api key")
+		appErr = AppError{
+			Code: ErrCodeUnauthorized,
+			Msg:  "Invalid api key",
+		}
+
 	default:
 		log.Println(err.Error())
 		appErr = AppError{

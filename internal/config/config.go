@@ -31,6 +31,9 @@ type Config struct {
 	GmailHost     string
 	GmailAddr     string
 
+	// OpenAI
+	OpenAiApiKey string
+
 	// Jwt
 	JWTAccessSecret           string
 	JWTRefreshSecret          string
@@ -84,6 +87,8 @@ func Load(appStack *AppStack) *Config {
 	if err != nil {
 		log.Fatalf("Invalid JWT_REFRESH_EXP_IN_REMEMBER format: %v", err)
 	}
+
+	openaiApiKey := cmp.Or(os.Getenv("OPENAI_API_KEY"), "")
 
 	// Cookies
 	// JWT_ACCESS_COOKIE_EXP_IN defines how long the access token cookie
@@ -145,6 +150,7 @@ func Load(appStack *AppStack) *Config {
 		GmailFrom:                 gmailFrom,
 		GmailHost:                 gmailHost,
 		GmailAddr:                 gmailAddr,
+		OpenAiApiKey:              openaiApiKey,
 		JWTAccessSecret:           mustGetEnv("JWT_ACCESS_TOKEN"),
 		JWTRefreshSecret:          mustGetEnv("JWT_REFRESH_TOKEN"),
 		JWTIssuer:                 mustGetEnv("JWT_ISS"),

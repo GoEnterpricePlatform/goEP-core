@@ -32,8 +32,8 @@ var (
 )
 
 var (
-	ErrAccountInactive = errors.New("account inactive")
-	ErrPassDoNotMatch  = errors.New("passwords do not match")
+	ErrAccountInactive    = errors.New("account inactive")
+	ErrPassDoNotMatch     = errors.New("passwords do not match")
 	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
@@ -41,4 +41,8 @@ var (
 	ErrInvalidOtpCode       = errors.New("invalid otp code")
 	ErrOtpPurposeNotAllowed = errors.New("otp purpose not allowed")
 	ErrOtpExpired           = errors.New("otp expired")
+)
+
+var (
+	ErrInvalidApiKey = errors.New("invalid api key")
 )
