@@ -10,6 +10,9 @@ Designed with clean architecture principles, it enables teams to extend, fork, a
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | <img width="400" src="https://github.com/user-attachments/assets/1d9986cf-728d-4583-a7c8-b0dfb5509a8e" /> | <img src="https://github.com/user-attachments/assets/69602576-efce-4635-ab1e-ec2398c76b12" width="400"> |
 | <img src="https://github.com/user-attachments/assets/0e5f99fd-f523-4e85-83d1-e365d1d5e068" width="400">   | <img src="https://github.com/user-attachments/assets/920fa934-78c2-401f-9ff5-8d358dde96db" width="400"> |
+| <img width="2838" height="1466" alt="image" src="https://github.com/user-attachments/assets/8b1f6309-6b3d-48af-bdce-60308aeabf30" /> | <img width="2834" height="1468" alt="image" src="https://github.com/user-attachments/assets/83004cdf-fd5b-492f-9f33-9c1e100c26e4" />
+
+
 
 ## Architecture
 
