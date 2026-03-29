@@ -20,12 +20,12 @@ func (a *Adapter) SelectTool(ctx context.Context, messages []*domain.ChatMessage
 	resp, err := a.Client.Responses.New(ctx, responses.ResponseNewParams{
 		Model: openai.ChatModelGPT5Mini,
 		Input: responses.ResponseNewParamsInputUnion{
-			OfInputItemList: buildConversation(messages),
+			OfInputItemList: buildConversation(messages, systemPrompt),
 		},
 		Tools: a.tools,
 		ToolChoice: responses.ResponseNewParamsToolChoiceUnion{
 			OfToolChoiceMode: param.Opt[responses.ToolChoiceOptions]{
-				Value: responses.ToolChoiceOptionsAuto,
+				Value: responses.ToolChoiceOptionsRequired,
 			},
 		},
 	})
@@ -151,7 +151,7 @@ func getString(m map[string]any, key string) string {
 	return fmt.Sprintf("%v", v)
 }
 
-func buildConversation(messages []*domain.ChatMessage) []responses.ResponseInputItemUnionParam {
+func buildConversation(messages []*domain.ChatMessage, systemPrompt string) []responses.ResponseInputItemUnionParam {
 
 	items := []responses.ResponseInputItemUnionParam{
 		{
@@ -160,21 +160,7 @@ func buildConversation(messages []*domain.ChatMessage) []responses.ResponseInput
 				Content: []responses.ResponseInputContentUnionParam{
 					{
 						OfInputText: &responses.ResponseInputTextParam{
-							Text: `
-							You are an admin assistant that manages system resources using tools.
-
-							Rules:
-								- If the user wants to delete or update a resource but no ID is provided, call the tool that lists the resources first.
-								- Do not repeat the same listing tool if it was already executed in the previous step unless the user explicitly asks again.
-								- Use the conversation context to decide the next step.
-
-							Action rules: 
-								- When collecting or editing fields, set action="prepare".
-								- When the user confirms the operation (for example: yes, create it, go ahead, execute), set action="execute".
-								- Do not execute operations unless the user clearly confirms.
-								
-							Never repeat a previous tool unless the user explicitly asks for it.
-							`,
+							Text: systemPrompt,
 						},
 					},
 				},

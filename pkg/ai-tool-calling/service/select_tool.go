@@ -82,19 +82,6 @@ func (s *Service) SelectTool(ctx context.Context, prompt string) error {
 		Table:   table,
 	})
 
-	for _, msg := range messages {
-		fmt.Printf("Role: %s\n", msg.Role)
-		fmt.Printf("Content: %s\n", msg.Content)
-
-		if msg.Table != nil {
-			fmt.Printf("Table: %+v\n", *msg.Table)
-		} else {
-			fmt.Println("Table: nil")
-		}
-
-		fmt.Println("----")
-	}
-
 	return nil
 }
 

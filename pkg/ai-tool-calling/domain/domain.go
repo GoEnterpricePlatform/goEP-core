@@ -11,9 +11,9 @@ type ToolSelectionResult struct {
 }
 
 type FieldInfo struct {
-	Name     string `json:"name"`
-	Value    string `json:"value"`
-	Required bool   `json:"required"`
+	Name     string
+	Value    string
+	Required bool
 }
 
 type ChatMessage struct {

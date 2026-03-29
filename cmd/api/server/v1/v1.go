@@ -10,8 +10,9 @@ import (
 	gmailSmtpClient "github.com/GoEnterpricePlatform/goEP-core/internal/gmail-smtp"
 	minioClient "github.com/GoEnterpricePlatform/goEP-core/internal/minio"
 	mongoClient "github.com/GoEnterpricePlatform/goEP-core/internal/mongo"
+	openaiClient "github.com/GoEnterpricePlatform/goEP-core/internal/open-ai"
 	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/resend"
-	openaiClient "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/adapter/open-ai"
+	openaiAdt "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/adapter/open-ai"
 	aiTCItz "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/initializer"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/service"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/service"
@@ -40,8 +41,6 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/posts/handler"
 	toolCallingRenderer "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/renderer"
 	publicHandler "github.com/GoEnterpricePlatform/goEP-core/web/public/api/handler"
-	"github.com/openai/openai-go/v3"
-	"github.com/openai/openai-go/v3/option"
 
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
 
@@ -103,10 +102,8 @@ func New() http.Handler {
 		mailerAdt = gmailsmtp.NewGmailSmtpAdt(gmailSmtp, appEnvs.GmailAddr, appEnvs.GmailFrom)
 	}
 
-	client := openai.NewClient(
-		option.WithAPIKey("OPENAI_API_KEY"), // defaults to os.LookupEnv("OPENAI_API_KEY")
-	)
-	toolCallingAdapter := openaiClient.NewToolCallingAdt(client)
+	openaiCli := openaiClient.NewOpenAIClient(appEnvs.OpenAiApiKey)
+	toolCallingAdapter := openaiAdt.NewToolCallingAdt(openaiCli)
 
 	// Collections
 	userColl := mongoDB.Collection("users")
@@ -152,6 +149,12 @@ func New() http.Handler {
 	// AI - initializer
 	aiTCInitializer := aiTCItz.NewAIItz()
 
+	// AI - system-prompt
+	systemPrompt, err := aiTCInitializer.GetSystemPrompt()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// File Storage
 	userFileStg := userFileStorage.NewUserFileStg(minioC.Client, appEnvs.MinioBucketName, 0)
 
@@ -164,7 +167,7 @@ func New() http.Handler {
 	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 	postSrv := postService.NewPostSrv(postRepo)
-	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer)
+	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer, systemPrompt)
 
 	// service - admin
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)

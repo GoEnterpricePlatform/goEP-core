@@ -13,9 +13,10 @@ type Service struct {
 	SystemPrompt   string
 }
 
-func NewToolCallingSrv(toolCallingAdt tcP.ToolCallingAdt, toolCallingItz *initializer.Initializer) *Service {
+func NewToolCallingSrv(toolCallingAdt tcP.ToolCallingAdt, toolCallingItz *initializer.Initializer, systemPrompt string) *Service {
 	return &Service{
 		ToolCallingAdt: toolCallingAdt,
 		ToolCallingItz: toolCallingItz,
+		SystemPrompt:   systemPrompt,
 	}
 }
