@@ -73,7 +73,7 @@ func New() http.Handler {
 
 	// Api version
 	v1 := http.NewServeMux()
-	mux.Handle("/v1/", http.StripPrefix("/v1", v1))
+	mux.Handle("/api/v1/", http.StripPrefix("/api/v1", v1))
 
 	// MongoDB
 	mongoConn := mongoClient.New(appEnvs.MongoDBUri)
@@ -202,23 +202,27 @@ func New() http.Handler {
 	adminR := adminRenderer.NewAdminRenderer()
 	mdwSrvTmpl := middlewareServiceTmpl.NewMdwSrvTmpl(tokenSrv, authSrv, cookieSrv)
 
+	// no lleva prefix api
+	templateV1 := http.NewServeMux()
+	mux.Handle("/v1/", http.StripPrefix("/v1", templateV1))
+
 	// Templates - admin
 	adminH := adminHandler.NewAdminHandler(adminSrv, cookieSrv, appEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)
-	adminH.RegisterRoutes(mux, v1)
+	adminH.RegisterRoutes(mux, templateV1)
 
 	// Templates - chat tool calling
 	toolCalllingR := toolCallingRenderer.NewToolCallingRenderer()
 	toolCallingH := chatToolCallingHandler.NewChatToolCallingHandler(toolCallingSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl, postSrv)
-	toolCallingH.RegisterRoutes(mux, v1)
+	toolCallingH.RegisterRoutes(mux, templateV1)
 
 	// tool Calling posts
 
 	toolCallingPostsH := handler.NewPostWebAiHandler(postSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl)
-	toolCallingPostsH.RegisterRoutes(v1)
+	toolCallingPostsH.RegisterRoutes(templateV1)
 
 	// Templates - post
 	postH := postHandlerWeb.NewPostWebHandler(postSrv, adminH.ApiBaseUrl, adminR)
-	postH.RegisterRoutes(v1)
+	postH.RegisterRoutes(templateV1)
 
 	// Templates - public
 	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl, postSrv)
