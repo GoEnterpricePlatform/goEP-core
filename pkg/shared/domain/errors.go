@@ -46,3 +46,9 @@ var (
 var (
 	ErrInvalidApiKey = errors.New("invalid api key")
 )
+
+// Billing
+var (
+	ErrInvalidStripeCredentials       = errors.New("invalid stripe credentials")
+	ErrInvalidLemonSqueezyCredentials = errors.New("invalid lemonsqueezy credentials")
+)

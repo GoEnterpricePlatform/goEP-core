@@ -14,7 +14,10 @@ import (
 	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/resend"
 	openaiAdt "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/adapter/open-ai"
 	aiTCItz "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/initializer"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/service"
+	toolCallingService "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/handler"
+	pProviderRepo "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/repository/mongo"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/service"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/service"
 	authHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/handler"
 	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
@@ -38,11 +41,13 @@ import (
 	postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/posts/handler"
 	adminRenderer "github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
 	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/handler"
-	"github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/posts/handler"
+	toolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/posts/handler"
 	toolCallingRenderer "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/renderer"
 	publicHandler "github.com/GoEnterpricePlatform/goEP-core/web/public/api/handler"
 
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
+	encryptor "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/encryptor"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/keystore"
 
 	sessionRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/repository/mongo"
 	sessionService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/service"
@@ -113,6 +118,9 @@ func New() http.Handler {
 	permissionColl := mongoDB.Collection("permissions")
 	postColl := mongoDB.Collection("posts")
 
+	// collections - billing
+	pProviderColl := mongoDB.Collection("payment-providers")
+
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
 	sessionRepo := sessionRepository.NewSessionRepo(mongoConn.DB, sessionColl)
@@ -121,12 +129,21 @@ func New() http.Handler {
 	permissionRepo := permissionRepository.NewPermissionRepo(mongoConn.DB, permissionColl)
 	postRepo := postRepository.NewPostRepo(mongoConn.DB, postColl)
 
+	// Repositories - billing
+	pProviderRepo := pProviderRepo.NewPaymentProviderRepo(mongoConn.DB, pProviderColl)
+
 	// Indexes
 	err = userRepo.CreateIndexes()
 	if err != nil {
 		log.Fatal(err)
 	}
 	err = postRepo.CreateIndexes()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Indexes - billing
+	err = pProviderRepo.CreateIndexes()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -167,7 +184,18 @@ func New() http.Handler {
 	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg)
 	postSrv := postService.NewPostSrv(postRepo)
-	toolCallingSrv := service.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer, systemPrompt)
+	toolCallingSrv := toolCallingService.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer, systemPrompt)
+
+	// Services - billing
+	keyStore := keystore.NewFileKeyStore(appEnvs.AppDataPath)
+
+	key, err := keyStore.LoadOrCreateKey()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	encryptorSrv := encryptor.NewAESGCM(key)
+	pProviderSrv := service.NewPaymentProviderSrv(pProviderRepo, encryptorSrv)
 
 	// service - admin
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
@@ -177,6 +205,9 @@ func New() http.Handler {
 	authHandler.NewAuthHandler(v1, authSrv, tokenSrv, appEnvs.AppEnv)
 	userHandler.NewUserHandler(v1, userSrv)
 	postHandler.NewPostApiHandler(v1, postSrv)
+
+	// Handler
+	handler.NewPaymentProviderApiHandler(v1, pProviderSrv)
 
 	// AI - Providers
 	postAIprovider := postAI.NewPostAiProvider(postSrv)
@@ -217,7 +248,7 @@ func New() http.Handler {
 
 	// tool Calling posts
 
-	toolCallingPostsH := handler.NewPostWebAiHandler(postSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl)
+	toolCallingPostsH := toolCallingHandler.NewPostWebAiHandler(postSrv, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl)
 	toolCallingPostsH.RegisterRoutes(templateV1)
 
 	// Templates - post

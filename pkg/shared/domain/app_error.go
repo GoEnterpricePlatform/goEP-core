@@ -139,6 +139,19 @@ func ManageError(err error, msg string) error {
 			Code: ErrCodeUnauthorized,
 			Msg:  "Invalid api key",
 		}
+	case errors.Is(err, ErrInvalidStripeCredentials):
+		log.Println("Invalid stripe credentials")
+		appErr = AppError{
+			Code: ErrCodeInvalidParams,
+			Msg:  "Invalid stripe credentials",
+		}
+
+	case errors.Is(err, ErrInvalidLemonSqueezyCredentials):
+		log.Println("Invalid lemonSqueezy credentials")
+		appErr = AppError{
+			Code: ErrCodeInvalidParams,
+			Msg:  "Invalid lemonSqueezy credentials",
+		}
 
 	default:
 		log.Println(err.Error())
