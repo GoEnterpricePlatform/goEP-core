@@ -28,5 +28,12 @@ go.work.sum
 # Air live reload
 tmp/
 
-# docker data services, minio, mongo and others
-data/
+# docker data services, minio, mongo and others, 
+# It will use the dynamic folder appname_data
+# data/ 
+
+# Application runtime data
+*_data/
+
+# Keys
+*.key

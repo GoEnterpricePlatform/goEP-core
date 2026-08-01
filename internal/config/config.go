@@ -48,6 +48,7 @@ type Config struct {
 	AppEnv         string
 	AllowedOrigins []string
 	AppName        string // send email resend, gmail
+	AppDataPath    string
 
 	// Templates
 	ApiBaseUrl string
@@ -110,6 +111,8 @@ func Load(appStack *AppStack) *Config {
 	// "appname" appears in the email message
 	appName := mustGetEnv("APP_NAME")
 
+	appDataPath := appName + "_data"
+
 	// mailer
 	// Resend
 	var resendApiKey string
@@ -145,6 +148,7 @@ func Load(appStack *AppStack) *Config {
 		ResendApiKey:              resendApiKey,
 		ResendEmailFrom:           resendEmailFrom,
 		AppName:                   appName,
+		AppDataPath:               appDataPath,
 		GmailUsername:             gmailUsername,
 		GmailPass:                 gmailPass,
 		GmailFrom:                 gmailFrom,
