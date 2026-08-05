@@ -15,9 +15,13 @@ import (
 	openaiAdt "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/adapter/open-ai"
 	aiTCItz "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/initializer"
 	toolCallingService "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/service"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/handler"
+	paymentProviderHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/handler"
 	pProviderRepo "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/repository/mongo"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/service"
+	paymentProviderService "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/variations/handler"
+	varOptionRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/variations/repository/var-option/mongo"
+	variationRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/variations/repository/variation/mongo"
+	variationService "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/variations/service"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/service"
 	authHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/handler"
 	authService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/service"
@@ -120,6 +124,8 @@ func New() http.Handler {
 
 	// collections - billing
 	pProviderColl := mongoDB.Collection("payment-providers")
+	variationsColl := mongoDB.Collection("variations")
+	varOptionColl := mongoDB.Collection("var_options")
 
 	// Repositories
 	userRepo := userRepository.NewUserRepo(mongoConn.DB, userColl)
@@ -131,6 +137,8 @@ func New() http.Handler {
 
 	// Repositories - billing
 	pProviderRepo := pProviderRepo.NewPaymentProviderRepo(mongoConn.DB, pProviderColl)
+	variationRepo := variationRepository.NewVariationRepo(mongoConn.DB, variationsColl)
+	varOptionRepo := varOptionRepository.NewVarOptionRepo(mongoConn.DB, varOptionColl)
 
 	// Indexes
 	err = userRepo.CreateIndexes()
@@ -195,7 +203,8 @@ func New() http.Handler {
 	}
 
 	encryptorSrv := encryptor.NewAESGCM(key)
-	pProviderSrv := service.NewPaymentProviderSrv(pProviderRepo, encryptorSrv)
+	pProviderSrv := paymentProviderService.NewPaymentProviderSrv(pProviderRepo, encryptorSrv)
+	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
 
 	// service - admin
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
@@ -206,8 +215,9 @@ func New() http.Handler {
 	userHandler.NewUserHandler(v1, userSrv)
 	postHandler.NewPostApiHandler(v1, postSrv)
 
-	// Handler
-	handler.NewPaymentProviderApiHandler(v1, pProviderSrv)
+	// billing Handler
+	paymentProviderHandler.NewPaymentProviderApiHandler(v1, pProviderSrv)
+	handler.NewVariationHandler(v1, variationSrv)
 
 	// AI - Providers
 	postAIprovider := postAI.NewPostAiProvider(postSrv)
