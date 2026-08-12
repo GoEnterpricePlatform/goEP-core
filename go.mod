@@ -1,8 +1,6 @@
 module github.com/GoEnterpricePlatform/goEP-core
 
-go 1.23.0
-
-toolchain go1.24.6
+go 1.25.5
 
 require (
 	github.com/go-playground/validator/v10 v10.27.0
@@ -10,6 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/minio/minio-go/v7 v7.0.95
+	github.com/openai/openai-go/v3 v3.24.0
 	github.com/resend/resend-go/v2 v2.27.0
 	github.com/stretchr/testify v1.10.0
 	go.mongodb.org/mongo-driver/v2 v2.3.0
@@ -33,7 +32,6 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/minio/crc64nvme v1.0.2 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/openai/openai-go/v3 v3.24.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
