@@ -9,6 +9,7 @@ import (
 	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
 	postRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/repository/mongo"
 	postService "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -20,10 +21,18 @@ type ModuleConfig struct {
 	APIv1      *http.ServeMux
 
 	DB *mongo.Database
+
+	Deps ModuleDeps
+}
+
+// ModuleDeps groups the external dependencies (from other modules/services)
+// that this module needs to function.
+type ModuleDeps struct {
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
 type Module struct {
-	PostService   postP.PostSrv
+	PostService postP.PostSrv
 }
 
 func NewPostModule(cfg ModuleConfig) (*Module, error) {
@@ -48,7 +57,7 @@ func NewPostModule(cfg ModuleConfig) (*Module, error) {
 	postSrv := postService.NewPostSrv(postRepo)
 
 	// register handlers
-	postHandler.NewPostApiHandler(cfg.APIv1, postSrv)
+	postHandler.NewPostApiHandler(cfg.APIv1, postSrv, cfg.Deps.AuthApiMdw)
 
 	return &Module{
 		PostService: postSrv,
