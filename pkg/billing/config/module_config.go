@@ -8,6 +8,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	pProviderRepo "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/repository/mongo"
 
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/keystore"
 
 	paymentProviderHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/handler"
@@ -27,6 +28,14 @@ type ModuleConfig struct {
 	APIv1      *http.ServeMux
 
 	DB *mongo.Database
+
+	Deps ModuleDeps
+}
+
+// ModuleDeps groups the external dependencies (from other modules/services)
+// that this module needs to function.
+type ModuleDeps struct {
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
 type Module struct {
@@ -69,7 +78,7 @@ func NewBillingModule(cfg ModuleConfig) (*Module, error) {
 	pProviderSrv := paymentProviderService.NewPaymentProviderSrv(pProviderRepo, encryptorSrv)
 
 	// register handlers
-	paymentProviderHandler.NewPaymentProviderApiHandler(cfg.APIv1, pProviderSrv)
+	paymentProviderHandler.NewPaymentProviderApiHandler(cfg.APIv1, pProviderSrv, cfg.Deps.AuthApiMdw)
 
 	return &Module{
 		PProviderService: pProviderSrv,

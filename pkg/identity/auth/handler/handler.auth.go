@@ -5,19 +5,28 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 )
 
 type Handler struct {
-	AuthSrv  port.AuthSrv
-	TokenSrv tokenP.TokenSrv
-	AppEnv   string
+	AuthSrv    port.AuthSrv
+	TokenSrv   tokenP.TokenSrv
+	AppEnv     string
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
-func NewAuthHandler(server *http.ServeMux, authSrv port.AuthSrv, tokenSrv tokenP.TokenSrv, appEnv string) *Handler {
+func NewAuthHandler(
+	server *http.ServeMux,
+	authSrv port.AuthSrv,
+	tokenSrv tokenP.TokenSrv,
+	appEnv string,
+	authApiMdw *middlewares.AuthMiddleware,
+) *Handler {
 	h := &Handler{
-		AuthSrv:  authSrv,
-		AppEnv:   appEnv,
-		TokenSrv: tokenSrv,
+		AuthSrv:    authSrv,
+		AppEnv:     appEnv,
+		TokenSrv:   tokenSrv,
+		AuthApiMdw: authApiMdw,
 	}
 
 	server.HandleFunc("POST /auth/sign-up", h.SignUp)

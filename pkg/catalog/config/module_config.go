@@ -11,6 +11,7 @@ import (
 	varOptionRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/repository/var-option/mongo"
 	variationRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/repository/variation/mongo"
 	variationService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -21,6 +22,14 @@ type ModuleConfig struct {
 	APIv1      *http.ServeMux
 
 	DB *mongo.Database
+
+	Deps ModuleDeps
+}
+
+// ModuleDeps groups the external dependencies (from other modules/services)
+// that this module needs to function.
+type ModuleDeps struct {
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
 type Module struct {
@@ -47,7 +56,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
 
 	// register handlers
-	handler.NewVariationHandler(cfg.APIv1, variationSrv)
+	handler.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
 
 	return &Module{
 		VariationService: variationSrv,

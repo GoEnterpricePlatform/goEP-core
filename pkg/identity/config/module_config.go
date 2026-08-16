@@ -28,6 +28,7 @@ import (
 	userRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/repository/mongo"
 	userService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/service"
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
@@ -49,11 +50,12 @@ type ModuleConfig struct {
 }
 
 type Module struct {
-	AuthSrv   authP.AuthSrv
-	UserSrv   userP.UserSrv
-	AdminSrv  adminP.AdminSrv
-	TokenSrv  tokenP.TokenSrv
-	CookieSrv cookieP.CookieSrv
+	AuthSrv    authP.AuthSrv
+	UserSrv    userP.UserSrv
+	AdminSrv   adminP.AdminSrv
+	TokenSrv   tokenP.TokenSrv
+	CookieSrv  cookieP.CookieSrv
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
 func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
@@ -118,6 +120,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(cfg.AppEnvs.JWTAccessSecret, cfg.AppEnvs.JWTRefreshSecret, cfg.AppEnvs.JWTAccessExpIn, cfg.AppEnvs.JWTRefreshExpIn, cfg.AppEnvs.JWTRefreshRememberMeExpIn, cfg.AppEnvs.JWTIssuer)
+	authApiMdw := middlewares.NewAuthMdw(tokenSrv)
 	cookieSrv := cookieService.NewCookieSrv(cfg.AppEnvs.AppEnv, cfg.AppEnvs.JwtAccessCookieDur)
 	sessionSrv := sessionService.NewSessionSrv(sessionRepo, tokenSrv)
 	otpCodeSrv := otpCodeService.NewOtpCodeSrv(otpCodeRepo)
@@ -129,14 +132,15 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
 
 	// Register handlers
-	authHandler.NewAuthHandler(cfg.APIv1, authSrv, tokenSrv, cfg.AppEnvs.AppEnv)
-	userHandler.NewUserHandler(cfg.APIv1, userSrv)
+	authHandler.NewAuthHandler(cfg.APIv1, authSrv, tokenSrv, cfg.AppEnvs.AppEnv, authApiMdw)
+	userHandler.NewUserHandler(cfg.APIv1, userSrv,authApiMdw)
 
 	return &Module{
-		AuthSrv:   authSrv,
-		UserSrv:   userSrv,
-		AdminSrv:  adminSrv,
-		TokenSrv:  tokenSrv,
-		CookieSrv: cookieSrv,
+		AuthSrv:    authSrv,
+		UserSrv:    userSrv,
+		AdminSrv:   adminSrv,
+		TokenSrv:   tokenSrv,
+		CookieSrv:  cookieSrv,
+		AuthApiMdw: authApiMdw,
 	}, nil
 }

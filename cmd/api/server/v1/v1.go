@@ -89,6 +89,9 @@ func New() http.Handler {
 		AppClients: appClients,
 		APIv1:      v1,
 		DB:         db,
+		Deps: postModule.ModuleDeps{
+			AuthApiMdw: identityMdl.AuthApiMdw,
+		},
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -100,6 +103,9 @@ func New() http.Handler {
 		AppClients: appClients,
 		APIv1:      v1,
 		DB:         db,
+		Deps: billingModule.ModuleDeps{
+			AuthApiMdw: identityMdl.AuthApiMdw,
+		},
 	})
 
 	_, err = catalogModule.NewCatalogModule(catalogModule.ModuleConfig{
@@ -108,6 +114,9 @@ func New() http.Handler {
 		AppClients: appClients,
 		APIv1:      v1,
 		DB:         db,
+		Deps: catalogModule.ModuleDeps{
+			AuthApiMdw: identityMdl.AuthApiMdw,
+		},
 	})
 	if err != nil {
 		log.Fatal(err)
