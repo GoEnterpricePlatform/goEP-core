@@ -20,7 +20,7 @@ func (s *Service) UploadAvatar(ctx context.Context, img string, file io.Reader, 
 		return domain.ManageError(domain.ErrNotFound, "")
 	}
 
-	path := fmt.Sprintf("users/%s%s", userID, filepath.Ext(img))
+	path := fmt.Sprintf("%s_users/%s%s", s.MdlName, userID, filepath.Ext(img))
 
 	err = s.UserFileStg.UploadImage(ctx, path, file, contentType)
 	if err != nil {
