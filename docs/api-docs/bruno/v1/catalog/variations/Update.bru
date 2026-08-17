@@ -1,0 +1,22 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/v1/variations/6a810dcca1716cd809139889
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name":"basic plan updated"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

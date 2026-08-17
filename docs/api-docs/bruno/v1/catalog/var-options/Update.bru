@@ -1,0 +1,22 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/v1/variations/6a7271baf20ec766c0e68057/options/6a81ddb3bd3dc3fbdd759b26
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "label":"var-option updated"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Get all with options
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/variations/options
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

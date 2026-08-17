@@ -1,0 +1,43 @@
+meta {
+  name: Verify email
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/verify-email
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "otp_id":"6a8240173ad31360f7f6b083",
+    "otp_code": "703816",
+    "user_id": "6a823ec03ad31360f7f6b07f"
+  }
+}
+
+script:post-response {
+  // Parse the response body
+  const response = res.getBody();
+  const jsonResponse = response;
+  
+  // Save the access token to environment variables (SECRET - stored in vars:secret)
+  bru.setEnvVar('access_token', jsonResponse.session.access_token);
+  
+  // Optional: Save other user data (these can be in vars if not sensitive)
+  // bru.setEnvVar('user_id', jsonResponse.user.id);
+  // bru.setEnvVar('user_email', jsonResponse.user.email);
+  
+  // Optional: Save token expiration time if available
+  // bru.setEnvVar('token_expires_at', jsonResponse.session.expires_at);
+  
+  // Optional: Log success (only for debugging)
+  // console.log('Access token saved successfully');
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

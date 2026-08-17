@@ -1,0 +1,27 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/provider
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "provider_name": "stripe",
+      "stripe": {
+          "publishable_key": "{{stripe_publishable_key}}",
+          "secret_key": "{{stripe_secret_key}}",
+          "webhook_secret": "{{stripe_webhook_secret}}"
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
