@@ -1,0 +1,30 @@
+meta {
+  name: Sign out
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/sign-out
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  // Set access token to null
+  bru.setEnvVar('access_token', null);
+  
+  
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Docs
+  
+  At the bottom right, this cookie, when signing out, Bruno doesn't visually delete the refreshToken cookie, but it can still be used, and when making any other request that needs the refreshToken cookie, it shows the correct error: "refresh token cookie not found".
+}

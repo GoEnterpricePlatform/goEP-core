@@ -1,0 +1,24 @@
+meta {
+  name: Upload avatar
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users/6a80876985553cb9390485d9/avatar
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  image: @file(C:\Users\ferna\OneDrive\Documentos\p\foto\avatar.png) @contentType(image/png)
+}
+
+body:file {
+  file: @file(C:\Users\ferna\OneDrive\Documentos\dev\Gopher_.png) @contentType(image/png)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

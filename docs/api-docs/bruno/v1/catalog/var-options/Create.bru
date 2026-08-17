@@ -1,0 +1,22 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/variations/6a7271baf20ec766c0e68057/options
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "label": "anual"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
