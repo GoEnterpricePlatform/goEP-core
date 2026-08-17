@@ -33,7 +33,7 @@ tmp/
 # data/ 
 
 # Application runtime data
-*_data/
+/*_data/
 
 # Keys
 *.key

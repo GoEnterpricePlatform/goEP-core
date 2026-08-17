@@ -1,0 +1,31 @@
+package pages
+
+import (
+    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/domain"
+)
+
+templ BlogPage(posts []*domain.Post) {
+	@layouts.Base("blog", BlogContent(posts))
+}
+
+templ BlogContent(posts []*domain.Post) {
+	<style>
+		.posts {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 20px;
+		}
+	</style>
+
+	<ul class="posts">
+		for _, post := range posts {
+			@components.PostCard(post)
+		}
+	</ul>
+}

@@ -1,0 +1,39 @@
+package components
+
+import "github.com/GoEnterpricePlatform/goEP-core/web/web-app/domain"
+
+
+templ PostCard(post *domain.Post) {
+	<style>
+		.post-card {
+			background: #ffffff;
+			border: 1px solid #e5e7eb;
+			border-radius: 12px;
+			padding: 20px;
+			transition: box-shadow 0.2s ease, transform 0.2s ease;
+		}
+
+		.post-card:hover {
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+			transform: translateY(-3px);
+		}
+
+		.post-title {
+			font-size: 18px;
+			font-weight: 600;
+			margin-bottom: 10px;
+			color: #111827;
+		}
+
+		.post-content {
+			font-size: 14px;
+			color: #4b5563;
+			line-height: 1.6;
+		}
+	</style>
+
+	<li class="post-card">
+		<h3 class="post-title">{ post.Title }</h3>
+		<p class="post-content">{ post.Content }</p>
+	</li>
+}

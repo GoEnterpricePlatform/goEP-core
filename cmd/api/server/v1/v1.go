@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
-	standardWebModule "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/config"
+	webAppModule "github.com/GoEnterpricePlatform/goEP-core/web/web-app/config"
 
 	aiModule "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/config"
 	billingModule "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/config"
@@ -132,7 +132,9 @@ func New() http.Handler {
 
 	// Web modules
 
-	standardWebModule.NewStandardWebModule(standardWebModule.ModuleConfig{
+	// for import module :
+	// standardWebModule "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/config"
+	/* standardWebModule.NewStandardWebModule(standardWebModule.ModuleConfig{
 		AppEnvs: appEnvs,
 		Mux: mux,
 		TemplateV1: templateV1,
@@ -142,6 +144,20 @@ func New() http.Handler {
 			CookieSrv: identityMdl.CookieSrv,
 			AdminSrv: identityMdl.AdminSrv,
 			TCService: aiMdl.TCService,
+			PostService: postMdl.PostService,
+		},
+	}) */
+
+	webAppModule.NewWebAppModule(webAppModule.ModuleConfig{
+		AppEnvs:    appEnvs,
+		Mux:        mux,
+		TemplateV1: templateV1,
+		Deps: webAppModule.ModuleDeps{
+			TokenSrv:    identityMdl.TokenSrv,
+			AuthSrv:     identityMdl.AuthSrv,
+			CookieSrv:   identityMdl.CookieSrv,
+			AdminSrv:    identityMdl.AdminSrv,
+			TCService:   aiMdl.TCService,
 			PostService: postMdl.PostService,
 		},
 	})
