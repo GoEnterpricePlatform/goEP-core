@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	standardWebModule "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/config"
 
 	aiModule "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/config"
 	billingModule "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/config"
@@ -12,19 +13,10 @@ import (
 
 	identityModule "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/config"
 	postModule "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/config"
-	adminHandler "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/handler"
-	postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/admin/api/posts/handler"
-	adminRenderer "github.com/GoEnterpricePlatform/goEP-core/web/admin/renderer"
-	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/handler"
-	toolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/api/posts/handler"
-	toolCallingRenderer "github.com/GoEnterpricePlatform/goEP-core/web/ai-tool-calling/renderer"
-	publicHandler "github.com/GoEnterpricePlatform/goEP-core/web/public/api/handler"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares/logger"
 	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/handler"
-
-	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
 
 func New() http.Handler {
@@ -134,34 +126,25 @@ func New() http.Handler {
 		log.Fatal(err)
 	}
 
-	// Templates
-	adminR := adminRenderer.NewAdminRenderer()
-	mdwSrvTmpl := middlewareServiceTmpl.NewMdwSrvTmpl(identityMdl.TokenSrv, identityMdl.AuthSrv, identityMdl.CookieSrv)
-
-	// no lleva prefix api
+	// web pages do not have the /api prefix
 	templateV1 := http.NewServeMux()
 	mux.Handle("/v1/", http.StripPrefix("/v1", templateV1))
 
-	// Templates - admin
-	adminH := adminHandler.NewAdminHandler(identityMdl.AdminSrv, identityMdl.CookieSrv, appEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)
-	adminH.RegisterRoutes(mux, templateV1)
+	// Web modules
 
-	// Templates - chat tool calling
-	toolCalllingR := toolCallingRenderer.NewToolCallingRenderer()
-	toolCallingH := chatToolCallingHandler.NewChatToolCallingHandler(aiMdl.TCService, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl, postMdl.PostService)
-	toolCallingH.RegisterRoutes(mux, templateV1)
-
-	// tool Calling posts
-
-	toolCallingPostsH := toolCallingHandler.NewPostWebAiHandler(postMdl.PostService, appEnvs.ApiBaseUrl, toolCalllingR, mdwSrvTmpl)
-	toolCallingPostsH.RegisterRoutes(templateV1)
-
-	// Templates - post
-	postH := postHandlerWeb.NewPostWebHandler(postMdl.PostService, adminH.ApiBaseUrl, adminR)
-	postH.RegisterRoutes(templateV1)
-
-	// Templates - public
-	publicHandler.NewPublicHandler(mux, appEnvs.ApiBaseUrl, postMdl.PostService)
+	standardWebModule.NewStandardWebModule(standardWebModule.ModuleConfig{
+		AppEnvs: appEnvs,
+		Mux: mux,
+		TemplateV1: templateV1,
+		Deps: standardWebModule.ModuleDeps{
+			TokenSrv: identityMdl.TokenSrv,
+			AuthSrv: identityMdl.AuthSrv,
+			CookieSrv: identityMdl.CookieSrv,
+			AdminSrv: identityMdl.AdminSrv,
+			TCService: aiMdl.TCService,
+			PostService: postMdl.PostService,
+		},
+	})
 
 	return apiHandler
 }
