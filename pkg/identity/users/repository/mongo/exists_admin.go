@@ -13,7 +13,7 @@ func (r *Repository) ExistsAdmin(ctx context.Context) (bool, error) {
 	pipeline := mongo.Pipeline{
 		bson.D{
 			{Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "roles"},
+				{Key: "from", Value: "identity_roles"},
 				{Key: "localField", Value: "role_ids"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "roles"},
