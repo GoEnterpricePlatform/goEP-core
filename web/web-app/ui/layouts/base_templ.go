@@ -8,7 +8,10 @@ package layouts
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+)
 
 func Base(activePage string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -31,7 +34,20 @@ func Base(activePage string, content templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Mi app</title><style>\r\n\t\t\t\tbody {\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tfont-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\r\n\t\t\t\t\tbackground-color: #f9fafb;\r\n\t\t\t\t\tcolor: #1f2937;\r\n\t\t\t\t}\r\n\r\n\t\t\t\t.layout {\r\n\t\t\t\t\tdisplay: grid;\r\n\t\t\t\t\tmin-height: 100dvh;\r\n\t\t\t\t\tgrid-template-rows: auto 1fr auto;\r\n\t\t\t\t}\r\n\r\n\t\t\t\tmain {\r\n\t\t\t\t\tmax-width: 100%;\r\n\t\t\t\t\tmargin: 10px;\r\n\t\t\t\t\tpadding: 0;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body><div class=\"layout\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"icon\" type=\"image/x-icon\" href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 templ.SafeURL
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(resources.StaticPath("assets/favicon.ico"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/layouts/base.templ`, Line: 14, Col: 89}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><title>Mi app</title><style>\r\n\t\t\t\tbody {\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tfont-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\r\n\t\t\t\t\tbackground-color: #f9fafb;\r\n\t\t\t\t\tcolor: #1f2937;\r\n\t\t\t\t}\r\n\r\n\t\t\t\t.layout {\r\n\t\t\t\t\tdisplay: grid;\r\n\t\t\t\t\tmin-height: 100dvh;\r\n\t\t\t\t\tgrid-template-rows: auto 1fr auto;\r\n\t\t\t\t}\r\n\r\n\t\t\t\tmain {\r\n\t\t\t\t\tmax-width: 100%;\r\n\t\t\t\t\tmargin: 10px;\r\n\t\t\t\t\tpadding: 0;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body><div class=\"layout\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -39,7 +55,7 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,7 +63,7 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +71,20 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(resources.StaticPath("js/hello-world.js"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/layouts/base.templ`, Line: 51, Col: 58}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

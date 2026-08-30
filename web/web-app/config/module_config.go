@@ -12,6 +12,7 @@ import (
 
 	tcP "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/port"
 	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
+
 	// middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 	/* adminHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/api/handler"
 	postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/api/posts/handler"
@@ -20,6 +21,7 @@ import (
 	toolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/posts/handler"
 	toolCallingRenderer "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/renderer" */
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/public/api/handler"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 )
 
 type ModuleConfig struct {
@@ -44,6 +46,7 @@ func NewWebAppModule(cfg ModuleConfig) {
 
 	// mdwSrvTmpl := middlewareServiceTmpl.NewMdwSrvTmpl(cfg.Deps.TokenSrv, cfg.Deps.AuthSrv, cfg.Deps.CookieSrv)
 
+	cfg.Mux.Handle("/static/", resources.Handler())
 	handler.NewPublicHandler(cfg.Mux, cfg.Deps.PostService)
 
 	// Templates - admin
