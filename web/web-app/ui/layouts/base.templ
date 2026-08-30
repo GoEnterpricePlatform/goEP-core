@@ -1,6 +1,9 @@
 package layouts
 
-import "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
+)
 
 templ Base(activePage string, content templ.Component) {
 	<!DOCTYPE html>
@@ -8,7 +11,8 @@ templ Base(activePage string, content templ.Component) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+			<link rel="icon" type="image/x-icon" href={ resources.StaticPath("assets/favicon.ico") }/>
+			
 			<title>Mi app</title>
 
 			<style>
@@ -43,6 +47,8 @@ templ Base(activePage string, content templ.Component) {
 
 				@components.Footer(2026)
 			</div>
+
+			<script src={ resources.StaticPath("js/hello-world.js") }></script>
 		</body>
 	</html>
 }
