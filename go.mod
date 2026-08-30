@@ -110,6 +110,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-getter v1.8.8 // indirect
 	github.com/hashicorp/go-version v1.9.0 // indirect
+	github.com/hookenz/gotailwind/v4 v4.3.3 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/klauspost/pgzip v1.2.6 // indirect
@@ -192,4 +193,5 @@ tool (
 	github.com/a-h/templ/cmd/templ
 	github.com/air-verse/air
 	github.com/go-task/task/v3/cmd/task
+	github.com/hookenz/gotailwind/v4
 )

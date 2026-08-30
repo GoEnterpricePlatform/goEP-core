@@ -1,7 +1,7 @@
 version: "3"
 
 env:
-  STATIC_DIR: "web/wep-app/resources/static"
+  STATIC_DIR: "web/web-app/resources/static"
 
 tasks:
   # The `Run:` tasks below are used together for development builds and will live-reload the server
@@ -12,6 +12,10 @@ tasks:
   run:ts:compiler:
     cmds:
       - go run cmd/api/env/dev/ts-compiler/main.go -watch
+  
+  run:web:styles:
+    cmds:
+      - go tool gotailwind -i web/web-app/src/css/app.css -o $STATIC_DIR/css/app.css
 
   run:server:
     cmds:
@@ -29,6 +33,7 @@ tasks:
   run:
     deps:
       - run:ts:compiler
+      - run:web:styles
       - run:templ
       - run:server
 

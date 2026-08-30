@@ -208,6 +208,8 @@ github.com/hashicorp/go-getter v1.8.8 h1:sRakhf+EH6s0LZLO2IgBwZ6hAFp+fZOZMNREwVE
 github.com/hashicorp/go-getter v1.8.8/go.mod h1:fqFlibKpwfns/s4oljLB3upJspyfFLQhS7031PlfUDc=
 github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaXPSCnA=
 github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
+github.com/hookenz/gotailwind/v4 v4.3.3 h1:2zHm9AD1v2qYxFdNWP/UjDOLPqk4WCo8p5klbrTp590=
+github.com/hookenz/gotailwind/v4 v4.3.3/go.mod h1:IfiJtdp8ExV9HV2XUiVjRBvB3QewVXVKWoAGEcpjfNE=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=

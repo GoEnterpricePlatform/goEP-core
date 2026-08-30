@@ -10,9 +10,10 @@ import templruntime "github.com/a-h/templ/runtime"
 
 func activeClass(activePage string, page string) string {
 	if activePage == page {
-		return "active"
+		return "bg-black text-white"
 	}
-	return ""
+
+	return "text-zinc-600 hover:bg-zinc-100 hover:text-black"
 }
 
 func Header(activePage string) templ.Component {
@@ -36,11 +37,11 @@ func Header(activePage string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\r\n\t\theader {\r\n\t\t\tbackground-color: #ffffff;\r\n\t\t\tborder-bottom: 1px solid #e5e7eb;\r\n\t\t}\r\n\r\n\t\t.navbar {\r\n\t\t\tmax-width: 1200px;\r\n\t\t\tmargin: 0 auto;\r\n\t\t\tpadding: 16px 20px;\r\n\t\t\tdisplay: flex;\r\n\t\t\talign-items: center;\r\n\t\t\tjustify-content: space-between;\r\n\t\t}\r\n\r\n\t\t.logo {\r\n\t\t\tfont-size: 20px;\r\n\t\t\tfont-weight: bold;\r\n\t\t\ttext-decoration: none;\r\n\t\t\tcolor: #1f2937;\r\n\t\t}\r\n\r\n\t\tnav a {\r\n\t\t\tmargin-left: 20px;\r\n\t\t\ttext-decoration: none;\r\n\t\t\tcolor: #374151;\r\n\t\t\tfont-weight: 500;\r\n\t\t}\r\n\r\n\t\tnav a.active {\r\n\t\t\tcolor: #2563eb;\r\n\t\t\tfont-weight: bold;\r\n\t\t}\r\n\r\n\t\tnav a:hover {\r\n\t\t\tcolor: #2563eb;\r\n\t\t}\r\n\r\n\t\t/* ---------- RESPONSIVE ---------- */\r\n\t\t@media (max-width: 768px) {\r\n\t\t\t.navbar {\r\n\t\t\t\tflex-direction: column;\r\n\t\t\t\tgap: 10px;\r\n\t\t\t}\r\n\r\n\t\t\tnav a {\r\n\t\t\t\tmargin-left: 10px;\r\n\t\t\t}\r\n\t\t}\r\n\t</style><header><div class=\"navbar\"><a href=\"/\" class=\"logo\">GoTemplates</a><nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur\"><div class=\"mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8\"><a href=\"/\" class=\"text-lg font-bold tracking-tight text-black transition-opacity hover:opacity-70\">GoTemplates</a><nav class=\"flex items-center gap-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 = []any{activeClass(activePage, "landing")}
+		var templ_7745c5c3_Var2 = []any{"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "landing")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -62,7 +63,7 @@ func Header(activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 = []any{activeClass(activePage, "about_us")}
+		var templ_7745c5c3_Var4 = []any{"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "about_us")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -84,7 +85,7 @@ func Header(activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 = []any{activeClass(activePage, "blog")}
+		var templ_7745c5c3_Var6 = []any{"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "blog")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -106,7 +107,7 @@ func Header(activePage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 = []any{activeClass(activePage, "contact")}
+		var templ_7745c5c3_Var8 = []any{"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "contact")}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
