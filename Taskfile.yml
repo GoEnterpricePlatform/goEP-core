@@ -1,0 +1,37 @@
+version: "3"
+
+env:
+  STATIC_DIR: "web/wep-app/resources/static"
+
+tasks:
+  # The `Run:` tasks below are used together for development builds and will live-reload the server
+  run:templ:
+    cmds:
+      - go tool templ generate -watch
+
+  run:ts:compiler:
+    cmds:
+      - go run cmd/api/env/dev/ts-compiler/main.go -watch
+
+  run:server:
+    cmds:
+      - |
+        go tool air  \
+         {{if eq OS "windows"}}-build.cmd "go build -tags=dev -o tmp/bin/main.exe ./cmd/api/env/dev/main/main.go" \
+          -build.entrypoint "tmp/bin/main.exe"{{end}}
+         {{if eq OS "linux"}}-build.cmd "go build -tags=dev -o tmp/bin/main ./cmd/api/env/dev/main/main.go" \
+          -build.entrypoint "tmp/bin/main"{{end}} \
+         -build.entrypoint "tmp/bin/main" \
+         -build.exclude_dir "web" \
+         -build.include_ext "go,templ" \
+         -misc.clean_on_exit "true"
+
+  run:
+    deps:
+      - run:ts:compiler
+      - run:templ
+      - run:server
+
+  default:
+    cmds:
+      - task: run

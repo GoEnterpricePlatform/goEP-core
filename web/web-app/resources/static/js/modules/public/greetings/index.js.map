@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../src/ts/modules/public/greetings/hello.ts", "../../../../../../src/ts/modules/public/greetings/hello-name.ts", "../../../../../../src/ts/modules/public/greetings/index.ts"],
+  "sourcesContent": ["export function helloWorld(): void {\r\n  alert(\"Hello World!\");\r\n}\r\n", "export function helloName(name: string): void {\r\n  alert(`Hello ${name}!`);\r\n}\r\n", "import { helloWorld } from './hello';\r\nimport { helloName } from './hello-name';\r\n\r\n// Optional: Export all for direct use\r\nexport { helloWorld, helloName };\r\n\r\n// Exponer al window\r\nif (typeof window !== \"undefined\") {\r\n  window.greetingController = {\r\n    helloWorld,\r\n    helloName,\r\n  };\r\n}"],
+  "mappings": "AAAO,SAASA,GAAmB,CACjC,MAAM,cAAc,CACtB,CCFO,SAASC,EAAUC,EAAoB,CAC5C,MAAM,SAASA,CAAI,GAAG,CACxB,CCKI,OAAO,OAAW,MACpB,OAAO,mBAAqB,CAC1B,WAAAC,EACA,UAAAC,CACF",
+  "names": ["helloWorld", "helloName", "name", "helloWorld", "helloName"]
+}
