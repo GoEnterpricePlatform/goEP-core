@@ -29,20 +29,20 @@ func Footer(year int) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\r\n\t\tfooter {\r\n\t\t\tmargin-top: 80px;\r\n\t\t\tpadding: 15px 20px;\r\n\t\t\tbackground-color: #1f2937;\r\n\t\t\tcolor: #9ca3af;\r\n\t\t\ttext-align: center;\r\n\t\t}\r\n\t</style><footer>© ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"border-t border-zinc-200 bg-white\"><div class=\"mx-auto flex max-w-7xl items-center justify-center px-6 py-6 lg:px-8\"><p class=\"text-sm text-zinc-500\">© ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/footer.templ`, Line: 14, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/footer.templ`, Line: 9, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " MyWebsite. All rights reserved.</footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " MyWebsite. All rights reserved.</p></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

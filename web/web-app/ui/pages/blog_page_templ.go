@@ -64,7 +64,7 @@ func BlogContent(posts []*domain.Post) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\r\n\t\t.posts {\r\n\t\t\tlist-style: none;\r\n\t\t\tpadding: 0;\r\n\t\t\tmargin: 0;\r\n\t\t\twidth: 100%;\r\n\t\t\tdisplay: grid;\r\n\t\t\tgrid-template-columns: repeat(auto-fill, minmax(300px, 1fr));\r\n\t\t\tgap: 20px;\r\n\t\t}\r\n\t</style><ul class=\"posts\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"mx-auto max-w-7xl px-6 py-12 lg:px-8\"><div class=\"mb-10\"><p class=\"text-sm font-medium uppercase tracking-wider text-zinc-500\">Blog</p><h1 class=\"mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl\">Latest posts</h1><p class=\"mt-3 max-w-2xl text-zinc-600\">Articles, ideas and updates from the platform.</p></div><ul class=\"grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,7 +74,7 @@ func BlogContent(posts []*domain.Post) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</ul></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

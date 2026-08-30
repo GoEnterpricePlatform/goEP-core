@@ -60,7 +60,7 @@ func AboutUsContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>About us</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"mx-auto max-w-7xl px-6 py-16 lg:px-8\"><div class=\"max-w-3xl\"><p class=\"text-sm font-medium uppercase tracking-wider text-zinc-500\">About us</p><h1 class=\"mt-2 text-4xl font-bold tracking-tight text-black\">Simple. Modern. Powerful.</h1><p class=\"mt-6 text-lg leading-8 text-zinc-600\">We build reliable software using modern technologies and clean architecture.</p></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -11,11 +11,50 @@ templ LandingPage() {
 }
 
 templ LandingContent() {
-	<div>
-		<h1>Landing</h1>
-		<button onclick="greetingController.helloWorld()">Hello world</button>
-		<button onclick="greetingController.helloName('Jhon Doe')">Hello user</button>
-	</div>
-	// This is the way to import the modules
-	<script type="module" defer src={ resources.StaticPath("js/modules/public/greetings/index.js") }></script>
+	<section class="mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-28">
+
+		<div class="max-w-3xl">
+
+			<div class="mb-6 inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600">
+				Go Enterprise Platform
+			</div>
+
+			<h1 class="text-5xl font-bold tracking-tight text-black sm:text-6xl">
+				Build modern web applications with Go.
+			</h1>
+
+			<p class="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
+				A clean and modern web architecture built with Go, Templ,
+				Tailwind CSS and Datastar.
+			</p>
+
+			<div class="mt-10 flex flex-wrap gap-3">
+
+				<button
+					type="button"
+					onclick="greetingController.helloWorld()"
+					class="inline-flex items-center rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-zinc-800 hover:shadow-md"
+				>
+					Hello world
+				</button>
+
+				<button
+					type="button"
+					onclick="greetingController.helloName('Jhon Doe')"
+					class="inline-flex items-center rounded-lg border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-black transition-all hover:border-black hover:bg-zinc-50"
+				>
+					Hello user
+				</button>
+
+			</div>
+
+		</div>
+
+	</section>
+
+	<script
+		type="module"
+		defer
+		src={ resources.StaticPath("js/modules/public/greetings/index.js") }
+	></script>
 }

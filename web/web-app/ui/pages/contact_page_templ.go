@@ -60,7 +60,7 @@ func ContactContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Contact</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"mx-auto max-w-7xl px-6 py-16 lg:px-8\"><div class=\"max-w-2xl\"><p class=\"text-sm font-medium uppercase tracking-wider text-zinc-500\">Contact</p><h1 class=\"mt-2 text-4xl font-bold tracking-tight text-black\">Get in touch</h1><p class=\"mt-4 text-lg leading-8 text-zinc-600\">Have a question or want to work together? Send us a message.</p><div class=\"mt-10 rounded-xl border border-zinc-200 bg-zinc-50 p-6\"><p class=\"text-sm text-zinc-500\">Contact information will be available here.</p></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

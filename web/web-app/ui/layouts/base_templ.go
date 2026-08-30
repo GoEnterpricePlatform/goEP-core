@@ -47,7 +47,20 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><title>Mi app</title><style>\r\n\t\t\t\tbody {\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tfont-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\r\n\t\t\t\t\tbackground-color: #f9fafb;\r\n\t\t\t\t\tcolor: #1f2937;\r\n\t\t\t\t}\r\n\r\n\t\t\t\t.layout {\r\n\t\t\t\t\tdisplay: grid;\r\n\t\t\t\t\tmin-height: 100dvh;\r\n\t\t\t\t\tgrid-template-rows: auto 1fr auto;\r\n\t\t\t\t}\r\n\r\n\t\t\t\tmain {\r\n\t\t\t\t\tmax-width: 100%;\r\n\t\t\t\t\tmargin: 10px;\r\n\t\t\t\t\tpadding: 0;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body><div class=\"layout\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><title>Mi app</title><link href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 templ.SafeURL
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(resources.StaticPath("css/app.css"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/layouts/base.templ`, Line: 17, Col: 51}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" rel=\"stylesheet\" type=\"text/css\"></head><body class=\"min-h-screen bg-white text-black antialiased\"><div class=\"flex min-h-screen flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +68,7 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<main class=\"flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +76,7 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +84,7 @@ func Base(activePage string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

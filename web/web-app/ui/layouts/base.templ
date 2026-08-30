@@ -14,34 +14,15 @@ templ Base(activePage string, content templ.Component) {
 			<link rel="icon" type="image/x-icon" href={ resources.StaticPath("assets/favicon.ico") }/>
 			
 			<title>Mi app</title>
+			<link href={ resources.StaticPath("css/app.css") } rel="stylesheet" type="text/css"/>
 
-			<style>
-				body {
-					margin: 0;
-					font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-					background-color: #f9fafb;
-					color: #1f2937;
-				}
-
-				.layout {
-					display: grid;
-					min-height: 100dvh;
-					grid-template-rows: auto 1fr auto;
-				}
-
-				main {
-					max-width: 100%;
-					margin: 10px;
-					padding: 0;
-				}
-			</style>
 		</head>
 
-		<body>
-			<div class="layout">
+		<body class="min-h-screen bg-white text-black antialiased">
+			<div class="flex min-h-screen flex-col">
 				@components.Header(activePage)
 
-				<main>
+				<main class="flex-1">
 					@content
 				</main>
 

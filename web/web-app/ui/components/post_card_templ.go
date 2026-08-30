@@ -31,33 +31,33 @@ func PostCard(post *domain.Post) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<style>\r\n\t\t.post-card {\r\n\t\t\tbackground: #ffffff;\r\n\t\t\tborder: 1px solid #e5e7eb;\r\n\t\t\tborder-radius: 12px;\r\n\t\t\tpadding: 20px;\r\n\t\t\ttransition: box-shadow 0.2s ease, transform 0.2s ease;\r\n\t\t}\r\n\r\n\t\t.post-card:hover {\r\n\t\t\tbox-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);\r\n\t\t\ttransform: translateY(-3px);\r\n\t\t}\r\n\r\n\t\t.post-title {\r\n\t\t\tfont-size: 18px;\r\n\t\t\tfont-weight: 600;\r\n\t\t\tmargin-bottom: 10px;\r\n\t\t\tcolor: #111827;\r\n\t\t}\r\n\r\n\t\t.post-content {\r\n\t\t\tfont-size: 14px;\r\n\t\t\tcolor: #4b5563;\r\n\t\t\tline-height: 1.6;\r\n\t\t}\r\n\t</style><li class=\"post-card\"><h3 class=\"post-title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<li class=\"group flex flex-col rounded-xl border border-zinc-200 bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-black/5\"><div class=\"mb-5 flex items-center justify-between\"><span class=\"rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600\">Article</span> <span class=\"text-zinc-400 transition-colors group-hover:text-black\">→</span></div><h3 class=\"text-lg font-semibold tracking-tight text-black\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(post.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/post_card.templ`, Line: 36, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/post_card.templ`, Line: 21, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h3><p class=\"post-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h3><p class=\"mt-3 line-clamp-4 text-sm leading-6 text-zinc-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(post.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/post_card.templ`, Line: 37, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/components/post_card.templ`, Line: 25, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><div class=\"mt-6 border-t border-zinc-100 pt-4\"><button type=\"button\" class=\"text-sm font-medium text-black transition-opacity hover:opacity-60\">Read article →</button></div></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

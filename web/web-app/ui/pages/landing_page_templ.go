@@ -63,14 +63,14 @@ func LandingContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h1>Landing</h1><button onclick=\"greetingController.helloWorld()\">Hello world</button> <button onclick=\"greetingController.helloName('Jhon Doe')\">Hello user</button></div><script type=\"module\" defer src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-28\"><div class=\"max-w-3xl\"><div class=\"mb-6 inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600\">Go Enterprise Platform</div><h1 class=\"text-5xl font-bold tracking-tight text-black sm:text-6xl\">Build modern web applications with Go.</h1><p class=\"mt-6 max-w-2xl text-lg leading-8 text-zinc-600\">A clean and modern web architecture built with Go, Templ, Tailwind CSS and Datastar.</p><div class=\"mt-10 flex flex-wrap gap-3\"><button type=\"button\" onclick=\"greetingController.helloWorld()\" class=\"inline-flex items-center rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-zinc-800 hover:shadow-md\">Hello world</button> <button type=\"button\" onclick=\"greetingController.helloName('Jhon Doe')\" class=\"inline-flex items-center rounded-lg border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-black transition-all hover:border-black hover:bg-zinc-50\">Hello user</button></div></div></section><script type=\"module\" defer src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(resources.StaticPath("js/modules/public/greetings/index.js"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/pages/landing_page.templ`, Line: 20, Col: 95}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/ui/pages/landing_page.templ`, Line: 58, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {

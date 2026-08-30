@@ -1,9 +1,9 @@
 package pages
 
 import (
-    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
-    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
-    "github.com/GoEnterpricePlatform/goEP-core/web/web-app/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
 )
 
 templ BlogPage(posts []*domain.Post) {
@@ -11,21 +11,29 @@ templ BlogPage(posts []*domain.Post) {
 }
 
 templ BlogContent(posts []*domain.Post) {
-	<style>
-		.posts {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-			width: 100%;
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-			gap: 20px;
-		}
-	</style>
+	<section class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
 
-	<ul class="posts">
-		for _, post := range posts {
-			@components.PostCard(post)
-		}
-	</ul>
+		<div class="mb-10">
+
+			<p class="text-sm font-medium uppercase tracking-wider text-zinc-500">
+				Blog
+			</p>
+
+			<h1 class="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">
+				Latest posts
+			</h1>
+
+			<p class="mt-3 max-w-2xl text-zinc-600">
+				Articles, ideas and updates from the platform.
+			</p>
+
+		</div>
+
+		<ul class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+			for _, post := range posts {
+				@components.PostCard(post)
+			}
+		</ul>
+
+	</section>
 }
