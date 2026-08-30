@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../src/ts/modules/public/greetings/hello-name.ts"],
+  "sourcesContent": ["export function helloName(name: string): void {\r\n  alert(`Hello ${name}!`);\r\n}\r\n"],
+  "mappings": "AAAO,SAASA,EAAUC,EAAoB,CAC5C,MAAM,SAASA,CAAI,GAAG,CACxB",
+  "names": ["helloName", "name"]
+}

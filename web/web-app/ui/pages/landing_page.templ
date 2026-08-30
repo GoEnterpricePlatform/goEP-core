@@ -1,6 +1,9 @@
 package pages
 
-import "github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
+) 
 
 
 templ LandingPage() {
@@ -10,6 +13,9 @@ templ LandingPage() {
 templ LandingContent() {
 	<div>
 		<h1>Landing</h1>
-		<button onclick="helloWorld()">Hello world</button>
+		<button onclick="greetingController.helloWorld()">Hello world</button>
+		<button onclick="greetingController.helloName('Jhon Doe')">Hello user</button>
 	</div>
+	// This is the way to import the modules
+	<script type="module" defer src={ resources.StaticPath("js/modules/public/greetings/index.js") }></script>
 }

@@ -1,7 +1,7 @@
 include .env
 
 run:
-	@go run cmd/api/env/dev/main.go
+	@go run cmd/api/env/dev/main/main.go
 
 build:
 	@echo ==========================================
@@ -11,7 +11,7 @@ build:
 	@echo (like go run uses in AppData\Local\go-build).
 	@echo So we build the binary locally to avoid that.
 	@echo ==========================================
-	go build -o app.exe cmd/api/env/dev/main.go
+	go build -o app.exe cmd/api/env/dev/main/main.go
 	.\app.exe
 
 
@@ -23,3 +23,8 @@ test:
 
 compose-dev:
 	@docker-compose -f docker-compose.dev.yml --env-file .env up
+
+
+## Other optional commands to improve the development experience 
+git-diff:
+	@git diff --staged -- . ':(exclude)go.mod' ':(exclude)go.sum' ':(exclude)*_templ.go'

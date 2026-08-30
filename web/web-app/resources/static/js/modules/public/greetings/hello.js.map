@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../src/ts/modules/public/greetings/hello.ts"],
+  "sourcesContent": ["export function helloWorld(): void {\r\n  alert(\"Hello World!\");\r\n}\r\n"],
+  "mappings": "AAAO,SAASA,GAAmB,CACjC,MAAM,cAAc,CACtB",
+  "names": ["helloWorld"]
+}
