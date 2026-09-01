@@ -8,6 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+// for develop
 func FormStateSignIn() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -29,10 +30,6 @@ func FormStateSignIn() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mt-8 rounded-lg border border-zinc-200 bg-white p-5\"><div class=\"flex items-center justify-between\"><div><h3 class=\"text-sm font-semibold text-zinc-900\">Form state</h3><p class=\"mt-1 text-xs text-zinc-500\">Current values and validation status</p></div></div><div class=\"mt-5 divide-y divide-zinc-100 border-t border-zinc-100\"><div class=\"flex items-center justify-between py-3\"><span class=\"text-sm text-zinc-500\">Submitted</span> <span class=\"max-w-[220px] truncate text-sm font-medium text-zinc-900\" data-text=\"$submitted\"></span></div><div class=\"flex items-center justify-between py-3\"><span class=\"text-sm text-zinc-500\">Email</span> <span class=\"max-w-[220px] truncate text-sm font-medium text-zinc-900\" data-text=\"$email\"></span></div><div class=\"flex items-center justify-between py-3\"><span class=\"text-sm text-zinc-500\">Password</span> <span class=\"text-sm font-medium text-zinc-900\"><span data-text=\"$password\"></span></span></div><div class=\"flex items-center justify-between py-3\"><span class=\"text-sm text-zinc-500\">Remember me</span> <span class=\"text-sm font-medium text-zinc-900\"><span data-text=\"$remember_me\"></span></span></div></div><div class=\"mt-4 border-t border-zinc-100 pt-4\"><div class=\"flex items-center justify-between\"><span class=\"text-sm font-medium text-zinc-700\">Form is valid ?</span> <span class=\"text-sm font-semibold text-zinc-900\" data-text=\"validationController.isFormValidSignIn(\r\n\t\t\t\t\t\t$email,\r\n\t\t\t\t\t\t$password\r\n\t\t\t\t\t)\"></span></div></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }
