@@ -39,8 +39,13 @@ func build(ctx context.Context) error {
 
 	entryMap := map[string]string{
 		src.TsDirectoryPath + "/modules/public/greetings/index.ts":      "modules/public/greetings/index",
+		src.TsDirectoryPath + "/modules/public/greetings/types.ts":      "modules/public/greetings/types",
 		src.TsDirectoryPath + "/modules/public/greetings/hello.ts":      "modules/public/greetings/hello",
 		src.TsDirectoryPath + "/modules/public/greetings/hello-name.ts": "modules/public/greetings/hello-name",
+
+		src.TsDirectoryPath + "/modules/identity/validations/index.ts": "modules/identity/validations/index",
+		src.TsDirectoryPath + "/modules/identity/validations/types.ts": "modules/identity/validations/types",
+		src.TsDirectoryPath + "/modules/identity/validations/validations.ts": "modules/identity/validations/validations",
 	}
 
 	var entryPoints []api.EntryPoint

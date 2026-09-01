@@ -1,0 +1,20 @@
+package layouts
+
+import 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
+
+templ NavbarLayout(activePage string, content templ.Component) {
+	@BaseLayout("Mi app", NavbarLayoutContent(activePage, content))
+}
+
+templ NavbarLayoutContent(activePage string, content templ.Component) {
+    <div class="flex min-h-screen flex-col">
+
+		@components.Header(activePage)
+
+		<main class="flex-1">
+			@content
+		</main>
+
+		@components.Footer(2026)
+	</div>
+}

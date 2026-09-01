@@ -27,4 +27,4 @@ compose-dev:
 
 ## Other optional commands to improve the development experience 
 git-diff:
-	@git diff --staged -- . ':(exclude)go.mod' ':(exclude)go.sum' ':(exclude)*_templ.go' ':(exclude)web/web-app/resources/static/css/app.css'
+	@git diff --staged -- . ':(exclude)go.mod' ':(exclude)go.sum' ':(exclude)*_templ.go' ':(exclude)web/web-app/resources/static/js/libs/**' ':(exclude)*.js.map' ':(exclude)web/web-app/resources/static/css/app.css'

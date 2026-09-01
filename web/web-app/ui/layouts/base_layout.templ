@@ -1,11 +1,10 @@
 package layouts
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 )
 
-templ Base(activePage string, content templ.Component) {
+templ BaseLayout(activePage string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -14,22 +13,17 @@ templ Base(activePage string, content templ.Component) {
 			<link rel="icon" type="image/x-icon" href={ resources.StaticPath("assets/favicon.ico") }/>
 			
 			<title>Mi app</title>
+			<script defer type="module" src={ resources.StaticPath("js/libs/datastar/datastar.js") }></script>
 			<link href={ resources.StaticPath("css/app.css") } rel="stylesheet" type="text/css"/>
 
 		</head>
 
 		<body class="min-h-screen bg-white text-black antialiased">
-			<div class="flex min-h-screen flex-col">
-				@components.Header(activePage)
-
-				<main class="flex-1">
-					@content
-				</main>
-
-				@components.Footer(2026)
-			</div>
+			
+			@content
 
 			/* <script src={ resources.StaticPath("js/hello-world.js") }></script> */
+			
 		</body>
 	</html>
 }

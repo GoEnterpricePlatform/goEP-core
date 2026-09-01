@@ -13,6 +13,11 @@ func (rw *responseWriter) WriteHeader(code int) {
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-
+// Preserve http.Flusher for SSE (Datastar) 
+func (rw *responseWriter) Flush() { 
+	if f, ok := rw.ResponseWriter.(http.Flusher); ok { 
+		f.Flush() 
+	} 
+}
 
 
