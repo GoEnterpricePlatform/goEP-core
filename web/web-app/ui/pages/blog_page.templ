@@ -7,7 +7,7 @@ import (
 )
 
 templ BlogPage(posts []*domain.Post) {
-	@layouts.Base("blog", BlogContent(posts))
+	@layouts.NavbarLayout("blog", BlogContent(posts))
 }
 
 templ BlogContent(posts []*domain.Post) {
