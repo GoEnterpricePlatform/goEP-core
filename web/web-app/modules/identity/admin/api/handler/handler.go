@@ -35,9 +35,10 @@ func NewAdminHandler(
 
 func (h Handler) RegisterRoutes(mux *http.ServeMux, muxV1 *http.ServeMux) {
 	// Redirect
-	// mux.HandleFunc("/admin", h.Admin)
+	mux.HandleFunc("/goep-admin", h.GoepAdmin)
 
 	// Pages - render html
+	// TODO: Authenticate ver si nos srive con data star
 	//muxV1.Handle("/admin/home", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.HomePage)))
 	//muxV1.Handle("/admin/other", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.OtherPage)))
 	muxV1.HandleFunc("GET /admin/auth/sign-in", h.AdminSignInPage)
