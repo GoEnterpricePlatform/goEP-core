@@ -42,8 +42,9 @@ func (h Handler) RegisterRoutes(mux *http.ServeMux, muxV1 *http.ServeMux) {
 	//muxV1.Handle("/admin/other", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.OtherPage)))
 	muxV1.HandleFunc("GET /admin/auth/sign-in", h.AdminSignInPage)
 	muxV1.HandleFunc("GET /admin/auth/sign-up", h.AdminSignUpPage)
+	muxV1.HandleFunc("GET /goep-admin", h.GoepAdminPage)
 
 	// Actions - form submissions
 	muxV1.HandleFunc("POST /admin/auth/sign-up", h.SignUp)
-	//muxV1.HandleFunc("POST /admin/auth/sign-in", h.SignIn)
+	muxV1.HandleFunc("POST /admin/auth/sign-in", h.SignIn)
 }

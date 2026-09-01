@@ -57,7 +57,7 @@ export function isFormValidSignIn(
 ): boolean {
 	const emailValid = isValidEmail(email);
 
-	const passwordValid = isValidPassword(password);
+	const passwordValid = password != "";
 
 	return emailValid && passwordValid;
 }
