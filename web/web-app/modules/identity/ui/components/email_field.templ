@@ -1,0 +1,50 @@
+package components
+
+templ EmailField() {
+    <div>
+		<label for="email" class="block text-sm font-medium text-zinc-700">
+			Email
+		</label>
+		<input
+			id="email"
+			name="email"
+			type="text"
+			data-bind:email
+			class="mt-1 block w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm outline-none transition-colors"
+			data-attr:class="`
+				mt-1 block w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors
+				${$submitted
+					? (validationController.isValidEmail($email) ? 'border-green-500' : 'border-red-500')
+					: 'border-zinc-300'
+				}
+			`"
+		/>
+		<div
+			class="hidden mt-1 text-sm text-red-500"
+			data-attr:class="
+				$submitted && !validationController.isValidEmail($email)
+					? 'mt-1 text-sm text-red-500'
+					: 'hidden'
+			"
+		>
+			<span
+				data-attr:class="
+					$email == ''
+						? 'inline'
+						: 'hidden'
+				"
+			>
+				Email is required
+			</span>
+			<span
+				data-attr:class="
+					$email != '' && !validationController.isValidEmail($email)
+						? 'inline'
+						: 'hidden'
+				"
+			>
+				Enter a valid email
+			</span>
+		</div>
+	</div> 
+}

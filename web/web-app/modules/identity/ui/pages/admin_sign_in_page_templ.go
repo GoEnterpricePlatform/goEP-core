@@ -9,8 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/modules/identity/ui/components"
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
-	// "github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 )
 
 func AdminSignInPage() templ.Component {
@@ -34,6 +35,23 @@ func AdminSignInPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script type=\"module\" src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(resources.StaticPath("js/modules/identity/validations/index.js"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/web-app/modules/identity/ui/pages/admin_sign_in_page.templ`, Line: 14, Col: 72}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = layouts.BaseLayout("admin sign in", AdminSignInContent()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -58,12 +76,36 @@ func AdminSignInContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Admin Sign in page</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section class=\"mx-auto max-w-7xl px-6 py-16 lg:px-8\"><div class=\"flex min-h-[80vh] items-center justify-center\"><div class=\"w-full max-w-md\"><p class=\"text-sm font-medium uppercase tracking-wider text-zinc-500\">Admin Sign in</p><h1 class=\"mt-2 text-4xl font-bold tracking-tight text-black\">Sign in to your account</h1><p class=\"mt-3 text-lg leading-8 text-zinc-600\">Enter your credentials to access the admin panel</p><form class=\"mt-8 space-y-5\" data-signals=\"{\r\n\t\t\t\t\t\tsubmitted: false,\r\n\t\t\t\t\t\temail: '',\r\n\t\t\t\t\t\tpassword: '',\r\n\t\t\t\t\t\tremember_me: '',\r\n\t\t\t\t\t\terror: '',\r\n\t\t\t\t\t}\" data-on:submit__prevent=\"\r\n\t\t\t\t\t\t$submitted = true;\r\n\t\t\t\t\t\tif (\r\n\t\t\t\t\t\t    !validationController.isFormValidSignIn($email,$password)\r\n\t\t\t\t\t\t) {\r\n\t\t\t\t\t\t    return;\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t\t@post('/v1/admin/auth/sign-in', {contentType: 'form'})\r\n\t\t\t\t\t\" enctype=\"multipart/form-data\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.EmailField().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.PasswordFieldSignIn().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Checkbox().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"hidden mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600\" data-style:display=\"$error != '' ? 'block' : 'none'\"><span data-text=\"$error\"></span></div><button type=\"submit\" class=\"w-full rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800\">Sign in</button>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.FormStateSignIn().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</form></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

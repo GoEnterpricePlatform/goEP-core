@@ -1,0 +1,21 @@
+package components
+
+templ Checkbox() {
+    <div>
+        <div class="flex items-center gap-3">
+		    <input
+		    	id="remember_me"
+		    	name="remember_me"
+		    	type="checkbox"
+		    	data-bind:remember_me
+		    	class="h-4 w-4 cursor-pointer rounded border-zinc-300 accent-black"
+		    />
+		    <label
+		    	for="remember_me"
+		    	class="text-sm font-medium text-zinc-700"
+		    >
+		    	Remember me
+		    </label>
+		</div>
+    </div>
+}
