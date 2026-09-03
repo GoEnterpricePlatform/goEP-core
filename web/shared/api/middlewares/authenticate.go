@@ -8,9 +8,9 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
-// /v1/admin/sign-in was updated to /v1/admin/auth/sign-in
+// /v1/admin/sign-in was updated to /v1/goep-admin/auth/sign-in
 // therefore if you are using web/standard-web it will be re-established 
-// you should update the paths to /v1/admin/auth/sign-in
+// you should update the paths to /v1/goep-admin/auth/sign-in
 // Why will it be the current form?
 func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +18,7 @@ func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {
 		accessCookie, err := r.Cookie("accessToken")
 		if err != nil {
 			m.CookieSrv.ClearForTemplate(w, "accessToken")
-			http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+			http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 			return
 		}
 
@@ -30,19 +30,19 @@ func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {
 				refreshCookie, err := r.Cookie("refreshToken")
 				if err != nil {
 					m.CookieSrv.ClearForTemplate(w, "refreshToken")
-					http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+					http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 					return
 				}
 
 				refreshClaims, err := m.TokenSrv.ParseRefreshToken(refreshCookie.Value)
 				if err != nil {
-					http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+					http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 					return
 				}
 
 				session, err := m.AuthSrv.RefreshToken(r.Context(), refreshClaims.ID, refreshClaims.UserID)
 				if err != nil {
-					http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+					http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 					return
 				}
 
@@ -50,7 +50,7 @@ func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {
 
 				claims, err := m.TokenSrv.ParseAccessToken(session.AccessToken)
 				if err != nil {
-					http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+					http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 					return
 				}
 
@@ -60,7 +60,7 @@ func (m *MdwSrvTmpl) Authenticate(next http.Handler) http.Handler {
 			}
 
 			m.CookieSrv.ClearForTemplate(w, "accessToken")
-			http.Redirect(w, r, "/v1/admin/auth/sign-in", http.StatusFound)
+			http.Redirect(w, r, "/v1/goep-admin/auth/sign-in", http.StatusFound)
 			return
 		}
 

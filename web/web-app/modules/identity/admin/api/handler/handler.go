@@ -38,12 +38,13 @@ func (h Handler) RegisterRoutes(mux *http.ServeMux, muxV1 *http.ServeMux) {
 	mux.HandleFunc("/goep-admin", h.GoepAdmin)
 
 	// Pages - render html
-	muxV1.HandleFunc("GET /admin/auth/sign-in", h.AdminSignInPage)
-	muxV1.HandleFunc("GET /admin/auth/sign-up", h.AdminSignUpPage)
+	muxV1.HandleFunc("GET /goep-admin/auth/sign-in", h.AdminSignInPage)
+	muxV1.HandleFunc("GET /goep-admin/auth/sign-up", h.AdminSignUpPage)
 	
 	// muxV1.Handle("GET /goep-admin", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.GoepAdminPage)))
 
 	// Actions - form submissions
+	// change to goep-admin, and also in the template forms
 	muxV1.HandleFunc("POST /admin/auth/sign-up", h.SignUp)
 	muxV1.HandleFunc("POST /admin/auth/sign-in", h.SignIn)
 }

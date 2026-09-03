@@ -6,8 +6,9 @@ import (
 )
 
 type PermissionNoSqlModel struct {
-	ID   bson.ObjectID `bson:"_id"`
-	Name string        `bson:"name"`
+	ID   bson.ObjectID         `bson:"_id"`
+	Name string                `bson:"name"`
+	Type domain.PermissionType `json:"permission_type"`
 }
 
 func (m *PermissionNoSqlModel) ToDomain(p *domain.Permission) {
@@ -17,6 +18,7 @@ func (m *PermissionNoSqlModel) ToDomain(p *domain.Permission) {
 
 	p.ID = m.ID.Hex()
 	p.Name = m.Name
+	p.Type = m.Type
 }
 
 func FromDomain(p *domain.Permission, id bson.ObjectID) *PermissionNoSqlModel {
@@ -27,6 +29,7 @@ func FromDomain(p *domain.Permission, id bson.ObjectID) *PermissionNoSqlModel {
 	return &PermissionNoSqlModel{
 		ID:   id,
 		Name: p.Name,
+		Type: p.Type,
 	}
 }
 

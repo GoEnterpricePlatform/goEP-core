@@ -2,10 +2,16 @@ package pages
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 )
 
-templ GeneralPage() {
-	@layouts.DashboardLayout("general", GeneralContent())
+templ GeneralPage(claims *claim.AccessTokenClaims) {
+	@layouts.DashboardLayout(
+		"general",
+		claims.Roles,
+		claims.Permissions,
+		GeneralContent(),
+	)
 }
 
 templ GeneralContent() {
@@ -24,13 +30,23 @@ templ GeneralContent() {
 		<div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
 
 			<div class="rounded-xl border border-zinc-200 bg-white p-5">
-				<p class="text-sm text-zinc-500">Users</p>
-				<p class="mt-2 text-2xl font-bold">120</p>
+				<p class="text-sm text-zinc-500">
+					Users
+				</p>
+
+				<p class="mt-2 text-2xl font-bold">
+					120
+				</p>
 			</div>
 
 			<div class="rounded-xl border border-zinc-200 bg-white p-5">
-				<p class="text-sm text-zinc-500">Posts</p>
-				<p class="mt-2 text-2xl font-bold">48</p>
+				<p class="text-sm text-zinc-500">
+					Posts
+				</p>
+
+				<p class="mt-2 text-2xl font-bold">
+					48
+				</p>
 			</div>
 
 		</div>

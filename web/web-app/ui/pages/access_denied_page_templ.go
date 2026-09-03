@@ -9,11 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
 )
 
-func GeneralPage(claims *claim.AccessTokenClaims) templ.Component {
+func AccessDeniedPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,12 +33,7 @@ func GeneralPage(claims *claim.AccessTokenClaims) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.DashboardLayout(
-			"general",
-			claims.Roles,
-			claims.Permissions,
-			GeneralContent(),
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layouts.BaseLayout("access denied", AccessDeniedContent()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,7 +41,7 @@ func GeneralPage(claims *claim.AccessTokenClaims) templ.Component {
 	})
 }
 
-func GeneralContent() templ.Component {
+func AccessDeniedContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -68,7 +62,7 @@ func GeneralContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section><div class=\"mb-6\"><h1 class=\"text-2xl font-bold tracking-tight text-black\">General</h1><p class=\"mt-1 text-sm text-zinc-500\">Welcome to your dashboard.</p></div><div class=\"grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4\"><div class=\"rounded-xl border border-zinc-200 bg-white p-5\"><p class=\"text-sm text-zinc-500\">Users</p><p class=\"mt-2 text-2xl font-bold\">120</p></div><div class=\"rounded-xl border border-zinc-200 bg-white p-5\"><p class=\"text-sm text-zinc-500\">Posts</p><p class=\"mt-2 text-2xl font-bold\">48</p></div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"mx-auto max-w-7xl px-6 py-16 lg:px-8\"><div class=\"flex min-h-[80vh] items-center justify-center\"><div class=\"w-full max-w-md\"><p class=\"text-sm font-medium uppercase tracking-wider text-zinc-500\">Access denied</p><div class=\"mt-6 flex flex-col gap-3\"><a href=\"/\" class=\"w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-center text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-100\">Back to home</a> <a href=\"/v1/goep-admin/auth/sign-in\" class=\"w-full rounded-lg bg-black px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-zinc-800\">Sign in</a></div></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

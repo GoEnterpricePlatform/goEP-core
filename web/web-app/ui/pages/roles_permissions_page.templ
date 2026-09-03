@@ -2,10 +2,16 @@ package pages
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 )
 
-templ RolesPermissionsPage() {
-	@layouts.DashboardLayout("roles-permissions", RolesPermissionsContent())
+templ RolesPermissionsPage(claims *claim.AccessTokenClaims) {
+	@layouts.DashboardLayout(
+		"roles-permissions", 
+		claims.Roles,
+		claims.Permissions,
+		RolesPermissionsContent(),
+	)
 }
 
 templ RolesPermissionsContent() {

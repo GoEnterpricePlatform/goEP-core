@@ -1,6 +1,17 @@
+// web/web-app/ui/components/sidebar.templ
+
 package components
 
-templ Sidebar(activePage string) {
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/navigation"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+)
+
+templ Sidebar(
+	activePage string,
+	roles []string,
+	permissions []string,
+) {
 	<aside class="hidden w-64 shrink-0 border-r border-zinc-200 bg-white md:block">
 
 		<div class="flex h-16 items-center border-b border-zinc-200 px-6">
@@ -14,33 +25,17 @@ templ Sidebar(activePage string) {
 
 		<nav class="p-4">
 
-			<a
-				href="/v1/goep-admin/general"
-				class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "general") }
-			>
-				General
-			</a>
-
-			<a
-				href="/v1/goep-admin/users"
-				class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "users") }
-			>
-				Users
-			</a>
-
-			<a
-				href="/v1/goep-admin/roles-permissions"
-				class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "roles-permissions") }
-			>
-				Roles and permissions
-			</a>
-
-			<a
-				href="/v1/goep-admin/settings"
-				class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, "settings") }
-			>
-				Settings
-			</a>
+			for _, item := range navigation.DashboardMenu {
+				if middlewares.HasRole(roles, "ROLE_SYSTEM_ADMIN") ||
+					middlewares.HasPermission(permissions, item.Permission) {
+					<a
+						href={ templ.SafeURL(item.Href) }
+						class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, item.ActivePage) }
+					>
+						{ item.Title }
+					</a>
+				}
+			}
 
 		</nav>
 

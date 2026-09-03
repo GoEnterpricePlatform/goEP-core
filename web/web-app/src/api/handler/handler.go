@@ -28,10 +28,41 @@ func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, postSrv port.P
 	mux.HandleFunc("/blog", h.BlogPage)
 	mux.HandleFunc("/contact", h.ContactPage)
 
-	templateV1.Handle("/goep-admin/general", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.GeneralPage)))
-	templateV1.Handle("/goep-admin/users", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.UsersPage)))
-	templateV1.Handle("/goep-admin/roles-permissions", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.RolesPermissionsPage)))
-	templateV1.Handle("/goep-admin/settings", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.SettingsPage)))
+	templateV1.Handle("/goep-admin/general", 
+		h.MdwSrvTmpl.Authenticate(
+			h.MdwSrvTmpl.RequirePermission(
+				"view.general",
+				http.HandlerFunc(h.GeneralPage),
+			),
+		),
+	)
+	templateV1.Handle("/goep-admin/users", 
+		h.MdwSrvTmpl.Authenticate(
+			h.MdwSrvTmpl.RequirePermission(
+				"view.users",
+				http.HandlerFunc(h.UsersPage),
+			),
+		),
+	)
+	templateV1.Handle("/goep-admin/roles-permissions", 
+		h.MdwSrvTmpl.Authenticate(
+			h.MdwSrvTmpl.RequirePermission(
+				"view.roles.permissions",
+				http.HandlerFunc(h.RolesPermissionsPage),
+			),
+		),
+	)
+
+	templateV1.Handle("/goep-admin/settings", 
+		h.MdwSrvTmpl.Authenticate(
+			h.MdwSrvTmpl.RequirePermission(
+				"view.settings",
+				http.HandlerFunc(h.SettingsPage),
+			),
+		),
+	)
+	
+	templateV1.HandleFunc("/goep-admin/access-denied", h.AccessDeniedPage)
 
 	return h
 }
