@@ -2,10 +2,16 @@ package pages
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/layouts"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 )
 
-templ SettingsPage() {
-	@layouts.DashboardLayout("settings", SettingsContent())
+templ SettingsPage(claims *claim.AccessTokenClaims) {
+	@layouts.DashboardLayout(
+		"settings", 
+		claims.Roles,
+		claims.Permissions,
+		SettingsContent(),
+	)
 }
 
 templ SettingsContent() {

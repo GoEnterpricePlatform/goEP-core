@@ -1,0 +1,1 @@
+When a permission is added from the service, it must be automatically assigned to the main admin role

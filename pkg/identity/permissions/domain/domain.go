@@ -1,13 +1,22 @@
 package domain
 
+type PermissionType string
+
+const (
+	PermissionTypeSystem PermissionType = "SYSTEM"
+	PermissionTypeView   PermissionType = "VIEW"
+)
+
 type Permission struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   string         `json:"id"`
+	Name string         `json:"name"`
+	Type PermissionType `json:"permission_type"`
 }
 
-func NewPermission(name PermissionName) *Permission {
+func NewPermission(name PermissionName, pType PermissionType) *Permission {
 	return &Permission{
 		Name: string(name),
+		Type: pType,
 	}
 }
 

@@ -3,11 +3,29 @@ package handler
 import (
 	"net/http"
 
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/pages"
 )
 
 func (h *Handler) GeneralPage(w http.ResponseWriter, r *http.Request) {
-	err := pages.GeneralPage().Render(r.Context(), w)
+	claims, ok := r.Context().Value(
+		middlewares.AccessTokenClaimsTmplIDKey,
+	).(*claim.AccessTokenClaims)
+
+	if !ok || claims == nil {
+		http.Redirect(
+			w,
+			r,
+			"/v1/goep-admin/auth/sign-in",
+			http.StatusFound,
+		)
+		return
+	}
+
+	// fmt.Printf("Claims: %+v", claims)
+
+	err := pages.GeneralPage(claims).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}

@@ -33,7 +33,7 @@ func (i *Initializer) SeedEssentialPermissions(ctx context.Context) ([]*domain.P
 			return nil, err
 		}
 		if !exists {
-			if err := i.PermissionRepo.Insert(ctx, domain.NewPermission(name)); err != nil {
+			if err := i.PermissionRepo.Insert(ctx, domain.NewPermission(name,domain.PermissionTypeSystem)); err != nil {
 				return nil, err
 			}
 		}

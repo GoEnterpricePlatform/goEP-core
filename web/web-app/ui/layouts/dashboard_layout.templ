@@ -1,17 +1,32 @@
+// web/web-app/ui/layouts/dashboard.templ
+
 package layouts
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/ui/components"
 )
 
-templ DashboardLayout(activePage string, content templ.Component) {
-	@BaseLayout(activePage, DashboardLayoutContent(activePage, content))
+templ DashboardLayout(
+	activePage string,
+	roles []string,
+	permissions []string,
+	content templ.Component,
+) {
+	@BaseLayout(
+		activePage,
+		DashboardLayoutContent(activePage, roles, permissions, content),
+	)
 }
 
-templ DashboardLayoutContent(activePage string, content templ.Component) {
+templ DashboardLayoutContent(
+	activePage string,
+	roles []string,
+	permissions []string,
+	content templ.Component,
+) {
 	<div class="flex min-h-screen">
 
-		@components.Sidebar(activePage)
+		@components.Sidebar(activePage, roles, permissions)
 
 		<div class="flex min-w-0 flex-1 flex-col">
 
