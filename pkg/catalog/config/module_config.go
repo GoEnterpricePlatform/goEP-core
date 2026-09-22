@@ -77,7 +77,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
-	planH.NewPlanHandler(cfg.APIv1, planSrv)
+	planH.NewPlanHandler(cfg.APIv1, planSrv, cfg.Deps.AuthApiMdw)
 
 	return &Module{
 		VariationService: variationSrv,
