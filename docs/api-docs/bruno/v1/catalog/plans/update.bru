@@ -1,0 +1,46 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/v1/plans/6aafcfaba9a5b3f77d9d4453
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "hobbie updated with update",
+    "description": "first plan with",
+    "plan_items": [
+      {
+        "id": "6aafcfaba9a5b3f77d9d4455",
+        "features": [
+          "feature two updated"
+        ],
+        "var_option_ids": [
+          "6aab2226cd0bfa185448728d",
+          "6aab2377cd0bfa1854487291"
+        ]
+      },
+      {
+        "id": "6aafcfaba9a5b3f77d9d4457",
+        "features": [
+          "feature four updated"
+        ],
+        "var_option_ids":[
+          "6aaf345dcb79690434ee0a34",
+          "6aab2226cd0bfa185448728d"
+        ]
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

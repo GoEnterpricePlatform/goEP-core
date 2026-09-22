@@ -1,0 +1,44 @@
+meta {
+  name: patch
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/plans/6ab2f97842832cd94fd537c5
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "plan 1 updated",
+    "description": "first plan updated",
+    "plan_items": [
+      {
+        "id":"6ab2f97842832cd94fd537c7",
+        "features": [
+          "aaaaaaa"
+          
+        ],
+        "var_option_ids": [
+          "6aab24701ff8d3213b397e64",
+          "6aab248b1ff8d3213b397e66"
+        ]
+      },
+      {
+        "id":"6ab2f97842832cd94fd537c8",
+        "features": [
+          "eeee"
+          
+        ]
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
