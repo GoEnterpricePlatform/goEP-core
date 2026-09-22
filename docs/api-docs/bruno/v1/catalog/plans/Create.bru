@@ -1,0 +1,308 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/plans
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "plane 1",
+    "desc": null,
+    "plan_items": [
+      {
+        "features": [
+          "feature one"
+        ],
+        "var_option_ids": [
+          "6aab24661ff8d3213b397e62",
+          "6aab24851ff8d3213b397e65"
+        ]
+      },
+      {
+        "features": [
+          "feature two"
+        ],
+        "var_option_ids": [
+          "6aab24691ff8d3213b397e63",
+          "6aab24851ff8d3213b397e65"
+        ]
+      },
+      {
+        "features": [
+          "feature tree"
+        ],
+        "var_option_ids": [
+          "6aab24701ff8d3213b397e64",
+          "6aab24851ff8d3213b397e65"
+        ]
+      },
+      {
+        "features": [
+          "feature four"
+        ],
+        "var_option_ids": [
+          "6aab24661ff8d3213b397e62",
+          "6aab248b1ff8d3213b397e66"
+        ]
+      },
+      {
+        "features": [
+          "feature five",
+          "feature five"
+        ],
+        "var_option_ids": [
+          "6aab24691ff8d3213b397e63",
+          "6aab248b1ff8d3213b397e66"
+        ]
+      },
+      {
+        "features": [
+          "feature six"
+        ],
+        "var_option_ids": [
+          "6aab24701ff8d3213b397e64",
+          "6aab248b1ff8d3213b397e66"
+        ]
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
+
+docs {
+  - Simple request
+  
+  ```json
+  {
+    "name": "hobbie",
+    "plan_items": [
+      {
+        "features": [
+          "feature one",
+          "feature two",
+          "feature tree"
+        ]
+      }
+    ]
+  }
+  ```
+  
+  - product with variations 
+    { "name": "plane 1", "desc": null, "plan_items": \[ { "features": \[ "feature one" \], "var_option_ids": \[ "6aab24661ff8d3213b397e62", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature two" \], "var_option_ids": \[ "6aab24691ff8d3213b397e63", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature tree" \], "var_option_ids": \[ "6aab24701ff8d3213b397e64", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature 1" \], "var_option_ids": \[ "6aab24661ff8d3213b397e62", "6aab248b1ff8d3213b397e66" \] }, { "features": \[ "feature 2" \], "var_option_ids": \[ "6aab24691ff8d3213b397e63", "6aab248b1ff8d3213b397e66" \] }, { "features": \[ "feature 3" \], "var_option_ids": \[ "6aab24701ff8d3213b397e64", "6aab248b1ff8d3213b397e66" \] } \] }
+    
+    
+  
+}
+
+example {
+  name: save
+  
+  request: {
+    url: {{baseUrl}}/api/v1/plans
+    method: POST
+    mode: json
+    body:json: {
+      {
+        "name": "plane 1",
+        "desc": null,
+        "plan_items": [
+          {
+            "features": [
+              "feature one"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature two"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature tree"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature 1"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          },
+          {
+            "qty_in_stock": 550,
+            "price": 500,
+            "file_path": "",
+            "content_type": "",
+            "features": [
+              "feature 2"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          },
+          {
+            "qty_in_stock": 650,
+            "price": 600,
+            "file_path": "",
+            "content_type": "",
+            "features": [
+              "feature 3"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          }
+        ]
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      access-control-allow-headers: Content-Type, Authorization
+      access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+      content-type: application/json
+      date: Wed, 16 Sep 2026 23:39:16 GMT
+      content-length: 1804
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "id": "6aab28a31ff8d3213b397e67",
+          "name": "plane 1",
+          "description": null,
+          "img_url": null,
+          "items": [
+            {
+              "id": "6aab28a31ff8d3213b397e68",
+              "img_url": null,
+              "features": [
+                "feature one"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e69",
+              "img_url": null,
+              "features": [
+                "feature two"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6a",
+              "img_url": null,
+              "features": [
+                "feature tree"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6b",
+              "img_url": null,
+              "features": [
+                "feature 1"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6c",
+              "img_url": null,
+              "features": [
+                "feature 2"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6d",
+              "img_url": null,
+              "features": [
+                "feature 3"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            }
+          ],
+          "variations": null,
+          "created_at": "2026-09-16T23:39:15.9166084Z",
+          "updated_at": "2026-09-16T23:39:15.9166084Z"
+        }
+      '''
+    }
+  }
+}

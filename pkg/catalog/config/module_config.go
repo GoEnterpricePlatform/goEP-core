@@ -6,13 +6,19 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/handler"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/disabled"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/minio"
+	planH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/handler"
+	planP "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/port"
+	planRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/repository/mongo"
+	planService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/service"
+	variationH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/handler"
+	varitionP "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/port"
 	varOptionRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/repository/var-option/mongo"
 	variationRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/repository/variation/mongo"
 	variationService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/service"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
-	"go.mongodb.org/mongo-driver/v2/mongo"
+	mongoDriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type ModuleConfig struct {
@@ -20,7 +26,7 @@ type ModuleConfig struct {
 	AppClients *config.AppClients
 	APIv1      *http.ServeMux
 
-	DB *mongo.Database
+	DB *mongoDriver.Database
 
 	Deps ModuleDeps
 }
@@ -32,10 +38,20 @@ type ModuleDeps struct {
 }
 
 type Module struct {
-	VariationService port.VariationSrv
+	VariationService varitionP.VariationSrv
+	PlanSrv          planP.PlanSrv
 }
 
 func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
+
+	// File Storage
+	var planFileStg planP.PlanFileStg
+	switch cfg.AppEnvs.FileStorageProvider {
+	case config.FSMinio:
+		planFileStg = minio.NewPlanFileStg(cfg.AppClients.MinioCli.Client, cfg.AppEnvs.MinioBucketName, 0)
+	case config.FSOptional:
+		planFileStg = disabled.NewPlanDisabledAdapter()
+	}
 
 	// module name
 	mdlName := "catalog"
@@ -47,17 +63,24 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	varOptionCollName := fmt.Sprintf("%s_var-options", mdlName)
 	varOptionColl := cfg.DB.Collection(varOptionCollName)
 
+	plansCollName := fmt.Sprintf("%s_plans", mdlName)
+	plansColl := cfg.DB.Collection(plansCollName)
+
 	// Repositories
 	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl)
 	varOptionRepo := varOptionRepository.NewVarOptionRepo(cfg.AppClients.MongoConn.DB, varOptionColl)
+	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl)
 
 	// services
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
+	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
 
 	// register handlers
-	handler.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
+	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
+	planH.NewPlanHandler(cfg.APIv1, planSrv)
 
 	return &Module{
 		VariationService: variationSrv,
+		PlanSrv:          planSrv,
 	}, nil
 }
