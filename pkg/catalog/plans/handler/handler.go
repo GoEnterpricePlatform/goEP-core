@@ -2,24 +2,27 @@ package handler
 
 import (
 	"net/http"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/port"
 
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 )
 
 type Handler struct {
-	PlanSrv port.PlanSrv
+	PlanSrv    port.PlanSrv
+	AuthApiMdw *middlewares.AuthMiddleware
 }
 
-func NewPlanHandler(muxV1 *http.ServeMux, planSrv port.PlanSrv) *Handler {
+func NewPlanHandler(muxV1 *http.ServeMux, planSrv port.PlanSrv, authApiMdw *middlewares.AuthMiddleware) *Handler {
 	h := &Handler{
 		PlanSrv: planSrv,
+		AuthApiMdw: authApiMdw,
 	}
 
 	muxV1.HandleFunc("GET /plans", h.GetAll)
-	muxV1.HandleFunc("POST /plans", h.Create)
+	muxV1.Handle("POST /plans", h.AuthApiMdw.AccessTokenMdw(h.Create))
 	muxV1.HandleFunc("GET /plans/{id}", h.Get)
-	muxV1.HandleFunc("PUT /plans/{id}", h.Update)
-	muxV1.HandleFunc("PATCH /plans/{id}", h.Patch)
+	muxV1.Handle("PUT /plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.Update))
+	muxV1.Handle("PATCH /plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.Patch))
 
 	// muxV1.Handle("POST /posts", h.AuthApiMdw.AccessTokenMdw(h.Create))
 	// muxV1.HandleFunc("GET /posts/{id}", h.Get)
