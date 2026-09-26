@@ -1,0 +1,749 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/paddle/plans
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "plane 1",
+    "desc": null,
+    "paddle_product_id": "paddle_product_id",
+    "items": [
+      {
+        "features": [
+          "feature one"
+        ],
+        "paddle_price_id": "price1",
+        "var_option_ids": [
+          "6aab24661ff8d3213b397e62",
+          "6aab24851ff8d3213b397e65"
+        ]
+      },
+      {
+        "features": [
+          "feature two"
+        ],
+        "var_option_ids": [
+          "6aab24691ff8d3213b397e63",
+          "6aab24851ff8d3213b397e65"
+        ],
+        "paddle_price_id": "price2"
+      },
+      {
+        "features": [
+          "feature tree"
+        ],
+        "var_option_ids": [
+          "6aab24701ff8d3213b397e64",
+          "6aab24851ff8d3213b397e65"
+        ],
+        "paddle_price_id": "price3"
+      },
+      {
+        "features": [
+          "feature four"
+        ],
+        "var_option_ids": [
+          "6aab24661ff8d3213b397e62",
+          "6aab248b1ff8d3213b397e66"
+        ],
+        "paddle_price_id": "price4"
+      },
+      {
+        "features": [
+          "feature five",
+          "feature five"
+        ],
+        "var_option_ids": [
+          "6aab24691ff8d3213b397e63",
+          "6aab248b1ff8d3213b397e66"
+        ],
+        "paddle_price_id": "price5"
+      },
+      {
+        "features": [
+          "feature six"
+        ],
+        "var_option_ids": [
+          "6aab24701ff8d3213b397e64",
+          "6aab248b1ff8d3213b397e66"
+        ],
+        "paddle_price_id": "price6"
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
+
+docs {
+  - Simple request
+  
+  ```json
+  {
+    "name": "hobbie",
+    "plan_items": [
+      {
+        "features": [
+          "feature one",
+          "feature two",
+          "feature tree"
+        ]
+      }
+    ]
+  }
+  ```
+  
+  - product with variations 
+    { "name": "plane 1", "desc": null, "plan_items": \[ { "features": \[ "feature one" \], "var_option_ids": \[ "6aab24661ff8d3213b397e62", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature two" \], "var_option_ids": \[ "6aab24691ff8d3213b397e63", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature tree" \], "var_option_ids": \[ "6aab24701ff8d3213b397e64", "6aab24851ff8d3213b397e65" \] }, { "features": \[ "feature 1" \], "var_option_ids": \[ "6aab24661ff8d3213b397e62", "6aab248b1ff8d3213b397e66" \] }, { "features": \[ "feature 2" \], "var_option_ids": \[ "6aab24691ff8d3213b397e63", "6aab248b1ff8d3213b397e66" \] }, { "features": \[ "feature 3" \], "var_option_ids": \[ "6aab24701ff8d3213b397e64", "6aab248b1ff8d3213b397e66" \] } \] }
+    
+    
+  
+}
+
+example {
+  name: save
+  
+  request: {
+    url: {{baseUrl}}/api/v1/plans
+    method: POST
+    mode: json
+    body:json: {
+      {
+        "name": "plane 1",
+        "desc": null,
+        "plan_items": [
+          {
+            "features": [
+              "feature one"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature two"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature tree"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature 1"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          },
+          {
+            "qty_in_stock": 550,
+            "price": 500,
+            "file_path": "",
+            "content_type": "",
+            "features": [
+              "feature 2"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          },
+          {
+            "qty_in_stock": 650,
+            "price": 600,
+            "file_path": "",
+            "content_type": "",
+            "features": [
+              "feature 3"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab248b1ff8d3213b397e66"
+            ]
+          }
+        ]
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      access-control-allow-headers: Content-Type, Authorization
+      access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+      content-type: application/json
+      date: Wed, 16 Sep 2026 23:39:16 GMT
+      content-length: 1804
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "id": "6aab28a31ff8d3213b397e67",
+          "name": "plane 1",
+          "description": null,
+          "img_url": null,
+          "items": [
+            {
+              "id": "6aab28a31ff8d3213b397e68",
+              "img_url": null,
+              "features": [
+                "feature one"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e69",
+              "img_url": null,
+              "features": [
+                "feature two"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6a",
+              "img_url": null,
+              "features": [
+                "feature tree"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6b",
+              "img_url": null,
+              "features": [
+                "feature 1"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6c",
+              "img_url": null,
+              "features": [
+                "feature 2"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            },
+            {
+              "id": "6aab28a41ff8d3213b397e6d",
+              "img_url": null,
+              "features": [
+                "feature 3"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "options": [],
+              "created_at": "2026-09-16T23:39:15.9166084Z",
+              "updated_at": "2026-09-16T23:39:15.9166084Z"
+            }
+          ],
+          "variations": null,
+          "created_at": "2026-09-16T23:39:15.9166084Z",
+          "updated_at": "2026-09-16T23:39:15.9166084Z"
+        }
+      '''
+    }
+  }
+}
+
+example {
+  name: save
+  
+  request: {
+    url: {{baseUrl}}/api/v1/paddle/plans
+    method: POST
+    mode: json
+    body:json: {
+      {
+        "name": "plane 1",
+        "desc": null,
+        "items": [
+          {
+            "features": [
+              "feature one"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab24851ff8d3213b397e65"
+            ],
+            "paddle_product_id": "p1"
+          },
+          {
+            "features": [
+              "feature two"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab24851ff8d3213b397e65"
+            ],
+                  "paddle_product_id": "p2"
+          },
+          {
+            "features": [
+              "feature tree"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab24851ff8d3213b397e65"
+            ],
+                  "paddle_product_id": "p3"
+            
+          },
+          {
+            "features": [
+              "feature four"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab248b1ff8d3213b397e66"
+            ],
+                  "paddle_product_id": "p4"
+          },
+          {
+            "features": [
+              "feature five",
+              "feature five"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab248b1ff8d3213b397e66"
+            ],
+                  "paddle_product_id": "p5"
+          },
+          {
+            "features": [
+              "feature six"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab248b1ff8d3213b397e66"
+            ],
+                  "paddle_product_id": "p6"
+            
+          }
+        ]
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      access-control-allow-headers: Content-Type, Authorization
+      access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+      content-type: application/json
+      date: Fri, 25 Sep 2026 20:30:26 GMT
+      transfer-encoding: chunked
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "id": "6ab6d9e21b9d72b2d1b4365d",
+          "plan_id": "6ab6d9e21b9d72b2d1b43656",
+          "name": "plane 1",
+          "description": null,
+          "img_url": null,
+          "items": [
+            {
+              "id": "6ab6d9e21b9d72b2d1b4365e",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b43657",
+              "img_url": null,
+              "features": [
+                "feature one"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_product_id": "p1",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            },
+            {
+              "id": "6ab6d9e21b9d72b2d1b4365f",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b43658",
+              "img_url": null,
+              "features": [
+                "feature two"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_product_id": "p2",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            },
+            {
+              "id": "6ab6d9e21b9d72b2d1b43660",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b43659",
+              "img_url": null,
+              "features": [
+                "feature tree"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_product_id": "p3",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            },
+            {
+              "id": "6ab6d9e21b9d72b2d1b43661",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b4365a",
+              "img_url": null,
+              "features": [
+                "feature four"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_product_id": "p4",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            },
+            {
+              "id": "6ab6d9e21b9d72b2d1b43662",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b4365b",
+              "img_url": null,
+              "features": [
+                "feature five",
+                "feature five"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_product_id": "p5",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            },
+            {
+              "id": "6ab6d9e21b9d72b2d1b43663",
+              "plan_item_id": "6ab6d9e21b9d72b2d1b4365c",
+              "img_url": null,
+              "features": [
+                "feature six"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_product_id": "p6",
+              "options": null,
+              "created_at": "2026-09-25T20:30:26.7944518Z",
+              "updated_at": "2026-09-25T20:30:26.7944518Z"
+            }
+          ],
+          "variations": null,
+          "created_at": "2026-09-25T20:30:26.7944518Z",
+          "updated_at": "2026-09-25T20:30:26.7944518Z"
+        }
+      '''
+    }
+  }
+}
+
+example {
+  name: ulti
+  
+  request: {
+    url: {{baseUrl}}/api/v1/paddle/plans
+    method: POST
+    mode: json
+    body:json: {
+      {
+        "name": "plane 1",
+        "desc": null,
+        "paddle_product_id": "paddle_product_id",
+        "items": [
+          {
+            "features": [
+              "feature one"
+            ],
+            "paddle_price_id": "price1",
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab24851ff8d3213b397e65"
+            ]
+          },
+          {
+            "features": [
+              "feature two"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab24851ff8d3213b397e65"
+            ],
+            "paddle_price_id": "price2"
+          },
+          {
+            "features": [
+              "feature tree"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab24851ff8d3213b397e65"
+            ],
+            "paddle_price_id": "price3"
+          },
+          {
+            "features": [
+              "feature four"
+            ],
+            "var_option_ids": [
+              "6aab24661ff8d3213b397e62",
+              "6aab248b1ff8d3213b397e66"
+            ],
+            "paddle_price_id": "price4"
+          },
+          {
+            "features": [
+              "feature five",
+              "feature five"
+            ],
+            "var_option_ids": [
+              "6aab24691ff8d3213b397e63",
+              "6aab248b1ff8d3213b397e66"
+            ],
+            "paddle_price_id": "price5"
+          },
+          {
+            "features": [
+              "feature six"
+            ],
+            "var_option_ids": [
+              "6aab24701ff8d3213b397e64",
+              "6aab248b1ff8d3213b397e66"
+            ],
+            "paddle_price_id": "price6"
+          }
+        ]
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      access-control-allow-headers: Content-Type, Authorization
+      access-control-allow-methods: GET, POST, PUT, DELETE, OPTIONS
+      content-type: application/json
+      date: Sat, 26 Sep 2026 15:00:46 GMT
+      transfer-encoding: chunked
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "id": "6ab7de1e35b47d041d0c76c9",
+          "plan_id": "6ab7de1e35b47d041d0c76c2",
+          "name": "plane 1",
+          "description": null,
+          "paddle_product_id": "paddle_product_id",
+          "img_url": null,
+          "items": [
+            {
+              "id": "6ab7de1e35b47d041d0c76ca",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c3",
+              "img_url": null,
+              "features": [
+                "feature one"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_price_id": "price1",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            },
+            {
+              "id": "6ab7de1e35b47d041d0c76cb",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c4",
+              "img_url": null,
+              "features": [
+                "feature two"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_price_id": "price2",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            },
+            {
+              "id": "6ab7de1e35b47d041d0c76cc",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c5",
+              "img_url": null,
+              "features": [
+                "feature tree"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab24851ff8d3213b397e65"
+              ],
+              "paddle_price_id": "price3",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            },
+            {
+              "id": "6ab7de1e35b47d041d0c76cd",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c6",
+              "img_url": null,
+              "features": [
+                "feature four"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24661ff8d3213b397e62",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_price_id": "price4",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            },
+            {
+              "id": "6ab7de1e35b47d041d0c76ce",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c7",
+              "img_url": null,
+              "features": [
+                "feature five",
+                "feature five"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24691ff8d3213b397e63",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_price_id": "price5",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            },
+            {
+              "id": "6ab7de1e35b47d041d0c76cf",
+              "plan_item_id": "6ab7de1e35b47d041d0c76c8",
+              "img_url": null,
+              "features": [
+                "feature six"
+              ],
+              "status": "active",
+              "var_option_ids": [
+                "6aab24701ff8d3213b397e64",
+                "6aab248b1ff8d3213b397e66"
+              ],
+              "paddle_price_id": "price6",
+              "options": null,
+              "created_at": "2026-09-26T15:00:46.0523464Z",
+              "updated_at": "2026-09-26T15:00:46.0523464Z"
+            }
+          ],
+          "variations": null,
+          "created_at": "2026-09-26T15:00:46.0523464Z",
+          "updated_at": "2026-09-26T15:00:46.0523464Z"
+        }
+      '''
+    }
+  }
+}

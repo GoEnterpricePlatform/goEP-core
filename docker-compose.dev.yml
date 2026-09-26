@@ -2,12 +2,32 @@ services:
   mongodb:
     image: mongo:8
     container_name: goep_core_db
-    restart: unless-stopped
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:${MONGO_PORT}/ --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     ports:
       - "${MONGO_PORT}:${MONGO_PORT}"
+    command: "--bind_ip_all --quiet --logpath /dev/null --replSet rs0"
+
+  mongo-init:
+    image: mongo:8
+    restart: "no"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    command: >
+      mongosh --host mongodb:${MONGO_PORT} --eval
+      '
+      rs.initiate( {
+        _id : "rs0",
+        members: [
+          { _id: 0, host: "mongodb:${MONGO_PORT}" }
+        ]
+      })
+      '
 
   minio:
     image: quay.io/minio/minio
