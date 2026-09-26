@@ -1,15 +1,22 @@
 package service
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/port"
+	paddlePlanP "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/port"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/port"
 )
 
 type Service struct {
-	PaddlePlanTx port.PaddlePlanTx
+	PaddlePlanTx   paddlePlanP.PaddlePlanTx
+	PaddlePlanRepo paddlePlanP.PaddlePlanRepo
+	PlanRepo       port.PlanRepo
+	PaddlePlanStg  paddlePlanP.PaddlePlanFileStg
 }
 
-func NewPlanPaddleSrv(paddlePlanTx port.PaddlePlanTx) *Service {
+func NewPlanPaddleSrv(paddlePlanTx paddlePlanP.PaddlePlanTx, paddlePlanRepo paddlePlanP.PaddlePlanRepo, planRepo port.PlanRepo, paddlePlanStg paddlePlanP.PaddlePlanFileStg) *Service {
 	return &Service{
-		PaddlePlanTx: paddlePlanTx,
+		PaddlePlanTx:   paddlePlanTx,
+		PaddlePlanRepo: paddlePlanRepo,
+		PlanRepo:       planRepo,
+		PaddlePlanStg:  paddlePlanStg,
 	}
 }

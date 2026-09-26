@@ -85,7 +85,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	// services
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
 	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
-	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx)
+	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
