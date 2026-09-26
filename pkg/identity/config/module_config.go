@@ -87,8 +87,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	// collections
 	userCollName := fmt.Sprintf("%s_users", mdlName)
 	userColl := cfg.DB.Collection(userCollName)
-	
-	
+
 	sessionCollName := fmt.Sprintf("%s_sessions", mdlName)
 	sessionColl := cfg.DB.Collection(sessionCollName)
 
@@ -100,13 +99,13 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 
 	permissionCollName := fmt.Sprintf("%s_permissions", mdlName)
 	permissionColl := cfg.DB.Collection(permissionCollName)
-	
-	userRepo := userRepository.NewUserRepo(cfg.AppClients.MongoConn.DB, userColl)
+
+	userRepo := userRepository.NewUserRepo(cfg.AppClients.MongoConn.DB, userColl, roleCollName)
 	sessionRepo := sessionRepository.NewSessionRepo(cfg.AppClients.MongoConn.DB, sessionColl)
 	otpCodeRepo := otpCodeRepository.NewOtpCodeRepo(cfg.AppClients.MongoConn.DB, otpCodeColl)
 	roleRepo := roleRepository.NewRoleRepo(cfg.AppClients.MongoConn.DB, roleColl)
 	permissionRepo := permissionRepository.NewPermissionRepo(cfg.AppClients.MongoConn.DB, permissionColl)
-	
+
 	// Indexes
 	err := userRepo.CreateIndexes()
 	if err != nil {
@@ -119,7 +118,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	roleItz := roleInitializer.NewRoleItz(roleRepo)
 	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
 		log.Fatal(err)
@@ -127,7 +126,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	if err := roleItz.AddPermissionsToRole(context.Background(), string(domain.RoleSystemAdmin), permissions); err != nil {
 		log.Fatal(err)
 	}
-	
+
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(cfg.AppEnvs.JWTAccessSecret, cfg.AppEnvs.JWTRefreshSecret, cfg.AppEnvs.JWTAccessExpIn, cfg.AppEnvs.JWTRefreshExpIn, cfg.AppEnvs.JWTRefreshRememberMeExpIn, cfg.AppEnvs.JWTIssuer)
 	authApiMdw := middlewares.NewAuthMdw(tokenSrv)

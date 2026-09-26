@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
-
+// The names of the collections may vary so it is better to inject it into the repository
 func (r *Repository) ExistsAdmin(ctx context.Context) (bool, error) {
 	pipeline := mongo.Pipeline{
 		bson.D{

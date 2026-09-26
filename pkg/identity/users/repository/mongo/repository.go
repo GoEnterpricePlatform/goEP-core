@@ -10,13 +10,15 @@ import (
 var _ port.UserRepo = &Repository{}
 
 type Repository struct {
-	Client     *mongo.Client
-	Collection *mongo.Collection
+	Client        *mongo.Client
+	Collection    *mongo.Collection
+	RolesCollName string
 }
 
-func NewUserRepo(client *mongo.Client, collection *mongo.Collection) *Repository {
+func NewUserRepo(client *mongo.Client, collection *mongo.Collection, rolesCollName string) *Repository {
 	return &Repository{
-		Client:     client,
-		Collection: collection,
+		Client:        client,
+		Collection:    collection,
+		RolesCollName: rolesCollName,
 	}
 }

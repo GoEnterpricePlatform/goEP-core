@@ -13,7 +13,7 @@ import (
 func (r *Repository) FindAllWithOptions(ctx context.Context) ([]*domain.Variation, error) {
 	pipeline := mongo.Pipeline{
 		{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: "var_options"},
+			{Key: "from", Value: r.VarOptCollName},
 			{Key: "localField", Value: "_id"},
 			{Key: "foreignField", Value: "variation_id"},
 			{Key: "as", Value: "options"},

@@ -10,20 +10,21 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
+// The names of the collections may vary so it is better to inject it into the repository
 func (r *Repository) FindAll(ctx context.Context, limit int64, page int64) ([]*domain.Plan, error) {
 	skip := (page - 1) * limit
 
 	pipeline := mongo.Pipeline{
 		// join with var_options
 		{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: "catalog_var-options"},
+			{Key: "from", Value: r.VarOptCollName},
 			{Key: "localField", Value: "items.var_option_ids"},
 			{Key: "foreignField", Value: "_id"},
 			{Key: "as", Value: "all_var_options"},
 		}}},
 		// join with variations
 		{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: "catalog_variations"},
+			{Key: "from", Value: r.variationsCollName},
 			{Key: "localField", Value: "all_var_options.variation_id"},
 			{Key: "foreignField", Value: "_id"},
 			{Key: "as", Value: "all_variations"},
