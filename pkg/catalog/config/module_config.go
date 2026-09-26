@@ -6,6 +6,10 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 
+	planPaddleH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/handler"
+	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/mongo"
+	planPaddleService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/service"
+	planPaddleTransaction "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/transaction/mongo"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/disabled"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/minio"
 	planH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/handler"
@@ -66,18 +70,27 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	plansCollName := fmt.Sprintf("%s_plans", mdlName)
 	plansColl := cfg.DB.Collection(plansCollName)
 
+	plansPaddleCollName := fmt.Sprintf("%s_plans_paddle", mdlName)
+	plansPaddleColl := cfg.DB.Collection(plansPaddleCollName)
+
 	// Repositories
 	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl)
 	varOptionRepo := varOptionRepository.NewVarOptionRepo(cfg.AppClients.MongoConn.DB, varOptionColl)
 	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl)
+	planPaddleRepo := planPaddleRepository.NewPlanPaddleRepo(cfg.AppClients.MongoConn.DB, plansPaddleColl)
+
+	// transactions
+	planPaddleTx := planPaddleTransaction.NewPlanPaddleTx(cfg.AppClients.MongoConn.DB, planRepo, planPaddleRepo)
 
 	// services
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
 	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
+	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
 	planH.NewPlanHandler(cfg.APIv1, planSrv, cfg.Deps.AuthApiMdw)
+	planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw)
 
 	return &Module{
 		VariationService: variationSrv,

@@ -1,0 +1,401 @@
+meta {
+  name: test
+  type: http
+  seq: 7
+}
+
+get {
+  url: 
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
+
+docs {
+  ```json
+  {
+    "data": [
+      {
+        "id": "pro_01m3eswk0gpn823rgmrthsy144",
+        "name": "plan fernan",
+        "tax_category": "standard",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m3et20vxntgt1rq9347atzdq",
+            "product_id": "pro_01m3eswk0gpn823rgmrthsy144",
+            "type": "standard",
+            "description": "some desc",
+            "name": "Anual-pro",
+            "billing_cycle": {
+              "interval": "year",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "35000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-26T12:11:52.061Z",
+            "updated_at": "2026-09-26T12:11:52.061Z"
+          },
+          {
+            "id": "pri_01m3et1e1zjewwas54j2ghj0ay",
+            "product_id": "pro_01m3eswk0gpn823rgmrthsy144",
+            "type": "standard",
+            "description": "some desc",
+            "name": "Anual-basic",
+            "billing_cycle": {
+              "interval": "year",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "30000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-26T12:11:32.799Z",
+            "updated_at": "2026-09-26T12:11:32.799Z"
+          },
+          {
+            "id": "pri_01m3eszb0h7m1rz1qrrgcfmbba",
+            "product_id": "pro_01m3eswk0gpn823rgmrthsy144",
+            "type": "standard",
+            "description": "some desc",
+            "name": "monthly-pro",
+            "billing_cycle": {
+              "interval": "month",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "25000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-26T12:10:24.145Z",
+            "updated_at": "2026-09-26T12:10:24.145Z"
+          },
+          {
+            "id": "pri_01m3esycegn7jjggan0z6yda6b",
+            "product_id": "pro_01m3eswk0gpn823rgmrthsy144",
+            "type": "standard",
+            "description": "some desc",
+            "name": "monthly-basic",
+            "billing_cycle": {
+              "interval": "month",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "10000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-26T12:09:52.848Z",
+            "updated_at": "2026-09-26T12:09:52.848Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-26T12:08:54.032Z",
+        "updated_at": "2026-09-26T12:08:54.032Z"
+      },
+      {
+        "id": "pro_01m2c8npmc4g392q0etmhd0zmy",
+        "name": "plan tree monthly ",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c8pcpge7a76mf888e5b2g2",
+            "product_id": "pro_01m2c8npmc4g392q0etmhd0zmy",
+            "type": "standard",
+            "description": "plan tree monthly desc",
+            "name": "plan tree monthly ",
+            "billing_cycle": {
+              "interval": "month",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "22000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:14:14.48Z",
+            "updated_at": "2026-09-13T02:14:14.48Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T02:13:51.884Z",
+        "updated_at": "2026-09-13T02:13:51.884Z"
+      },
+      {
+        "id": "pro_01m2c8k2h9kb5tvdfx6e7d5xjh",
+        "name": "plan two monthly",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c8n50ptgeeh298s708m3g5",
+            "product_id": "pro_01m2c8k2h9kb5tvdfx6e7d5xjh",
+            "type": "standard",
+            "description": "plan two monthly desc",
+            "name": "plan two monthly ",
+            "billing_cycle": {
+              "interval": "month",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "21000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:13:33.846Z",
+            "updated_at": "2026-09-13T02:13:33.846Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T02:12:25.769Z",
+        "updated_at": "2026-09-13T02:12:25.769Z"
+      },
+      {
+        "id": "pro_01m2c8aekkyg28gzdydz9x9rk5",
+        "name": "plan one monthly",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c8gg806ek7khz8vkk7ef02",
+            "product_id": "pro_01m2c8aekkyg28gzdydz9x9rk5",
+            "type": "standard",
+            "description": "plan one monthly desc",
+            "name": "plan one monthly ",
+            "billing_cycle": {
+              "interval": "month",
+              "frequency": 1
+            },
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "20000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:11:01.504Z",
+            "updated_at": "2026-09-13T02:11:01.504Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T02:07:43.219Z",
+        "updated_at": "2026-09-13T02:12:41.46Z"
+      },
+      {
+        "id": "pro_01m2c88963ngp6ygspvp7w0p91",
+        "name": "product tree",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c89rr072cj1w1ecrnw7rzv",
+            "product_id": "pro_01m2c88963ngp6ygspvp7w0p91",
+            "type": "standard",
+            "description": "product tree desc",
+            "name": "product tree",
+            "billing_cycle": null,
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "10000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:07:20.832Z",
+            "updated_at": "2026-09-13T02:07:20.832Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T02:06:32.131Z",
+        "updated_at": "2026-09-13T02:06:32.131Z"
+      },
+      {
+        "id": "pro_01m2c83dm2snhq00e8mcv9232d",
+        "name": "product two",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c86a3c1m2w3r75sp6hzryx",
+            "product_id": "pro_01m2c83dm2snhq00e8mcv9232d",
+            "type": "standard",
+            "description": "product two desc",
+            "name": "product two",
+            "billing_cycle": null,
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "9000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:05:27.532Z",
+            "updated_at": "2026-09-13T02:05:27.532Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T02:03:52.834Z",
+        "updated_at": "2026-09-13T02:04:12.534Z"
+      },
+      {
+        "id": "pro_01m2c7p0fmwg4kh8640kaqkekr",
+        "name": "product one",
+        "tax_category": "saas",
+        "type": "standard",
+        "description": null,
+        "image_url": null,
+        "custom_data": null,
+        "status": "active",
+        "prices": [
+          {
+            "id": "pri_01m2c80vh0gkp8npp74g3j9k5k",
+            "product_id": "pro_01m2c7p0fmwg4kh8640kaqkekr",
+            "type": "standard",
+            "description": "price one desc",
+            "name": "price one",
+            "billing_cycle": null,
+            "trial_period": null,
+            "tax_mode": "location",
+            "unit_price": {
+              "amount": "8000",
+              "currency_code": "USD"
+            },
+            "unit_price_overrides": [],
+            "custom_data": null,
+            "status": "active",
+            "quantity": {
+              "minimum": 1,
+              "maximum": 999999
+            },
+            "import_meta": null,
+            "created_at": "2026-09-13T02:02:28.768Z",
+            "updated_at": "2026-09-13T02:03:08.530259Z"
+          }
+        ],
+        "import_meta": null,
+        "created_at": "2026-09-13T01:56:33.396Z",
+        "updated_at": "2026-09-13T01:56:33.396Z"
+      }
+    ],
+    "meta": {
+      "request_id": "cacd4a69-7b78-4453-b955-1c857bd21148",
+      "pagination": {
+        "per_page": 50,
+        "next": "https://api.paddle.com/products?after=pro_01m2c7p0fmwg4kh8640kaqkekr&include=prices&per_page=50",
+        "has_more": false,
+        "estimated_total": 7
+      }
+    }
+  }
+  ```
+}
