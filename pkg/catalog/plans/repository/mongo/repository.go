@@ -8,13 +8,17 @@ import (
 var _ port.PlanRepo = &Repository{}
 
 type Repository struct {
-	Client     *mongo.Client
-	Collection *mongo.Collection
+	Client             *mongo.Client
+	Collection         *mongo.Collection
+	VarOptCollName     string
+	variationsCollName string
 }
 
-func NewPlanRepo(client *mongo.Client, collection *mongo.Collection) *Repository {
+func NewPlanRepo(client *mongo.Client, collection *mongo.Collection, varOptCollName string, variationsCollName string) *Repository {
 	return &Repository{
-		Client:     client,
-		Collection: collection,
+		Client:             client,
+		Collection:         collection,
+		VarOptCollName:     varOptCollName,
+		variationsCollName: variationsCollName,
 	}
 }

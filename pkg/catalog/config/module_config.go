@@ -74,9 +74,9 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	plansPaddleColl := cfg.DB.Collection(plansPaddleCollName)
 
 	// Repositories
-	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl)
+	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl, varOptionCollName)
 	varOptionRepo := varOptionRepository.NewVarOptionRepo(cfg.AppClients.MongoConn.DB, varOptionColl)
-	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl)
+	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl, varOptionCollName, variationsCollName)
 	planPaddleRepo := planPaddleRepository.NewPlanPaddleRepo(cfg.AppClients.MongoConn.DB, plansPaddleColl)
 
 	// transactions
