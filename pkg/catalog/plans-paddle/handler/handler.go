@@ -19,9 +19,9 @@ func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv
 		AuthApiMdw:    authApiMdw,
 	}
 
-	//muxV1.HandleFunc("GET /plans", h.GetAll)
 	muxV1.Handle("POST /paddle/plans", h.AuthApiMdw.AccessTokenMdw(h.Create))
-	//muxV1.HandleFunc("GET /plans/{id}", h.Get)
+	muxV1.HandleFunc("GET /paddle/plans/{id}", h.Get)
+	//muxV1.HandleFunc("GET /plans", h.GetAll)
 	//muxV1.Handle("PUT /plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.Update))
 	//muxV1.Handle("PATCH /plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.Patch))
 
