@@ -21,6 +21,7 @@ func (r *Repository) Update(ctx context.Context, id string, paddlePlan *domain.P
 	}
 	result, err := r.Collection.UpdateOne(ctx, bson.M{"_id": oID, "plan_id": m.PlanID}, bson.M{"$set": bson.M{
 		"paddle_product_id": m.PaddleProductID,
+		"order":             m.Order,
 		"items":             m.Items,
 		"updated_at":        m.UpdatedAt,
 	}})

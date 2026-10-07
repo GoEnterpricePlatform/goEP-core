@@ -33,6 +33,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Name:            req.Name,
 		Description:     req.Description,
 		PaddleProductID: req.PaddleProductID,
+		Order:           req.Order,
 		Items:           make([]*domain.PaddlePlanItem, 0, len(req.Items)),
 	}
 

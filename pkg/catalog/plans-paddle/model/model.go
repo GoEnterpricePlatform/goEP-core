@@ -12,6 +12,7 @@ type PaddlePlanNoSqlModel struct {
 	ID              bson.ObjectID          `bson:"_id"`
 	PlanID          bson.ObjectID          `bson:"plan_id"`
 	PaddleProductID string                 `bson:"paddle_product_id"`
+	Order           int                    `bson:"order"`
 	Items           []*PaddlePlanItemModel `bson:"items"`
 	CreatedAt       *time.Time             `bson:"created_at"`
 	UpdatedAt       *time.Time             `bson:"updated_at"`
@@ -79,6 +80,7 @@ func (m *PaddlePlanNoSqlModel) ToDomain(o *domain.PaddlePlan) {
 	o.ID = m.ID.Hex()
 	o.PlanID = planID
 	o.PaddleProductID = m.PaddleProductID
+	o.Order = m.Order
 	o.Items = items
 	o.CreatedAt = m.CreatedAt
 	o.UpdatedAt = m.UpdatedAt
@@ -121,6 +123,7 @@ func FromDomainPaddlePlan(d *domain.PaddlePlan, id bson.ObjectID) (*PaddlePlanNo
 		ID:              id,
 		PlanID:          planID,
 		PaddleProductID: d.PaddleProductID,
+		Order:           d.Order,
 		Items:           items,
 		CreatedAt:       d.CreatedAt,
 		UpdatedAt:       d.UpdatedAt,

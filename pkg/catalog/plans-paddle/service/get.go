@@ -65,5 +65,7 @@ func (s *Service) Get(ctx context.Context, id string) (*paddlPlanD.PaddlePlan, e
 		}
 	}
 
+	s.enrichPaddleDetails(ctx, paddlePlan)
+
 	return paddlePlan, nil
 }

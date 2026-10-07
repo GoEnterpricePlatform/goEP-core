@@ -11,7 +11,7 @@ import (
 )
 
 func (r *Repository) FindAll(ctx context.Context, limit, page int64) ([]*domain.PaddlePlan, error) {
-	opts := options.Find().SetSkip((page - 1) * limit).SetLimit(limit).SetSort(bson.D{{Key: "created_at", Value: -1}, {Key: "_id", Value: -1}})
+	opts := options.Find().SetSkip((page - 1) * limit).SetLimit(limit).SetSort(bson.D{{Key: "order", Value: 1}, {Key: "created_at", Value: -1}, {Key: "_id", Value: -1}})
 	cursor, err := r.Collection.Find(ctx, bson.D{}, opts)
 	if err != nil {
 		return nil, fmt.Errorf("error listing paddle plans: %w", err)

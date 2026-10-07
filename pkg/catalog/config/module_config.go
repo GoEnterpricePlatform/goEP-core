@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	paddle "github.com/PaddleHQ/paddle-go-sdk/v5"
 
 	planPaddleH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/handler"
 	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/mongo"
@@ -85,7 +86,11 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	// services
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo, planRepo)
 	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
-	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg)
+	var paddleSDKClient *paddle.SDK
+	if cfg.AppClients.PaddleCli != nil {
+		paddleSDKClient = cfg.AppClients.PaddleCli.Client
+	}
+	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
