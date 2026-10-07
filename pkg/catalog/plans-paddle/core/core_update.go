@@ -12,6 +12,7 @@ type UpdatePaddlePlanReq struct {
 	Name            string                  `json:"name"`
 	Description     *string                 `json:"description"`
 	PaddleProductID string                  `json:"paddle_product_id"`
+	Order           int                     `json:"order"`
 	Items           []*UpdatePaddlePlanItem `json:"items"`
 }
 
@@ -23,7 +24,7 @@ type UpdatePaddlePlanItem struct {
 }
 
 func (r UpdatePaddlePlanReq) Validate() error {
-	create := CreatePaddlePlanReq{Name: r.Name, Description: r.Description, PaddleProductID: r.PaddleProductID}
+	create := CreatePaddlePlanReq{Name: r.Name, Description: r.Description, PaddleProductID: r.PaddleProductID, Order: r.Order}
 	for _, item := range r.Items {
 		if item == nil {
 			create.Items = append(create.Items, nil)

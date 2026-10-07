@@ -68,6 +68,8 @@ func (s *Service) GetAll(ctx context.Context, limit int64, page int64) ([]*paddl
 				paddleItem.ImgUrl = &url
 			}
 		}
+
+		s.enrichPaddleDetails(ctx, paddlePlan)
 	}
 
 	count, err := s.PaddlePlanRepo.Count(ctx)

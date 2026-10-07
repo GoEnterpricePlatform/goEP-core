@@ -4,6 +4,7 @@ type CreatePaddlePlanReq struct {
 	Name            string                  `json:"name"`
 	Description     *string                 `json:"description"`
 	PaddleProductID string                  `json:"paddle_product_id"`
+	Order           int                     `json:"order"`
 	Items           []*CreatePaddlePlanItem `json:"items"`
 }
 

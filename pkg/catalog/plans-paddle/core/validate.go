@@ -8,6 +8,10 @@ import (
 )
 
 func (r CreatePaddlePlanReq) Validate() error {
+	if r.Order < 0 {
+		return domain.NewAppError(domain.ErrCodeInvalidParams, "order cannot be negative")
+	}
+
 	if strings.TrimSpace(r.Name) == "" {
 		return domain.NewAppError(domain.ErrCodeInvalidParams, "name is required")
 	}
