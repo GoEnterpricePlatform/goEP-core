@@ -16,6 +16,7 @@ var ErrCodeMapping = map[string]int{
 	domain.ErrCodeInvalidParams: http.StatusBadRequest,
 	domain.ErrCodeUnauthorized:  http.StatusUnauthorized,
 	domain.ErrCodeForbidden:     http.StatusForbidden,
+	domain.ErrCodeConflict:      http.StatusConflict,
 }
 
 func RespondError(w http.ResponseWriter, err error) {

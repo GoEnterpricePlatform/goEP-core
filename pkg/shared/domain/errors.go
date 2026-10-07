@@ -10,6 +10,7 @@ const (
 	ErrCodeTimeout             = "timeout"
 	ErrCodeUnauthorized        = "unauthorized"
 	ErrCodeForbidden           = "forbidden"
+	ErrCodeConflict            = "conflict"
 )
 
 var (

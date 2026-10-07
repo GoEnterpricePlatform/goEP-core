@@ -17,7 +17,13 @@ type VarOptionRepo interface {
 	Insert(ctx context.Context, varOption *domain.VarOption) error
 	Update(ctx context.Context, varOption *domain.VarOption) error
 	Delete(ctx context.Context, id string, variationID string) error
-	FindByIDs(ctx context.Context,ids []string) ([]*domain.VarOption,error)
+	FindByIDs(ctx context.Context, ids []string) ([]*domain.VarOption, error)
+	HasByVariation(ctx context.Context, variationID string) (bool, error)
+}
+
+// OptionUsageChecker lets variations reject deletion without knowing who uses an option.
+type OptionUsageChecker interface {
+	IsOptionInUse(ctx context.Context, optionID string) (bool, error)
 }
 
 type VariationSrv interface {

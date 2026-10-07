@@ -83,7 +83,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	planPaddleTx := planPaddleTransaction.NewPlanPaddleTx(cfg.AppClients.MongoConn.DB, planRepo, planPaddleRepo)
 
 	// services
-	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo)
+	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo, planRepo)
 	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
 	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg)
 
