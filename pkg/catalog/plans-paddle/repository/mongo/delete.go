@@ -1,0 +1,24 @@
+package mongo
+
+import (
+	"context"
+	"fmt"
+
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
+
+func (r *Repository) Delete(ctx context.Context, id string) error {
+	oID, err := bson.ObjectIDFromHex(id)
+	if err != nil {
+		return sharedD.ErrIncorrectID
+	}
+	result, err := r.Collection.DeleteOne(ctx, bson.M{"_id": oID})
+	if err != nil {
+		return fmt.Errorf("error deleting paddle plan: %w", err)
+	}
+	if result.DeletedCount == 0 {
+		return sharedD.ErrNotFound
+	}
+	return nil
+}
