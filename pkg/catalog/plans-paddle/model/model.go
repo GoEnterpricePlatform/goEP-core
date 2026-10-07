@@ -102,6 +102,12 @@ func FromDomainPaddlePlan(d *domain.PaddlePlan, id bson.ObjectID) (*PaddlePlanNo
 		}
 
 		itemID := bson.NewObjectID()
+		if item.ID != "" {
+			itemID, err = bson.ObjectIDFromHex(item.ID)
+			if err != nil {
+				return nil, sharedD.ErrIncorrectID
+			}
+		}
 
 		itemModel, err := FromDomainPaddlePlanItem(item, itemID)
 		if err != nil {

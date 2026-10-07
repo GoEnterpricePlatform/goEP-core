@@ -63,7 +63,6 @@ func (s *Service) Get(ctx context.Context, id string) (*paddlPlanD.PaddlePlan, e
 
 			paddleItem.ImgUrl = &url
 		}
-		paddleItem.VarOptionIDs = nil
 	}
 
 	return paddlePlan, nil

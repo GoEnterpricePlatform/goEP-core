@@ -1,0 +1,17 @@
+meta {
+  name: Delete
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/paddle/plans/6aafcfaba9a5b3f77d9d4453
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

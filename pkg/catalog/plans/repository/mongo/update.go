@@ -17,18 +17,23 @@ func (r *Repository) Update(ctx context.Context, id string, plan *domain.Plan) e
 	if err != nil {
 		return sharedD.ErrIncorrectID
 	}
-	
+
 	items := make([]bson.D, 0, len(plan.Items))
-	
+
 	for _, item := range plan.Items {
 		if item == nil {
 			continue
 		}
-		
-		itemID, err := bson.ObjectIDFromHex(item.ID)
-		if err != nil {
-			return sharedD.ErrIncorrectID
+
+		// A new id is created for the new items
+		itemID := bson.NewObjectID()
+		if item.ID != "" {
+			itemID, err = bson.ObjectIDFromHex(item.ID)
+			if err != nil {
+				return sharedD.ErrIncorrectID
+			}
 		}
+		item.ID = itemID.Hex()
 
 		varOptionIDs := make([]bson.ObjectID, 0, len(item.VarOptionIDs))
 
