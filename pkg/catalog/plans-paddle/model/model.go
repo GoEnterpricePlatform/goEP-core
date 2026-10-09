@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
+	planD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/domain"
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -19,11 +20,12 @@ type PaddlePlanNoSqlModel struct {
 }
 
 type PaddlePlanItemModel struct {
-	ID            bson.ObjectID `bson:"_id"`
-	PlanItemID    bson.ObjectID `bson:"plan_item_id"`
-	PaddlePriceID string        `bson:"paddle_price_id"`
-	CreatedAt     *time.Time    `bson:"created_at"`
-	UpdatedAt     *time.Time    `bson:"updated_at"`
+	ID            bson.ObjectID    `bson:"_id"`
+	PlanItemID    bson.ObjectID    `bson:"plan_item_id"`
+	PaddlePriceID string           `bson:"paddle_price_id"`
+	Status        planD.PlanStatus `bson:"status"`
+	CreatedAt     *time.Time       `bson:"created_at"`
+	UpdatedAt     *time.Time       `bson:"updated_at"`
 }
 
 func (m *PaddlePlanItemModel) ToDomain(o *domain.PaddlePlanItem) {
@@ -34,6 +36,7 @@ func (m *PaddlePlanItemModel) ToDomain(o *domain.PaddlePlanItem) {
 	o.ID = m.ID.Hex()
 	o.PlanItemID = m.PlanItemID.Hex()
 	o.PaddlePriceID = m.PaddlePriceID
+	o.Status = m.Status
 	o.CreatedAt = m.CreatedAt
 	o.UpdatedAt = m.UpdatedAt
 }
@@ -52,6 +55,7 @@ func FromDomainPaddlePlanItem(o *domain.PaddlePlanItem, id bson.ObjectID) (*Padd
 		ID:            id,
 		PlanItemID:    planItemID,
 		PaddlePriceID: o.PaddlePriceID,
+		Status:        o.Status,
 		CreatedAt:     o.CreatedAt,
 		UpdatedAt:     o.UpdatedAt,
 	}, nil

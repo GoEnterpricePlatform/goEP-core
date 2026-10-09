@@ -39,6 +39,21 @@ tasks:
       - run:templ
       - run:server
 
+  # Start only the API and expose it through a temporary Cloudflare Quick Tunnel.
+  run:tunnel:
+    deps:
+      #- run:back:server
+      - run:back:tunnel
+    failfast: true
+
+  run:back:server:
+    cmds:
+      - go run cmd/api/env/dev/main/main.go
+
+  run:back:tunnel:
+    cmds:
+      - cloudflared tunnel --url http://localhost:${HTTP_SERVER_PORT:-8000}
+
   build:templ:
     cmds:
       - go tool templ generate

@@ -8,8 +8,12 @@ type PaddleClient struct {
 	Client *paddle.SDK
 }
 
-func NewPaddleClient(apiKey string) (*PaddleClient, error) {
-	client, err := paddle.New(apiKey, paddle.WithBaseURL(paddle.SandboxBaseURL))
+func NewPaddleClient(apiKey string, environment string) (*PaddleClient, error) {
+	baseURL := paddle.SandboxBaseURL
+	if environment == "production" {
+		baseURL = paddle.ProductionBaseURL
+	}
+	client, err := paddle.New(apiKey, paddle.WithBaseURL(baseURL))
 	if err != nil {
 		return nil, err
 	}

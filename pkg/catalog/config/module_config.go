@@ -8,7 +8,8 @@ import (
 	paddle "github.com/PaddleHQ/paddle-go-sdk/v5"
 
 	planPaddleH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/handler"
-	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/mongo"
+	checkoutPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/checkout/mongo"
+	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/plans/mongo"
 	planPaddleService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/service"
 	planPaddleTransaction "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/transaction/mongo"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/disabled"
@@ -73,12 +74,14 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 
 	plansPaddleCollName := fmt.Sprintf("%s_plans_paddle", mdlName)
 	plansPaddleColl := cfg.DB.Collection(plansPaddleCollName)
+	paddleCheckoutsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_checkouts", mdlName))
 
 	// Repositories
 	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl, varOptionCollName)
 	varOptionRepo := varOptionRepository.NewVarOptionRepo(cfg.AppClients.MongoConn.DB, varOptionColl)
 	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl, varOptionCollName, variationsCollName)
 	planPaddleRepo := planPaddleRepository.NewPlanPaddleRepo(cfg.AppClients.MongoConn.DB, plansPaddleColl)
+	paddleCheckoutRepo := checkoutPaddleRepository.NewPaddleCheckoutRepo(paddleCheckoutsColl)
 
 	// transactions
 	planPaddleTx := planPaddleTransaction.NewPlanPaddleTx(cfg.AppClients.MongoConn.DB, planRepo, planPaddleRepo)
@@ -90,12 +93,12 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	if cfg.AppClients.PaddleCli != nil {
 		paddleSDKClient = cfg.AppClients.PaddleCli.Client
 	}
-	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
+	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, paddleCheckoutRepo, planRepo, planFileStg, paddleSDKClient)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
 	planH.NewPlanHandler(cfg.APIv1, planSrv, cfg.Deps.AuthApiMdw)
-	planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw)
+	planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
 
 	return &Module{
 		VariationService: variationSrv,

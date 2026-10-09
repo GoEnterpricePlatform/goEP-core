@@ -70,9 +70,15 @@ func (ae *AppEnvs) Load() {
 
 	// paddle
 	var paddleApiKey string
+	paddleEnvironment := cmp.Or(os.Getenv("PADDLE_ENVIRONMENT"), "sandbox")
+	var paddleWebhookSecret string
 
 	if isEnableMorPaddle {
 		paddleApiKey = mustGetEnv("PADDLE_API_KEY")
+		paddleWebhookSecret = mustGetEnv("PADDLE_WEBHOOK_SECRET_KEY")
+		if paddleEnvironment != "sandbox" && paddleEnvironment != "production" {
+			log.Fatalf("PADDLE_ENVIRONMENT must be either sandbox or production")
+		}
 	}
 
 	// Auth - tokens
@@ -186,6 +192,8 @@ func (ae *AppEnvs) Load() {
 	ae.OpenAiApiKey = openaiApiKey
 	ae.IsEnableMorPaddle = isEnableMorPaddle
 	ae.PaddleApiKey = paddleApiKey
+	ae.PaddleEnvironment = paddleEnvironment
+	ae.PaddleWebhookSecret = paddleWebhookSecret
 	ae.JWTAccessSecret = mustGetEnv("JWT_ACCESS_TOKEN")
 	ae.JWTRefreshSecret = mustGetEnv("JWT_REFRESH_TOKEN")
 	ae.JWTIssuer = mustGetEnv("JWT_ISS")

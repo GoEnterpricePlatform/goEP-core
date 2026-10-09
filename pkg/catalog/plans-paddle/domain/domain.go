@@ -61,3 +61,5 @@ type PaddleBillingCycle struct {
 	Interval  string `json:"interval"`
 	Frequency int    `json:"frequency"`
 }
+
+
