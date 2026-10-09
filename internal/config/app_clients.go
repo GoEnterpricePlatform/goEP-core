@@ -65,7 +65,7 @@ func (ac *AppClients) GetClients(appEnvs *AppEnvs) error {
 	}
 
 	if appEnvs.IsEnableMorPaddle {
-		paddleCli, err := paddleClient.NewPaddleClient(appEnvs.PaddleApiKey)
+		paddleCli, err := paddleClient.NewPaddleClient(appEnvs.PaddleApiKey, appEnvs.PaddleEnvironment)
 		if err != nil {
 			return err
 		}

@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/v1/paddle/plans
+  url: {{baseUrl}}/api/v1/plans
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "name": "plane 1",
+    "name": "plane default",
     "desc": null,
     "plan_items": [
       {
@@ -20,8 +20,8 @@ body:json {
           "feature one"
         ],
         "var_option_ids": [
-          "6aab24661ff8d3213b397e62",
-          "6aab24851ff8d3213b397e65"
+          "6ab7f00e165d87591d0a5ff4",
+          "6ab7f023165d87591d0a5ff6"
         ]
       },
       {
@@ -29,8 +29,8 @@ body:json {
           "feature two"
         ],
         "var_option_ids": [
-          "6aab24691ff8d3213b397e63",
-          "6aab24851ff8d3213b397e65"
+          "6ab7f00e165d87591d0a5ff4",
+          "6ab7f029165d87591d0a5ff7"
         ]
       },
       {
@@ -38,8 +38,8 @@ body:json {
           "feature tree"
         ],
         "var_option_ids": [
-          "6aab24701ff8d3213b397e64",
-          "6aab24851ff8d3213b397e65"
+          "6ab7f016165d87591d0a5ff5",
+          "6ab7f023165d87591d0a5ff6"
         ]
       },
       {
@@ -47,27 +47,8 @@ body:json {
           "feature four"
         ],
         "var_option_ids": [
-          "6aab24661ff8d3213b397e62",
-          "6aab248b1ff8d3213b397e66"
-        ]
-      },
-      {
-        "features": [
-          "feature five",
-          "feature five"
-        ],
-        "var_option_ids": [
-          "6aab24691ff8d3213b397e63",
-          "6aab248b1ff8d3213b397e66"
-        ]
-      },
-      {
-        "features": [
-          "feature six"
-        ],
-        "var_option_ids": [
-          "6aab24701ff8d3213b397e64",
-          "6aab248b1ff8d3213b397e66"
+          "6ab7f016165d87591d0a5ff5",
+          "6ab7f029165d87591d0a5ff7"
         ]
       }
     ]

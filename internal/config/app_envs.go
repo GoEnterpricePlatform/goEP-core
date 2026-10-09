@@ -42,8 +42,10 @@ type AppEnvs struct {
 	OpenAiApiKey string
 
 	// payments MoR
-	IsEnableMorPaddle bool
-	PaddleApiKey string
+	IsEnableMorPaddle   bool
+	PaddleApiKey        string
+	PaddleEnvironment   string
+	PaddleWebhookSecret string
 
 	// Jwt
 	JWTAccessSecret           string

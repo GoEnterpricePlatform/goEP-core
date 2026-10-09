@@ -13,6 +13,9 @@ type PaddlePlanSrv interface {
 	GetAll(ctx context.Context, limit, page int64) ([]*domain.PaddlePlan, int64, int64, error)
 	Update(ctx context.Context, id string, paddlePlan *domain.PaddlePlan) error
 	Delete(ctx context.Context, id string) error
+	CreateCheckout(ctx context.Context, planID, itemID string) (*domain.PaddleCheckout, error)
+	GetCheckout(ctx context.Context, transactionID string) (*domain.PaddleCheckout, error)
+	HandlePaddleWebhook(ctx context.Context, event *domain.PaddleWebhookEvent) error
 }
 
 type PaddlePlanRepo interface {
@@ -32,4 +35,10 @@ type PaddlePlanTx interface {
 
 type PaddlePlanFileStg interface {
 	GetImage(ctx context.Context, imgPath string) (string, error)
+}
+
+type PaddleCheckoutRepo interface {
+	Insert(ctx context.Context, checkout *domain.PaddleCheckout) error
+	Find(ctx context.Context, transactionID string) (*domain.PaddleCheckout, error)
+	UpdateStatus(ctx context.Context, transactionID, status string, subscriptionID *string, updatedAt string) error
 }
