@@ -24,7 +24,7 @@ func (h *Handler) PaddleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var event domain.PaddleWebhookEvent
-	if err := json.Unmarshal(payload, &event); err != nil || event.EventType == "" {
+	if err := json.Unmarshal(payload, &event); err != nil || event.EventID == "" || event.EventType == "" {
 		http.Error(w, "invalid Paddle webhook payload", http.StatusBadRequest)
 		return
 	}

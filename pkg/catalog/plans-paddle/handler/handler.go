@@ -30,8 +30,10 @@ func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv
 	muxV1.HandleFunc("GET /paddle/plans", h.requirePaddleEnabled(h.GetAll))
 	muxV1.Handle("PUT /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Update)))
 	muxV1.Handle("DELETE /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Delete)))
-	muxV1.HandleFunc("POST /paddle/checkout", h.requirePaddleEnabled(h.CreateCheckout))
-	muxV1.HandleFunc("GET /paddle/checkout/{transactionID}", h.requirePaddleEnabled(h.GetCheckout))
+	muxV1.Handle("POST /paddle/checkout", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.CreateCheckout)))
+	muxV1.HandleFunc("GET /paddle/transactions/{paddleTransactionID}", h.requirePaddleEnabled(h.GetTransaction))
+	muxV1.Handle("GET /paddle/subscription/access", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.GetSubscriptionAccess)))
+	muxV1.Handle("POST /paddle/subscription/reconcile", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.ReconcileSubscription)))
 	var webhookHandler http.Handler = http.HandlerFunc(h.PaddleWebhook)
 	if isEnabled && webhookSecret != "" {
 		webhookHandler = paddleSDK.NewWebhookVerifier(webhookSecret, paddleSDK.VerifierWithTimestampTolerance(5*time.Second)).Middleware(webhookHandler)

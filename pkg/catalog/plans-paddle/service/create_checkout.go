@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -10,7 +11,10 @@ import (
 	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
 )
 
-func (s *Service) CreateCheckout(ctx context.Context, planID, itemID string) (*paddlePlanD.PaddleCheckout, error) {
+func (s *Service) CreateCheckout(ctx context.Context, userID, planID, itemID string) (*paddlePlanD.PaddleTransaction, error) {
+	if userID == "" {
+		return nil, sharedD.NewAppError(sharedD.ErrCodeUnauthorized, "authentication is required to create a Paddle checkout")
+	}
 	if s.PaddleClient == nil {
 		return nil, sharedD.NewAppError(sharedD.ErrCodeInternalServerError, "Paddle is not configured")
 	}
@@ -60,6 +64,7 @@ func (s *Service) CreateCheckout(ctx context.Context, planID, itemID string) (*p
 		CustomData: paddleSDK.CustomData{
 			"plan_id":      plan.PlanID,
 			"plan_item_id": selected.PlanItemID,
+			"user_id":      userID,
 		},
 	})
 	if err != nil {
@@ -69,17 +74,24 @@ func (s *Service) CreateCheckout(ctx context.Context, planID, itemID string) (*p
 		return nil, fmt.Errorf("Paddle returned an empty transaction ID")
 	}
 
-	checkout := &paddlePlanD.PaddleCheckout{
-		TransactionID: transaction.ID,
-		PlanID:        plan.PlanID,
-		PlanItemID:    selected.PlanItemID,
-		PaddlePriceID: selected.PaddlePriceID,
-		Status:        string(transaction.Status),
-		UpdatedAt:     time.Now().UTC().Format(time.RFC3339Nano),
+	paddleTransaction := &paddlePlanD.PaddleTransaction{
+		PaddleTransactionID: transaction.ID,
+		UserID:              userID,
+		PlanID:              plan.PlanID,
+		PlanItemID:          selected.PlanItemID,
+		Status:              string(transaction.Status),
+		UpdatedAt:           time.Now().UTC().Format(time.RFC3339Nano),
 	}
-	if err := s.PaddleCheckoutRepo.Insert(ctx, checkout); err != nil {
+	if s.PaddleCustomerRepo != nil {
+		if customer, err := s.PaddleCustomerRepo.FindByUserID(ctx, userID); err == nil {
+			paddleTransaction.CustomerID = customer.ID
+		} else if !errors.Is(err, sharedD.ErrNotFound) {
+			return nil, sharedD.ManageError(err, "error finding billing customer")
+		}
+	}
+	if err := s.PaddleTransactionRepo.Insert(ctx, paddleTransaction); err != nil {
 		return nil, sharedD.ManageError(err, "error saving Paddle checkout")
 	}
 
-	return checkout, nil
+	return paddleTransaction, nil
 }

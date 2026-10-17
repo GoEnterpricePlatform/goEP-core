@@ -2,6 +2,7 @@ package port
 
 import (
 	"context"
+	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 	planD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/domain"
@@ -13,9 +14,12 @@ type PaddlePlanSrv interface {
 	GetAll(ctx context.Context, limit, page int64) ([]*domain.PaddlePlan, int64, int64, error)
 	Update(ctx context.Context, id string, paddlePlan *domain.PaddlePlan) error
 	Delete(ctx context.Context, id string) error
-	CreateCheckout(ctx context.Context, planID, itemID string) (*domain.PaddleCheckout, error)
-	GetCheckout(ctx context.Context, transactionID string) (*domain.PaddleCheckout, error)
+	CreateCheckout(ctx context.Context, userID, planID, itemID string) (*domain.PaddleTransaction, error)
+	GetTransaction(ctx context.Context, paddleTransactionID string) (*domain.PaddleTransaction, error)
 	HandlePaddleWebhook(ctx context.Context, event *domain.PaddleWebhookEvent) error
+	GetSubscriptionAccess(ctx context.Context, userID string) (*domain.PaddleSubscriptionAccess, error)
+	ReconcileUserSubscriptions(ctx context.Context, userID string) error
+	RunSubscriptionReconciliation(ctx context.Context, interval time.Duration)
 }
 
 type PaddlePlanRepo interface {
@@ -37,8 +41,32 @@ type PaddlePlanFileStg interface {
 	GetImage(ctx context.Context, imgPath string) (string, error)
 }
 
-type PaddleCheckoutRepo interface {
-	Insert(ctx context.Context, checkout *domain.PaddleCheckout) error
-	Find(ctx context.Context, transactionID string) (*domain.PaddleCheckout, error)
-	UpdateStatus(ctx context.Context, transactionID, status string, subscriptionID *string, updatedAt string) error
+type PaddleTransactionRepo interface {
+	Insert(ctx context.Context, transaction *domain.PaddleTransaction) error
+	FindByPaddleTransactionID(ctx context.Context, paddleTransactionID string) (*domain.PaddleTransaction, error)
+	FindAllByUserID(ctx context.Context, userID string) ([]*domain.PaddleTransaction, error)
+	FindAllLinkedToSubscriptions(ctx context.Context) ([]*domain.PaddleTransaction, error)
+	UpsertFromWebhook(ctx context.Context, checkout *domain.PaddleTransaction, eventAt time.Time) error
+}
+
+type PaddleSubscriptionRepo interface {
+	Upsert(ctx context.Context, subscription *domain.PaddleSubscription, lastEventAt time.Time) error
+	FindByID(ctx context.Context, id string) (*domain.PaddleSubscription, error)
+	FindByPaddleSubscriptionID(ctx context.Context, paddleSubscriptionID string) (*domain.PaddleSubscription, error)
+	FindCurrentByUserID(ctx context.Context, userID string) (*domain.PaddleSubscription, error)
+	FindAllByUserID(ctx context.Context, userID string) ([]*domain.PaddleSubscription, error)
+	FindAll(ctx context.Context) ([]*domain.PaddleSubscription, error)
+}
+
+type PaddleCustomerRepo interface {
+	Upsert(ctx context.Context, customer *domain.PaddleCustomer) error
+	FindByUserID(ctx context.Context, userID string) (*domain.PaddleCustomer, error)
+	FindByPaddleCustomerID(ctx context.Context, paddleCustomerID string) (*domain.PaddleCustomer, error)
+}
+
+type PaddleWebhookEventRepo interface {
+	StartProcessing(ctx context.Context, event *domain.PaddleWebhookEvent, now time.Time) (alreadyProcessed bool, err error)
+	MarkProcessed(ctx context.Context, eventID string, processedAt time.Time) error
+	MarkFailed(ctx context.Context, eventID string, failedAt time.Time, processingErr error) error
+	CreateIndexes() error
 }
