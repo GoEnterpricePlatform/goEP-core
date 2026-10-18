@@ -1,34 +1,12 @@
-# Builder registration and manifest validation
+#Modular architecture documentation
 
-## 1.NewCompiledRegistry
+The usage and extension guide is in [GoEP Core Modular Architecture](modular-architecture.md).
 
-Registers the available constructors: **Identity**, **Posts**, **Billing**, **Catalog** and **AI**.
+For a step-by-step example of creating a module, see [Adding a backend module](agregar-modulo.md).
 
-In this record, "available" means that your code is included in the executable.
+Reference documents:
 
-## 2. Initialize
-
-Looks up each constructor by name and calls it with the typed configuration that module needs.
-
-For example, you construct **Identity** and then pass your authentication middleware to **Posts**.
-
-## 3. Registry.Validate
-
-Compare the registry with the manifests:
-
-- Detects if there is a manifest without compiled code.
-- Detects if there is a factory without a manifest.
-
-That validation is tested, but still **is not executed when the application starts**.
-
-## Tour
-
-```text
-NewCompiledRegistry
-        ↓
-Initialize searches each factory by name
-        ↓
-Call the constructors in the current order
-        ↓
-Modules record their routes as before
-```
+- [Composition and service injection](backend-module-composition.md)
+- [Manifest Discovery](module-discovery.md)
+- [Registry of compiled implementations and dependencies](compiled-module-registry.md)
+- [Lifecycle persistence](module-lifecycle.md)

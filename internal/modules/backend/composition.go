@@ -12,6 +12,7 @@ import (
 	postModule "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
 )
 
 // Config contains the infrastructure shared by backend modules and their route
@@ -25,15 +26,16 @@ type Config struct {
 
 // Modules contains the backend modules and services needed by the web layer.
 type Modules struct {
-	Identity *identityModule.Module
-	Posts    *postModule.Module
-	AI       *aiModule.Module
+	Identity  *identityModule.Module
+	Posts     *postModule.Module
+	AI        *aiModule.Module
+	Lifecycle *lifecycle.Manager
 }
 
 // Initialize constructs backend modules in dependency order and registers
 // their API routes on cfg.APIv1.
 func Initialize(cfg Config) (*Modules, error) {
-	registry, enabled, err := initializeModuleLifecycle(cfg)
+	registry, enabled, lifecycleManager, err := initializeModuleLifecycle(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -117,9 +119,10 @@ func Initialize(cfg Config) (*Modules, error) {
 	}
 
 	return &Modules{
-		Identity: identity,
-		Posts:    posts,
-		AI:       ai,
+		Identity:  identity,
+		Posts:     posts,
+		AI:        ai,
+		Lifecycle: lifecycleManager,
 	}, nil
 }
 

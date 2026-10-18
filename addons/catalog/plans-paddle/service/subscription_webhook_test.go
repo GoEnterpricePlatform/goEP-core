@@ -158,6 +158,7 @@ func TestHandlePaddleWebhookSeparatesRenewalTransactionsFromSubscription(t *test
 	s := &Service{PaddleTransactionRepo: checkouts, PaddleSubscriptionRepo: subscriptions}
 
 	created := &domain.PaddleWebhookEvent{
+		EventID:    "evt_sub_created",
 		EventType:  "subscription.created",
 		OccurredAt: "2026-10-09T16:00:00Z",
 		Data: domain.PaddleWebhookEventData{
@@ -181,6 +182,7 @@ func TestHandlePaddleWebhookSeparatesRenewalTransactionsFromSubscription(t *test
 	for _, transactionID := range []string{"txn_initial", "txn_renewal"} {
 		subscriptionID := "sub_1"
 		event := &domain.PaddleWebhookEvent{
+			EventID:    "evt_" + transactionID,
 			EventType:  "transaction.completed",
 			OccurredAt: "2026-10-09T16:01:00Z",
 			Data: domain.PaddleWebhookEventData{
