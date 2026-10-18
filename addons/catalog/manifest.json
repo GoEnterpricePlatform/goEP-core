@@ -1,0 +1,6 @@
+{
+  "name": "catalog",
+  "version": "1.0.0",
+  "summary": "Product plans, variations, and subscriptions",
+  "depends": ["identity"]
+}

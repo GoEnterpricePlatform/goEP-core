@@ -1,0 +1,6 @@
+{
+  "name": "identity",
+  "version": "1.0.0",
+  "summary": "User identity, authentication, and authorization",
+  "depends": []
+}

@@ -1,0 +1,6 @@
+{
+  "name": "posts",
+  "version": "1.0.0",
+  "summary": "Post management",
+  "depends": ["identity"]
+}
