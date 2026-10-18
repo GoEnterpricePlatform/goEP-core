@@ -8,6 +8,7 @@ import (
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
+// GetTransaction handles GET /paddle/transactions/{paddleTransactionID} when a client checks a Paddle transaction after checkout.
 func (h *Handler) GetTransaction(w http.ResponseWriter, r *http.Request) {
 	paddleTransactionID := r.PathValue("paddleTransactionID")
 	if paddleTransactionID == "" {

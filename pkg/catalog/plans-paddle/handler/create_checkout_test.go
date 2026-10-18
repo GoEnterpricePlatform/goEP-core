@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
@@ -41,8 +40,6 @@ func (s *checkoutServiceStub) HandlePaddleWebhook(context.Context, *domain.Paddl
 func (s *checkoutServiceStub) GetSubscriptionAccess(context.Context, string) (*domain.PaddleSubscriptionAccess, error) {
 	return nil, nil
 }
-func (s *checkoutServiceStub) ReconcileUserSubscriptions(context.Context, string) error     { return nil }
-func (s *checkoutServiceStub) RunSubscriptionReconciliation(context.Context, time.Duration) {}
 
 func TestCreateCheckoutRequiresAuthenticatedUser(t *testing.T) {
 	service := &checkoutServiceStub{}

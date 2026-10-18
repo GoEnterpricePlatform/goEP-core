@@ -15,6 +15,7 @@ type createCheckoutRequest struct {
 	ItemID string `json:"item_id"`
 }
 
+// CreateCheckout handles POST /paddle/checkout after an authenticated user selects a plan and item to purchase.
 func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 	if !h.IsEnabled {
 		http.Error(w, "Paddle is not enabled", http.StatusServiceUnavailable)

@@ -11,9 +11,7 @@ import (
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
-// Create a product, with or without variations, and establish your relationships with Paddle.
-// The returned product may be incomplete;
-// uses your ID to get full plan information using /plans/{id}.
+// Create handles POST /paddle/plans when an authenticated administrator adds a Paddle-backed plan to the catalog.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var req core.CreatePaddlePlanReq
 

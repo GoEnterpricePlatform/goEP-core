@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model"
+	model "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model/subscription"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"

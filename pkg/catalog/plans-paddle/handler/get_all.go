@@ -18,6 +18,7 @@ type paddlePlansPage struct {
 	Plans    []*domain.PaddlePlan `json:"plans"`
 }
 
+// GetAll handles GET /paddle/plans when a client needs the paginated Paddle plan catalog.
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 

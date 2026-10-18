@@ -18,8 +18,6 @@ type PaddlePlanSrv interface {
 	GetTransaction(ctx context.Context, paddleTransactionID string) (*domain.PaddleTransaction, error)
 	HandlePaddleWebhook(ctx context.Context, event *domain.PaddleWebhookEvent) error
 	GetSubscriptionAccess(ctx context.Context, userID string) (*domain.PaddleSubscriptionAccess, error)
-	ReconcileUserSubscriptions(ctx context.Context, userID string) error
-	RunSubscriptionReconciliation(ctx context.Context, interval time.Duration)
 }
 
 type PaddlePlanRepo interface {

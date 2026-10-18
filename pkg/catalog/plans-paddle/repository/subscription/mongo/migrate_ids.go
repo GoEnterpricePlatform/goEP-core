@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model"
+	model "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model/subscription"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/port"
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"

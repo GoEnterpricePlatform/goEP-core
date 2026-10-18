@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model"
+	model "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model/plan"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -31,12 +31,4 @@ func (r *Repository) FindAll(ctx context.Context, limit, page int64) ([]*domain.
 		plans = append(plans, plan)
 	}
 	return plans, nil
-}
-
-func (r *Repository) Count(ctx context.Context) (int64, error) {
-	count, err := r.Collection.CountDocuments(ctx, bson.D{})
-	if err != nil {
-		return 0, fmt.Errorf("error counting paddle plans: %w", err)
-	}
-	return count, nil
 }

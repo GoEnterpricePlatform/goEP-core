@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/model/transaction"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

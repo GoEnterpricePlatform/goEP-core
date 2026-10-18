@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	paddle "github.com/PaddleHQ/paddle-go-sdk/v5"
@@ -81,7 +80,6 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	plansPaddleCollName := fmt.Sprintf("%s_paddle_plans", mdlName)
 	plansPaddleColl := cfg.DB.Collection(plansPaddleCollName)
 	paddleTransactionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_transactions", mdlName))
-	legacyPaddleCheckoutsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_checkouts", mdlName))
 	paddleSubscriptionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_subscriptions", mdlName))
 	paddleCustomersColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_customers", mdlName))
 	paddleWebhookEventsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_webhook_events", mdlName))
@@ -103,10 +101,6 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	if err := paddleSubscriptionRepo.MigrateLegacyIDs(context.Background(), paddleCustomerRepo); err != nil {
 		log.Fatal(err)
 	}
-	if err := paddleTransactionRepo.MigrateLegacyCheckouts(context.Background(), legacyPaddleCheckoutsColl, paddleSubscriptionRepo, paddleCustomerRepo); err != nil {
-		log.Fatal(err)
-	}
-
 	// Indexes
 	err := paddleSubscriptionRepo.CreateIndexes()
 	if err != nil {
@@ -138,9 +132,6 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
 	planH.NewPlanHandler(cfg.APIv1, planSrv, cfg.Deps.AuthApiMdw)
 	planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
-	if paddleSDKClient != nil {
-		go planPaddleSrv.RunSubscriptionReconciliation(context.Background(), 6*time.Hour)
-	}
 
 	return &Module{
 		VariationService: variationSrv,

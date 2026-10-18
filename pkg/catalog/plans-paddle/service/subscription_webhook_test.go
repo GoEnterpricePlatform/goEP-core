@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/service/helpers"
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
@@ -85,7 +86,7 @@ func (r *memorySubscriptionRepo) Upsert(_ context.Context, subscription *domain.
 		subscription.ID = "internal:" + subscription.PaddleSubscriptionID
 	}
 	if existing, ok := r.findByPaddleID(subscription.PaddleSubscriptionID); ok && existing.UpdatedAt != "" {
-		if lastEventAt, err := parseWebhookTime(existing.UpdatedAt); err == nil && lastEventAt.After(eventAt) {
+		if lastEventAt, err := helpers.ParseWebhookTime(existing.UpdatedAt); err == nil && lastEventAt.After(eventAt) {
 			return nil
 		}
 	}
