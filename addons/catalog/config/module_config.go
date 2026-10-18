@@ -28,7 +28,7 @@ import (
 	varOptionRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/repository/var-option/mongo"
 	variationRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/repository/variation/mongo"
 	variationService "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/service"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 	mongoDriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -45,7 +45,7 @@ type ModuleConfig struct {
 // ModuleDeps groups the external dependencies (from other modules/services)
 // that this module needs to function.
 type ModuleDeps struct {
-	AuthApiMdw *middlewares.AuthMiddleware
+	AuthApiMdw middlewarePort.Authenticator
 }
 
 type Module struct {

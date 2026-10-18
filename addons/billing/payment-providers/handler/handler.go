@@ -4,18 +4,18 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 )
 
 type Handler struct {
 	PProviderSrv port.PaymentProviderSrv
-	AuthApiMdw   *middlewares.AuthMiddleware
+	AuthApiMdw   middlewarePort.Authenticator
 }
 
 func NewPaymentProviderApiHandler(
 	muxV1 *http.ServeMux,
 	pProviderSrv port.PaymentProviderSrv,
-	authApiMdw *middlewares.AuthMiddleware,
+	authApiMdw middlewarePort.Authenticator,
 ) *Handler {
 	h := &Handler{
 		PProviderSrv: pProviderSrv,

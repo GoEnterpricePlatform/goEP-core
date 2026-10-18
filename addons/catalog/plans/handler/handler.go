@@ -4,17 +4,17 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 )
 
 type Handler struct {
 	PlanSrv    port.PlanSrv
-	AuthApiMdw *middlewares.AuthMiddleware
+	AuthApiMdw middlewarePort.Authenticator
 }
 
-func NewPlanHandler(muxV1 *http.ServeMux, planSrv port.PlanSrv, authApiMdw *middlewares.AuthMiddleware) *Handler {
+func NewPlanHandler(muxV1 *http.ServeMux, planSrv port.PlanSrv, authApiMdw middlewarePort.Authenticator) *Handler {
 	h := &Handler{
-		PlanSrv: planSrv,
+		PlanSrv:    planSrv,
 		AuthApiMdw: authApiMdw,
 	}
 

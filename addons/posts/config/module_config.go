@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	postHandler "github.com/GoEnterpricePlatform/goEP-core/addons/posts/handler"
 	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	postRepository "github.com/GoEnterpricePlatform/goEP-core/addons/posts/repository/mongo"
 	postService "github.com/GoEnterpricePlatform/goEP-core/addons/posts/service"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -27,7 +27,7 @@ type ModuleConfig struct {
 // ModuleDeps groups the external dependencies (from other modules/services)
 // that this module needs to function.
 type ModuleDeps struct {
-	AuthApiMdw *middlewares.AuthMiddleware
+	AuthApiMdw middlewarePort.Authenticator
 }
 
 type Module struct {

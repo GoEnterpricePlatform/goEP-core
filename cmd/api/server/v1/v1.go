@@ -7,12 +7,7 @@ import (
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	webAppModule "github.com/GoEnterpricePlatform/goEP-core/web/web-app/config"
 
-	aiModule "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/config"
-	billingModule "github.com/GoEnterpricePlatform/goEP-core/addons/billing/config"
-	catalogModule "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
-
-	identityModule "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
-	postModule "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
+	backendModules "github.com/GoEnterpricePlatform/goEP-core/internal/modules/backend"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/logger"
@@ -47,58 +42,10 @@ func New() http.Handler {
 
 	// Call the modules
 
-	identityMdl, err := identityModule.NewIdentityModule(identityModule.ModuleConfig{
+	backend, err := backendModules.Initialize(backendModules.Config{
 		AppEnvs:    appEnvs,
 		AppClients: appClients,
 		APIv1:      v1,
-		DB:         appClients.DB,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	postMdl, err := postModule.NewPostModule(postModule.ModuleConfig{
-		AppEnvs:    appEnvs,
-		AppClients: appClients,
-		APIv1:      v1,
-		DB:         appClients.DB,
-		Deps: postModule.ModuleDeps{
-			AuthApiMdw: identityMdl.AuthApiMdw,
-		},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = billingModule.NewBillingModule(billingModule.ModuleConfig{
-		AppEnvs:    appEnvs,
-		AppClients: appClients,
-		APIv1:      v1,
-		DB:         appClients.DB,
-		Deps: billingModule.ModuleDeps{
-			AuthApiMdw: identityMdl.AuthApiMdw,
-		},
-	})
-
-	_, err = catalogModule.NewCatalogModule(catalogModule.ModuleConfig{
-		AppEnvs:    appEnvs,
-		AppClients: appClients,
-		APIv1:      v1,
-		DB:         appClients.DB,
-		Deps: catalogModule.ModuleDeps{
-			AuthApiMdw: identityMdl.AuthApiMdw,
-		},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Optional services
-	aiMdl, err := aiModule.NewAiModule(aiModule.ModuleConfig{
-		AppEnvs:    appEnvs,
-		AppClients: appClients,
-		APIv1:      v1,
-		PostModule: postMdl,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -131,13 +78,13 @@ func New() http.Handler {
 		Mux:        mux,
 		TemplateV1: templateV1,
 		Deps: webAppModule.ModuleDeps{
-			TokenSrv:    identityMdl.TokenSrv,
-			AuthSrv:     identityMdl.AuthSrv,
-			CookieSrv:   identityMdl.CookieSrv,
-			AdminSrv:    identityMdl.AdminSrv,
-			TCService:   aiMdl.TCService,
-			PostService: postMdl.PostService,
-			RolesSrv:    identityMdl.RoleSrv,
+			TokenSrv:    backend.Identity.TokenSrv,
+			AuthSrv:     backend.Identity.AuthSrv,
+			CookieSrv:   backend.Identity.CookieSrv,
+			AdminSrv:    backend.Identity.AdminSrv,
+			TCService:   backend.AI.TCService,
+			PostService: backend.Posts.PostService,
+			RolesSrv:    backend.Identity.RoleSrv,
 		},
 	})
 

@@ -4,22 +4,22 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 )
 
 type Handler struct {
 	VariationSrv port.VariationSrv
-	AuthApiMdw   *middlewares.AuthMiddleware
+	AuthApiMdw   middlewarePort.Authenticator
 }
 
 func NewVariationHandler(
 	mux *http.ServeMux,
 	variationSrv port.VariationSrv,
-	authApiMdw *middlewares.AuthMiddleware,
+	authApiMdw middlewarePort.Authenticator,
 ) *Handler {
 	h := &Handler{
 		VariationSrv: variationSrv,
-		AuthApiMdw: authApiMdw,
+		AuthApiMdw:   authApiMdw,
 	}
 
 	mux.Handle("POST /variations", h.AuthApiMdw.AccessTokenMdw(h.CreateVariation))
