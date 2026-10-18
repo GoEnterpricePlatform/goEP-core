@@ -11,6 +11,7 @@ import (
 	identityModule "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
 	postModule "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 )
 
 // Config contains the infrastructure shared by backend modules and their route
@@ -31,7 +32,15 @@ type Modules struct {
 // Initialize constructs backend modules in dependency order and registers
 // their API routes on cfg.APIv1.
 func Initialize(cfg Config) (*Modules, error) {
-	identity, err := identityModule.NewIdentityModule(identityModule.ModuleConfig{
+	registry, err := NewCompiledRegistry()
+	if err != nil {
+		return nil, err
+	}
+	identityFactory, err := modules.GetFactory[identityModule.ModuleConfig, *identityModule.Module](registry, "identity")
+	if err != nil {
+		return nil, err
+	}
+	identity, err := identityFactory.New(identityModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
 		APIv1:      cfg.APIv1,
@@ -41,7 +50,11 @@ func Initialize(cfg Config) (*Modules, error) {
 		return nil, err
 	}
 
-	posts, err := postModule.NewPostModule(postModule.ModuleConfig{
+	postsFactory, err := modules.GetFactory[postModule.ModuleConfig, *postModule.Module](registry, "posts")
+	if err != nil {
+		return nil, err
+	}
+	posts, err := postsFactory.New(postModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
 		APIv1:      cfg.APIv1,
@@ -54,7 +67,11 @@ func Initialize(cfg Config) (*Modules, error) {
 		return nil, err
 	}
 
-	_, err = billingModule.NewBillingModule(billingModule.ModuleConfig{
+	billingFactory, err := modules.GetFactory[billingModule.ModuleConfig, *billingModule.Module](registry, "billing")
+	if err != nil {
+		return nil, err
+	}
+	_, err = billingFactory.New(billingModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
 		APIv1:      cfg.APIv1,
@@ -67,7 +84,11 @@ func Initialize(cfg Config) (*Modules, error) {
 		return nil, err
 	}
 
-	_, err = catalogModule.NewCatalogModule(catalogModule.ModuleConfig{
+	catalogFactory, err := modules.GetFactory[catalogModule.ModuleConfig, *catalogModule.Module](registry, "catalog")
+	if err != nil {
+		return nil, err
+	}
+	_, err = catalogFactory.New(catalogModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
 		APIv1:      cfg.APIv1,
@@ -80,7 +101,11 @@ func Initialize(cfg Config) (*Modules, error) {
 		return nil, err
 	}
 
-	ai, err := aiModule.NewAiModule(aiModule.ModuleConfig{
+	aiFactory, err := modules.GetFactory[aiModule.ModuleConfig, *aiModule.Module](registry, "ai-tool-calling")
+	if err != nil {
+		return nil, err
+	}
+	ai, err := aiFactory.New(aiModule.ModuleConfig{
 		AppEnvs:     cfg.AppEnvs,
 		AppClients:  cfg.AppClients,
 		APIv1:       cfg.APIv1,
