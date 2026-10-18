@@ -13,7 +13,7 @@ import (
 	aiTCItz "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/initializer"
 	toolCallingService "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/service"
 	postAI "github.com/GoEnterpricePlatform/goEP-core/addons/posts/ai"
-	postModule "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
+	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -24,7 +24,7 @@ type ModuleConfig struct {
 	APIv1      *http.ServeMux
 
 	// Module dependencies
-	PostModule *postModule.Module
+	PostService postP.PostSrv
 
 	DB *mongo.Database
 }
@@ -65,7 +65,7 @@ func NewAiModule(cfg ModuleConfig) (*Module, error) {
 	toolCallingSrv := toolCallingService.NewToolCallingSrv(toolCallingAdapter, aiTCInitializer, systemPrompt)
 
 	// AI - Providers
-	postAIprovider := postAI.NewPostAiProvider(cfg.PostModule.PostService)
+	postAIprovider := postAI.NewPostAiProvider(cfg.PostService)
 
 	// AI - register
 	aiTCInitializer.RegisterTool(postAIprovider)

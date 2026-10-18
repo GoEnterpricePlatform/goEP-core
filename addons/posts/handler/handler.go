@@ -4,17 +4,18 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 )
 
 type Handler struct {
 	PostSrv    port.PostSrv
-	AuthApiMdw *middlewares.AuthMiddleware
+	AuthApiMdw middlewarePort.Authenticator
 }
 
-func NewPostApiHandler(muxV1 *http.ServeMux, postSrv port.PostSrv, authApiMdw *middlewares.AuthMiddleware) *Handler {
+func NewPostApiHandler(muxV1 *http.ServeMux, postSrv port.PostSrv, authApiMdw middlewarePort.Authenticator) *Handler {
 	h := &Handler{
-		PostSrv: postSrv,
+		PostSrv:    postSrv,
+		AuthApiMdw: authApiMdw,
 	}
 
 	muxV1.Handle("POST /posts", h.AuthApiMdw.AccessTokenMdw(h.Create))

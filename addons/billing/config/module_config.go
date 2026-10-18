@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	pProviderRepo "github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/repository/mongo"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/keystore"
 
 	paymentProviderHandler "github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/handler"
@@ -34,7 +34,7 @@ type ModuleConfig struct {
 // ModuleDeps groups the external dependencies (from other modules/services)
 // that this module needs to function.
 type ModuleDeps struct {
-	AuthApiMdw *middlewares.AuthMiddleware
+	AuthApiMdw middlewarePort.Authenticator
 }
 
 type Module struct {

@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
 
 	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
 	"net/http"
@@ -11,14 +11,14 @@ import (
 
 type Handler struct {
 	PaddlePlanSrv       port.PaddlePlanSrv
-	AuthApiMdw          *middlewares.AuthMiddleware
+	AuthApiMdw          middlewarePort.Authenticator
 	IsEnabled           bool
 	PaddleWebhookSecret string
 }
 
 // NewPlanPaddleHandler registers Paddle plan, checkout, subscription, transaction, and webhook routes.
 // Management and user-specific routes require authentication; Paddle's webhook route uses signature verification.
-func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv, authApiMdw *middlewares.AuthMiddleware, webhookSecret string, isEnabled bool) *Handler {
+func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv, authApiMdw middlewarePort.Authenticator, webhookSecret string, isEnabled bool) *Handler {
 
 	h := &Handler{
 		PaddlePlanSrv:       paddlePlanSrv,
