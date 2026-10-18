@@ -3,8 +3,8 @@ package middlewares
 import (
 	"time"
 
-	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
-	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
+	authP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
+	tokenP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 )
 

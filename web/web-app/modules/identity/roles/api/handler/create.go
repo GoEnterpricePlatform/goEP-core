@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/core"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/core"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/modules/identity/ui/components"
 	"github.com/starfederation/datastar-go/datastar"

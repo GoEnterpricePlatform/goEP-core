@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
 	componentsIdentity "github.com/GoEnterpricePlatform/goEP-core/web/web-app/modules/identity/ui/components"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src/ui/components"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src/ui/layouts"

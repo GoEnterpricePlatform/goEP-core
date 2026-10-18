@@ -7,12 +7,12 @@ import (
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	webAppModule "github.com/GoEnterpricePlatform/goEP-core/web/web-app/config"
 
-	aiModule "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/config"
-	billingModule "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/config"
-	catalogModule "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/config"
+	aiModule "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/config"
+	billingModule "github.com/GoEnterpricePlatform/goEP-core/addons/billing/config"
+	catalogModule "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
 
-	identityModule "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/config"
-	postModule "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/config"
+	identityModule "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
+	postModule "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/logger"

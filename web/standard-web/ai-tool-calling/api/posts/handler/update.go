@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/core"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )

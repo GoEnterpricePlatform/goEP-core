@@ -3,7 +3,7 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
 )
 
 func (m *MdwSrvTmpl) RequirePermission(permission string, next http.Handler) http.Handler {

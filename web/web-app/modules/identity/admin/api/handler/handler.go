@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
+	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/renderer"
 	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"

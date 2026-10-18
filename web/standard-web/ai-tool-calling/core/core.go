@@ -1,6 +1,6 @@
 package core
 
-import "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/domain"
+import "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/domain"
 
 type AssistantPageData struct {
 	Messages []*domain.ChatMessage

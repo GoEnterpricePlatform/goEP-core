@@ -1,6 +1,6 @@
 package handler
 
-import "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+import "github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
 
 type RespData struct {
 	ActivePage  string

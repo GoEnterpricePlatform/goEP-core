@@ -1,0 +1,35 @@
+package mongo
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/model"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/domain"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+)
+
+func (r *Repository) Insert(ctx context.Context, session *domain.Session) error {
+	id := bson.NewObjectID()
+
+	userOID, err := bson.ObjectIDFromHex(session.UserID)
+	if err != nil {
+		return dShared.ErrIncorrectID
+	}
+
+	sessionModel := model.FromDomain(session, id, userOID)
+
+	_, err = r.Collection.InsertOne(ctx, sessionModel)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return fmt.Errorf("%w: error inserting session: %w", dShared.ErrDuplicateKey, err)
+		}
+		return fmt.Errorf("error inserting session: %w", err)
+	}
+
+	sessionModel.ToDomain(session)
+
+	return nil
+}

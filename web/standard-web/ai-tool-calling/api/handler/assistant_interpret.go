@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	tcCore "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/core"
+	tcCore "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/core"
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/core"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )
