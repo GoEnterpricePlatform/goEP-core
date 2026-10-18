@@ -8,15 +8,15 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	pProviderRepo "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/repository/mongo"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/keystore"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/keystore"
 
 	paymentProviderHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/handler"
 	paymentProviderService "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/service"
 
 	pProviderP "github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/port"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/encryptor"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/encryptor"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

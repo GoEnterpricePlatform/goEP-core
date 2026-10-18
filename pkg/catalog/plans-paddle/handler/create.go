@@ -7,8 +7,8 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/core"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 // Create handles POST /paddle/plans when an authenticated administrator adds a Paddle-backed plan to the catalog.

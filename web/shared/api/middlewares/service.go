@@ -5,7 +5,7 @@ import (
 
 	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 )
 
 type MdwSrvTmpl struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) GetSubscriptionAccess(ctx context.Context, userID string) (*domain.PaddleSubscriptionAccess, error) {

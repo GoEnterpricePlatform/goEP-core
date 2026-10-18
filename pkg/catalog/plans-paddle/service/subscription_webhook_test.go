@@ -7,7 +7,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/service/helpers"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 type memoryTransactionRepo struct {

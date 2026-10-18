@@ -7,7 +7,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
 	otpCodeD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
-	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 // SignUp registers a new user, hashes the password, and saves it to the repository and return otpID

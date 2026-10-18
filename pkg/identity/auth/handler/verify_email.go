@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
-	sharedH "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	sharedH "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
 )
 

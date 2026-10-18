@@ -29,8 +29,8 @@ import (
 	userHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/handler"
 	userRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/repository/mongo"
 	userService "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/service"
-	cookieService "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/service"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
+	cookieService "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/service"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
@@ -39,7 +39,7 @@ import (
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
 	userFSP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/port"
 	userP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/port"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

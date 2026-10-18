@@ -3,7 +3,7 @@ package mongo
 import (
 	"errors"
 	"fmt"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 

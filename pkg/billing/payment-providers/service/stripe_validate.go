@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func validateStripeCredentials(secretKey string) error {

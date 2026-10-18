@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 type createCheckoutRequest struct {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 )
 
 type checkoutServiceStub struct {

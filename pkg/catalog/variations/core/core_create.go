@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 type CreateVariationReq struct {

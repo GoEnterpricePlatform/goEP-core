@@ -6,7 +6,7 @@ import (
 
 	paddlePlanD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 	planD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) Create(ctx context.Context, paddlePlan *paddlePlanD.PaddlePlan) error {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/domain"
 	helpers "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/helper"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) Get(ctx context.Context, id string) (*domain.Plan, error) {

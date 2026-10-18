@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/port"
-	encryptor "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/encryptor"
+	encryptor "github.com/GoEnterpricePlatform/goEP-core/internal/shared/encryptor"
 )
 
 var _ port.PaymentProviderSrv = &Service{}

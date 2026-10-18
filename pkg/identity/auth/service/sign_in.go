@@ -8,8 +8,8 @@ import (
 	otpCodeD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/opt-codes/domain"
 	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
 	userD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
-	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, string, error) {

@@ -6,7 +6,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/encryption"
 	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
 	userD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) SignIn(ctx context.Context, email string, password string, rememberMe bool) (*userD.User, *sessionD.Session, error) {

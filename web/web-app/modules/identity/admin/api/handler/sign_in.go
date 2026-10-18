@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 	"github.com/starfederation/datastar-go/datastar"
 )
