@@ -23,6 +23,7 @@ func NewDependencyResolver(manifests []Manifest, registry *Registry) (*Dependenc
 		if _, exists := byName[manifest.Name]; exists {
 			return nil, fmt.Errorf("duplicate module manifest %q", manifest.Name)
 		}
+		manifest.Depends = append([]string(nil), manifest.Depends...)
 		byName[manifest.Name] = manifest
 	}
 
@@ -51,7 +52,51 @@ func (r *DependencyResolver) Order() []Manifest {
 	if r == nil {
 		return nil
 	}
-	return append([]Manifest(nil), r.ordered...)
+	ordered := make([]Manifest, len(r.ordered))
+	for i, manifest := range r.ordered {
+		manifest.Depends = append([]string(nil), manifest.Depends...)
+		ordered[i] = manifest
+	}
+	return ordered
+}
+
+// Manifest returns the discovered metadata for name.
+func (r *DependencyResolver) Manifest(name string) (Manifest, bool) {
+	if r == nil {
+		return Manifest{}, false
+	}
+	manifest, exists := r.manifests[name]
+	manifest.Depends = append([]string(nil), manifest.Depends...)
+	return manifest, exists
+}
+
+// RequiredDependencies returns all direct and transitive dependencies of name
+// in deterministic order. Unknown module names return nil.
+func (r *DependencyResolver) RequiredDependencies(name string) []string {
+	if r == nil {
+		return nil
+	}
+	if _, exists := r.manifests[name]; !exists {
+		return nil
+	}
+	dependencies := make(map[string]struct{})
+	r.collectDependencies(name, dependencies)
+	result := make([]string, 0, len(dependencies))
+	for dependency := range dependencies {
+		result = append(result, dependency)
+	}
+	sort.Strings(result)
+	return result
+}
+
+func (r *DependencyResolver) collectDependencies(name string, collected map[string]struct{}) {
+	for _, dependency := range r.manifests[name].Depends {
+		if _, seen := collected[dependency]; seen {
+			continue
+		}
+		collected[dependency] = struct{}{}
+		r.collectDependencies(dependency, collected)
+	}
 }
 
 // ValidateCanEnable checks that every direct and transitive dependency of name
@@ -69,6 +114,41 @@ func (r *DependencyResolver) ValidateCanEnable(name string, enabledModules []str
 		enabled[module] = struct{}{}
 	}
 	return r.validateDependenciesEnabled(name, name, enabled)
+}
+
+// ValidateCanDisable checks that disabling name would not leave an enabled
+// module without one of its required dependencies.
+func (r *DependencyResolver) ValidateCanDisable(name string, enabledModules []string) error {
+	if r == nil {
+		return fmt.Errorf("module dependency resolver is nil")
+	}
+	if _, exists := r.manifests[name]; !exists {
+		return fmt.Errorf("module %q has no discovered manifest", name)
+	}
+
+	enabled := make([]string, 0, len(enabledModules))
+	for _, module := range enabledModules {
+		if module != name {
+			enabled = append(enabled, module)
+		}
+	}
+	sort.Strings(enabled)
+	for _, module := range enabled {
+		if _, known := r.manifests[module]; known && r.requires(module, name) {
+			return fmt.Errorf("module %q cannot be disabled: enabled module %q depends on it", name, module)
+		}
+	}
+	return nil
+}
+
+func (r *DependencyResolver) requires(moduleName, dependencyName string) bool {
+	manifest := r.manifests[moduleName]
+	for _, dependency := range manifest.Depends {
+		if dependency == dependencyName || r.requires(dependency, dependencyName) {
+			return true
+		}
+	}
+	return false
 }
 
 func (r *DependencyResolver) validateDependenciesEnabled(moduleName, rootName string, enabled map[string]struct{}) error {
