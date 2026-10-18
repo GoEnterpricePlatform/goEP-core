@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/core"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
 )
 
 func (h Handler) GetAll(w http.ResponseWriter, r *http.Request) {

@@ -5,7 +5,7 @@ import (
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/renderer"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
 

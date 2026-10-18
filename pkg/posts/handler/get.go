@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (h Handler) Get(w http.ResponseWriter, r *http.Request) {

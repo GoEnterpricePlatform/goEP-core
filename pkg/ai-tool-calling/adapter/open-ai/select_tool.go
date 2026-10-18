@@ -8,7 +8,7 @@ import (
 	"regexp"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/packages/param"

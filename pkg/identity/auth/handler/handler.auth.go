@@ -5,7 +5,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 )
 
 type Handler struct {

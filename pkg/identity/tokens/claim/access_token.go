@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	"github.com/golang-jwt/jwt/v5"
 )
 

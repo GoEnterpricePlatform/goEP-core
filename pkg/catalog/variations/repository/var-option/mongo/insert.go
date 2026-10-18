@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/model"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

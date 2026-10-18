@@ -7,7 +7,7 @@ import (
 	"time"
 
 	paddlePlanD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
 )
 

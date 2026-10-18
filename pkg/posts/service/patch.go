@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) Patch(ctx context.Context, id string, post *domain.Post) (*domain.Post, error) {

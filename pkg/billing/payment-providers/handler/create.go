@@ -7,8 +7,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/core"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/billing/payment-providers/domain"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (h Handler) Create(w http.ResponseWriter, r *http.Request) {

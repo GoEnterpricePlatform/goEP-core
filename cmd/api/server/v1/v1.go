@@ -14,9 +14,9 @@ import (
 	identityModule "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/config"
 	postModule "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/config"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares/logger"
-	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/handler"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/logger"
+	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/internal/shared/handler"
 )
 
 func New() http.Handler {

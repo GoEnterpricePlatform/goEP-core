@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sessionD "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/session/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) RefreshToken(ctx context.Context, rTokenID string, userID string) (*sessionD.Session, error) {

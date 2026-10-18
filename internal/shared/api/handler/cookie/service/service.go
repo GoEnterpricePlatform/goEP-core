@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 )
 
 var _ port.CookieSrv = &Service{}

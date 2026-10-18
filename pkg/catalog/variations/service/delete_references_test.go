@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	variationD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/variations/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 type variationRepoStub struct{ deleted bool }

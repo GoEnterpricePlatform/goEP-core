@@ -8,7 +8,7 @@ import (
 	adminP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 
 	tcP "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/port"
 	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) GetAll(ctx context.Context) ([]*domain.Post, error) {

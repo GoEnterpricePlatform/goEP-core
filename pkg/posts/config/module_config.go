@@ -9,7 +9,7 @@ import (
 	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
 	postRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/repository/mongo"
 	postService "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/service"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

@@ -5,7 +5,7 @@ import (
 
 	paddlePlanD "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) GetTransaction(ctx context.Context, paddleTransactionID string) (*paddlePlanD.PaddleTransaction, error) {

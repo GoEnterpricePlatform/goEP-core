@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 )
 
 func (s *Service) Delete(ctx context.Context, id string) error {
