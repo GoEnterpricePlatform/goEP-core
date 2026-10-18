@@ -1,0 +1,6 @@
+{
+  "name": "ai-tool-calling",
+  "version": "1.0.0",
+  "summary": "AI tool calling with backend service integrations",
+  "depends": ["posts"]
+}
