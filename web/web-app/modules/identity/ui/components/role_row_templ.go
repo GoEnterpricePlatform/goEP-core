@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 )
 
 func RoleRow(role *domain.Role) templ.Component {

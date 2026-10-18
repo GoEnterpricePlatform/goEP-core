@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/users/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/domain"
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 	"github.com/starfederation/datastar-go/datastar"

@@ -1,6 +1,6 @@
 package middlewares
 
-import "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/port"
+import "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 
 type AuthMiddleware struct {
 	TokenSrv port.TokenSrv

@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	roleP "github.com/GoEnterpricePlatform/goEP-core/pkg/identity/roles/port"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
+	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
 

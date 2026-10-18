@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 )
 

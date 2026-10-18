@@ -1,0 +1,45 @@
+package handler
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/port"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+
+	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
+	"net/http"
+	"time"
+)
+
+type Handler struct {
+	PaddlePlanSrv       port.PaddlePlanSrv
+	AuthApiMdw          *middlewares.AuthMiddleware
+	IsEnabled           bool
+	PaddleWebhookSecret string
+}
+
+// NewPlanPaddleHandler registers Paddle plan, checkout, subscription, transaction, and webhook routes.
+// Management and user-specific routes require authentication; Paddle's webhook route uses signature verification.
+func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv, authApiMdw *middlewares.AuthMiddleware, webhookSecret string, isEnabled bool) *Handler {
+
+	h := &Handler{
+		PaddlePlanSrv:       paddlePlanSrv,
+		AuthApiMdw:          authApiMdw,
+		IsEnabled:           isEnabled,
+		PaddleWebhookSecret: webhookSecret,
+	}
+
+	muxV1.Handle("POST /paddle/plans", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Create)))
+	muxV1.HandleFunc("GET /paddle/plans/{id}", h.requirePaddleEnabled(h.Get))
+	muxV1.HandleFunc("GET /paddle/plans", h.requirePaddleEnabled(h.GetAll))
+	muxV1.Handle("PUT /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Update)))
+	muxV1.Handle("DELETE /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Delete)))
+	muxV1.Handle("POST /paddle/checkout", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.CreateCheckout)))
+	muxV1.HandleFunc("GET /paddle/transactions/{paddleTransactionID}", h.requirePaddleEnabled(h.GetTransaction))
+	muxV1.Handle("GET /paddle/subscription/access", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.GetSubscriptionAccess)))
+	var webhookHandler http.Handler = http.HandlerFunc(h.PaddleWebhook)
+	if isEnabled && webhookSecret != "" {
+		webhookHandler = paddleSDK.NewWebhookVerifier(webhookSecret, paddleSDK.VerifierWithTimestampTolerance(5*time.Second)).Middleware(webhookHandler)
+	}
+	muxV1.Handle("POST /paddle/webhook", webhookHandler)
+
+	return h
+}

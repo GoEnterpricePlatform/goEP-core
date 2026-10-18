@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/renderer"
-	postP "github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
+	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 )
 
 type Handler struct {

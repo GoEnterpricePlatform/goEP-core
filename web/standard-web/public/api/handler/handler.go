@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 )
 
 type Handler struct {

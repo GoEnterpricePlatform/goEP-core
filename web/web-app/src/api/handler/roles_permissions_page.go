@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src/ui/pages"

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/auth/core"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/templates"
 )

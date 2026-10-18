@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	toolCallingP "github.com/GoEnterpricePlatform/goEP-core/pkg/ai-tool-calling/port"
-	"github.com/GoEnterpricePlatform/goEP-core/pkg/posts/port"
+	toolCallingP "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/port"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/renderer"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
