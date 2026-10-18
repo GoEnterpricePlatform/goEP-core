@@ -19,6 +19,8 @@ Designed with clean architecture principles, it allows teams to extend, branch a
 - **Email:** Resend or Gmail (SMTP)
 - **Frontend:** Templ + Datastar + TypeScript (extensible to React separately)
 
+See [the backend module guide](docs/agregar-modulo.md) for a detailed example of adding a module, its manifest, factory, dependencies, and tests.
+
 
 ## Authentication & Authorization
 
