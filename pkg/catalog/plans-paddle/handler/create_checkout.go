@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/identity/tokens/claim"
 	sharedC "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
@@ -13,6 +15,7 @@ type createCheckoutRequest struct {
 	ItemID string `json:"item_id"`
 }
 
+// CreateCheckout handles POST /paddle/checkout after an authenticated user selects a plan and item to purchase.
 func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 	if !h.IsEnabled {
 		http.Error(w, "Paddle is not enabled", http.StatusServiceUnavailable)
@@ -24,7 +27,12 @@ func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 		sharedC.RespondError(w, sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "plan_id and item_id are required"))
 		return
 	}
-	checkout, err := h.PaddlePlanSrv.CreateCheckout(r.Context(), req.PlanID, req.ItemID)
+	claims, ok := r.Context().Value(middlewares.AccessTokenClaimsIDKey).(*claim.AccessTokenClaims)
+	if !ok || claims.UserID == "" {
+		sharedC.RespondError(w, sharedD.NewAppError(sharedD.ErrCodeUnauthorized, "authentication is required"))
+		return
+	}
+	checkout, err := h.PaddlePlanSrv.CreateCheckout(r.Context(), claims.UserID, req.PlanID, req.ItemID)
 	if err != nil {
 		sharedC.RespondError(w, err)
 		return

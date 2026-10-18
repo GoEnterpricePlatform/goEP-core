@@ -8,6 +8,7 @@ import (
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
+// Get handles GET /paddle/plans/{id} when a client needs the public catalog details for one Paddle plan.
 func (h Handler) Get(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 

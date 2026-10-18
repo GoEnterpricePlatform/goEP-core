@@ -8,6 +8,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/domain"
 )
 
+// PaddleWebhook handles POST /paddle/webhook when Paddle sends a signed billing event to update local customer, transaction, or subscription records.
 func (h *Handler) PaddleWebhook(w http.ResponseWriter, r *http.Request) {
 	if !h.IsEnabled {
 		http.Error(w, "Paddle is not enabled", http.StatusServiceUnavailable)
@@ -24,7 +25,7 @@ func (h *Handler) PaddleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var event domain.PaddleWebhookEvent
-	if err := json.Unmarshal(payload, &event); err != nil || event.EventType == "" {
+	if err := json.Unmarshal(payload, &event); err != nil || event.EventID == "" || event.EventType == "" {
 		http.Error(w, "invalid Paddle webhook payload", http.StatusBadRequest)
 		return
 	}

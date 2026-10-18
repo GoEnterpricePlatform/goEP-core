@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/port"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/shared/api/middlewares"
+
 	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
+	"net/http"
+	"time"
 )
 
 type Handler struct {
@@ -16,6 +16,8 @@ type Handler struct {
 	PaddleWebhookSecret string
 }
 
+// NewPlanPaddleHandler registers Paddle plan, checkout, subscription, transaction, and webhook routes.
+// Management and user-specific routes require authentication; Paddle's webhook route uses signature verification.
 func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv, authApiMdw *middlewares.AuthMiddleware, webhookSecret string, isEnabled bool) *Handler {
 
 	h := &Handler{
@@ -30,8 +32,9 @@ func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv
 	muxV1.HandleFunc("GET /paddle/plans", h.requirePaddleEnabled(h.GetAll))
 	muxV1.Handle("PUT /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Update)))
 	muxV1.Handle("DELETE /paddle/plans/{id}", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.Delete)))
-	muxV1.HandleFunc("POST /paddle/checkout", h.requirePaddleEnabled(h.CreateCheckout))
-	muxV1.HandleFunc("GET /paddle/checkout/{transactionID}", h.requirePaddleEnabled(h.GetCheckout))
+	muxV1.Handle("POST /paddle/checkout", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.CreateCheckout)))
+	muxV1.HandleFunc("GET /paddle/transactions/{paddleTransactionID}", h.requirePaddleEnabled(h.GetTransaction))
+	muxV1.Handle("GET /paddle/subscription/access", h.AuthApiMdw.AccessTokenMdw(h.requirePaddleEnabled(h.GetSubscriptionAccess)))
 	var webhookHandler http.Handler = http.HandlerFunc(h.PaddleWebhook)
 	if isEnabled && webhookSecret != "" {
 		webhookHandler = paddleSDK.NewWebhookVerifier(webhookSecret, paddleSDK.VerifierWithTimestampTolerance(5*time.Second)).Middleware(webhookHandler)
@@ -39,14 +42,4 @@ func NewPlanPaddleHandler(muxV1 *http.ServeMux, paddlePlanSrv port.PaddlePlanSrv
 	muxV1.Handle("POST /paddle/webhook", webhookHandler)
 
 	return h
-}
-
-func (h *Handler) requirePaddleEnabled(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if !h.IsEnabled {
-			http.Error(w, "Paddle is not enabled", http.StatusServiceUnavailable)
-			return
-		}
-		next(w, r)
-	}
 }

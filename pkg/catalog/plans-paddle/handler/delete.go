@@ -7,6 +7,7 @@ import (
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
+// Delete handles DELETE /paddle/plans/{id} when an authenticated administrator removes a Paddle-backed catalog plan.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {

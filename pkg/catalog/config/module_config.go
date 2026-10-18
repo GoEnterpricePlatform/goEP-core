@@ -1,15 +1,20 @@
 package config
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	paddle "github.com/PaddleHQ/paddle-go-sdk/v5"
 
 	planPaddleH "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/handler"
-	checkoutPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/checkout/mongo"
+	customerPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/customer/mongo"
 	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/plans/mongo"
+	subscriptionPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/subscription/mongo"
+	transactionPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/transaction/mongo"
+	webhookEventPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/repository/webhook-event/mongo"
 	planPaddleService "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/service"
 	planPaddleTransaction "github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans-paddle/transaction/mongo"
 	"github.com/GoEnterpricePlatform/goEP-core/pkg/catalog/plans/file-storage/disabled"
@@ -72,16 +77,44 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	plansCollName := fmt.Sprintf("%s_plans", mdlName)
 	plansColl := cfg.DB.Collection(plansCollName)
 
-	plansPaddleCollName := fmt.Sprintf("%s_plans_paddle", mdlName)
+	plansPaddleCollName := fmt.Sprintf("%s_paddle_plans", mdlName)
 	plansPaddleColl := cfg.DB.Collection(plansPaddleCollName)
-	paddleCheckoutsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_checkouts", mdlName))
+	paddleTransactionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_transactions", mdlName))
+	paddleSubscriptionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_subscriptions", mdlName))
+	paddleCustomersColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_customers", mdlName))
+	paddleWebhookEventsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_webhook_events", mdlName))
 
 	// Repositories
 	variationRepo := variationRepository.NewVariationRepo(cfg.AppClients.MongoConn.DB, variationsColl, varOptionCollName)
 	varOptionRepo := varOptionRepository.NewVarOptionRepo(cfg.AppClients.MongoConn.DB, varOptionColl)
 	planRepo := planRepository.NewPlanRepo(cfg.AppClients.MongoConn.DB, plansColl, varOptionCollName, variationsCollName)
 	planPaddleRepo := planPaddleRepository.NewPlanPaddleRepo(cfg.AppClients.MongoConn.DB, plansPaddleColl)
-	paddleCheckoutRepo := checkoutPaddleRepository.NewPaddleCheckoutRepo(paddleCheckoutsColl)
+	paddleTransactionRepo := transactionPaddleRepository.NewPaddleTransactionRepo(paddleTransactionsColl)
+	paddleSubscriptionRepo := subscriptionPaddleRepository.NewPaddleSubscriptionRepo(paddleSubscriptionsColl)
+	paddleCustomerRepo := customerPaddleRepository.NewPaddleCustomerRepo(paddleCustomersColl)
+	paddleWebhookEventRepo := webhookEventPaddleRepository.NewPaddleWebhookEventRepo(paddleWebhookEventsColl)
+
+	// Migrate billing documents before creating indexes for the new ID fields.
+	if err := paddleCustomerRepo.MigrateLegacyIDs(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+	if err := paddleSubscriptionRepo.MigrateLegacyIDs(context.Background(), paddleCustomerRepo); err != nil {
+		log.Fatal(err)
+	}
+	// Indexes
+	err := paddleSubscriptionRepo.CreateIndexes()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := paddleTransactionRepo.CreateIndexes(); err != nil {
+		log.Fatal(err)
+	}
+	if err := paddleCustomerRepo.CreateIndexes(); err != nil {
+		log.Fatal(err)
+	}
+	if err := paddleWebhookEventRepo.CreateIndexes(); err != nil {
+		log.Fatal(err)
+	}
 
 	// transactions
 	planPaddleTx := planPaddleTransaction.NewPlanPaddleTx(cfg.AppClients.MongoConn.DB, planRepo, planPaddleRepo)
@@ -93,7 +126,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	if cfg.AppClients.PaddleCli != nil {
 		paddleSDKClient = cfg.AppClients.PaddleCli.Client
 	}
-	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, paddleCheckoutRepo, planRepo, planFileStg, paddleSDKClient)
+	planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, paddleTransactionRepo, paddleSubscriptionRepo, planRepo, planFileStg, paddleSDKClient, paddleCustomerRepo, paddleWebhookEventRepo)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)

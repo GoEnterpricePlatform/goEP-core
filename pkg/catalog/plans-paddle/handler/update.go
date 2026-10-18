@@ -10,6 +10,7 @@ import (
 	sharedD "github.com/GoEnterpricePlatform/goEP-core/pkg/shared/domain"
 )
 
+// Update handles PUT /paddle/plans/{id} when an authenticated administrator changes a Paddle-backed catalog plan.
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
