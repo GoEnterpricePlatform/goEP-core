@@ -20,6 +20,7 @@ type Config struct {
 	AppEnvs    *appConfig.AppEnvs
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
+	AddonsDir  string
 }
 
 // Modules contains the backend modules and services needed by the web layer.
@@ -32,7 +33,7 @@ type Modules struct {
 // Initialize constructs backend modules in dependency order and registers
 // their API routes on cfg.APIv1.
 func Initialize(cfg Config) (*Modules, error) {
-	registry, err := NewCompiledRegistry()
+	registry, enabled, err := initializeModuleLifecycle(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,7 @@ func Initialize(cfg Config) (*Modules, error) {
 	identity, err := identityFactory.New(identityModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
-		APIv1:      cfg.APIv1,
+		APIv1:      moduleRoutes(cfg.APIv1, enabled, "identity"),
 		DB:         cfg.AppClients.DB,
 	})
 	if err != nil {
@@ -57,7 +58,7 @@ func Initialize(cfg Config) (*Modules, error) {
 	posts, err := postsFactory.New(postModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
-		APIv1:      cfg.APIv1,
+		APIv1:      moduleRoutes(cfg.APIv1, enabled, "posts"),
 		DB:         cfg.AppClients.DB,
 		Deps: postModule.ModuleDeps{
 			AuthApiMdw: identity.AuthApiMdw,
@@ -74,7 +75,7 @@ func Initialize(cfg Config) (*Modules, error) {
 	_, err = billingFactory.New(billingModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
-		APIv1:      cfg.APIv1,
+		APIv1:      moduleRoutes(cfg.APIv1, enabled, "billing"),
 		DB:         cfg.AppClients.DB,
 		Deps: billingModule.ModuleDeps{
 			AuthApiMdw: identity.AuthApiMdw,
@@ -91,7 +92,7 @@ func Initialize(cfg Config) (*Modules, error) {
 	_, err = catalogFactory.New(catalogModule.ModuleConfig{
 		AppEnvs:    cfg.AppEnvs,
 		AppClients: cfg.AppClients,
-		APIv1:      cfg.APIv1,
+		APIv1:      moduleRoutes(cfg.APIv1, enabled, "catalog"),
 		DB:         cfg.AppClients.DB,
 		Deps: catalogModule.ModuleDeps{
 			AuthApiMdw: identity.AuthApiMdw,
@@ -108,7 +109,7 @@ func Initialize(cfg Config) (*Modules, error) {
 	ai, err := aiFactory.New(aiModule.ModuleConfig{
 		AppEnvs:     cfg.AppEnvs,
 		AppClients:  cfg.AppClients,
-		APIv1:       cfg.APIv1,
+		APIv1:       moduleRoutes(cfg.APIv1, enabled, "ai-tool-calling"),
 		PostService: posts.PostService,
 	})
 	if err != nil {
@@ -120,4 +121,14 @@ func Initialize(cfg Config) (*Modules, error) {
 		Posts:    posts,
 		AI:       ai,
 	}, nil
+}
+
+func moduleRoutes(apiV1 *http.ServeMux, enabled map[string]bool, moduleName string) *http.ServeMux {
+	if enabled[moduleName] {
+		return apiV1
+	}
+	// Backend services are still constructed during this transition because
+	// Web App consumes them directly. A private mux keeps disabled API routes
+	// out of the public router until Web App joins the lifecycle manager.
+	return http.NewServeMux()
 }

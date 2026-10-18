@@ -17,7 +17,7 @@
 
 La composición real es `Identity → Posts → Billing → Catalog → AI`. Identity suministra autenticación a Posts, Billing y Catalog. Posts suministra `PostSrv` a AI. Las dependencias de servicios se entregan mediante `ModuleDeps` específicas y los contratos públicos mínimos; no se introdujo un contenedor genérico. El middleware real de Identity implementa `middlewares/port.Authenticator`, cuyo único método envuelve un handler HTTP con la validación del token.
 
-`internal/modules/backend` es dueño de las llamadas a constructores y devuelve las instancias necesarias al bootstrap. El paquete `cmd/api/server/v1` sigue siendo dueño de los recursos globales, `/ping`, `/api/v1/`, middlewares globales y Web App. No se encontró un ciclo de imports entre `internal/modules/backend` y los módulos: el compositor importa los módulos, y éstos no importan al compositor.
+`internal/modules/backend` es dueño de las llamadas a constructores, consulta el ciclo de vida y devuelve las instancias necesarias al bootstrap. El paquete `cmd/api/server/v1` sigue siendo dueño de los recursos globales, `/ping`, `/api/v1/`, middlewares globales y Web App. Las rutas de un módulo habilitado se registran en el mux público; las de un módulo deshabilitado se registran en un mux aislado. Los servicios siguen construyéndose para conservar las dependencias que Web App consume hasta una fase posterior. No se encontró un ciclo de imports entre `internal/modules/backend` y los módulos: el compositor importa los módulos, y éstos no importan al compositor.
 
 ## Referencias inspeccionadas
 

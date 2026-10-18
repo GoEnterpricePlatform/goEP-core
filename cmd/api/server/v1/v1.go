@@ -46,6 +46,7 @@ func New() http.Handler {
 		AppEnvs:    appEnvs,
 		AppClients: appClients,
 		APIv1:      v1,
+		AddonsDir:  "addons",
 	})
 	if err != nil {
 		log.Fatal(err)
