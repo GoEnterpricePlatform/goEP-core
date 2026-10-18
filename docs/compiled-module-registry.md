@@ -5,3 +5,5 @@
 `internal/modules/backend.NewCompiledRegistry` registers Identity, Posts, Billing, Catalog and AI Tool Calling. The composer uses those factories along with the typed injection defined in Phase 1. Adding an official Go implementation requires registering your factory and generating a new build.
 
 `Registry.Validate` compares discovered manifests with the registry in both directions: reporting a discovered module with no compiled implementation and a compiled factory with no manifest. This validation is available for subsequent Module Manager integration; discovery is not connecting to HTTP boot yet.
+
+`internal/modules.NewDependencyResolver` validates that declared dependencies exist, checks compiled availability and detects cycles. `Order` returns manifests in deterministic topological order. `ValidateCanEnable` checks direct and transitive dependencies against the modules already enabled. The backend composer still uses its explicit typed sequence; a future Module Manager can use this order when constructing modules.

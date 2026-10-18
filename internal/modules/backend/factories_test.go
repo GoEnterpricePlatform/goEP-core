@@ -20,6 +20,10 @@ func TestCompiledBackendRegistryMatchesOfficialManifests(t *testing.T) {
 	if err := registry.Validate(manifests); err != nil {
 		t.Fatalf("Registry.Validate(repository addons) error = %v", err)
 	}
+	resolver, err := modules.NewDependencyResolver(manifests, registry)
+	if err != nil {
+		t.Fatalf("NewDependencyResolver(repository addons) error = %v", err)
+	}
 	want := []string{"ai-tool-calling", "billing", "catalog", "identity", "posts"}
 	got := registry.Names()
 	if len(got) != len(want) {
@@ -31,4 +35,20 @@ func TestCompiledBackendRegistryMatchesOfficialManifests(t *testing.T) {
 			break
 		}
 	}
+
+	wantOrder := []string{"identity", "billing", "catalog", "posts", "ai-tool-calling"}
+	resolved := resolver.Order()
+	for i := range wantOrder {
+		if resolved[i].Name != wantOrder[i] {
+			t.Fatalf("resolved module order = %v, want %v", moduleNames(resolved), wantOrder)
+		}
+	}
+}
+
+func moduleNames(manifests []modules.Manifest) []string {
+	names := make([]string, len(manifests))
+	for i, manifest := range manifests {
+		names[i] = manifest.Name
+	}
+	return names
 }
