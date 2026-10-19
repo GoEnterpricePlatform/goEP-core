@@ -23,12 +23,48 @@ type namedFactory interface {
 
 // Registry contains the module implementations compiled into this executable.
 type Registry struct {
-	factories map[string]namedFactory
+	factories           map[string]namedFactory
+	backendInitializers map[string]func(BackendRuntime) (any, error)
 }
 
 // NewRegistry creates an empty registry for statically compiled factories.
 func NewRegistry() *Registry {
-	return &Registry{factories: make(map[string]namedFactory)}
+	return &Registry{
+		factories:           make(map[string]namedFactory),
+		backendInitializers: make(map[string]func(BackendRuntime) (any, error)),
+	}
+}
+
+// RegisterBackendInitializer adds the module-local bootstrap adapter used by
+// the backend composition loop.
+func RegisterBackendInitializer(registry *Registry, name string, initializer func(BackendRuntime) (any, error)) error {
+	if registry == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return fmt.Errorf("backend module initializer name is required")
+	}
+	if initializer == nil {
+		return fmt.Errorf("backend module initializer %q has no initializer", name)
+	}
+	if _, exists := registry.backendInitializers[name]; exists {
+		return fmt.Errorf("backend module initializer %q is already registered", name)
+	}
+	registry.backendInitializers[name] = initializer
+	return nil
+}
+
+// InitializeBackendModule invokes a module's own typed bootstrap adapter.
+func (r *Registry) InitializeBackendModule(name string, runtime BackendRuntime) (any, error) {
+	if r == nil {
+		return nil, fmt.Errorf("module registry is nil")
+	}
+	initializer, exists := r.backendInitializers[name]
+	if !exists {
+		return nil, fmt.Errorf("backend module initializer %q is not registered", name)
+	}
+	return initializer(runtime)
 }
 
 // RegisterFactory adds a typed module factory to the registry.
@@ -107,6 +143,27 @@ func (r *Registry) Validate(manifests []Manifest) error {
 	for _, name := range r.Names() {
 		if _, exists := manifestsByName[name]; !exists {
 			return fmt.Errorf("compiled module factory %q has no matching manifest", name)
+		}
+	}
+	return nil
+}
+
+// ValidateBackend checks that every discovered backend module has both a
+// compiled typed factory and a runtime initializer.
+func (r *Registry) ValidateBackend(manifests []Manifest) error {
+	if err := r.Validate(manifests); err != nil {
+		return err
+	}
+	known := make(map[string]struct{}, len(manifests))
+	for _, manifest := range manifests {
+		known[manifest.Name] = struct{}{}
+		if _, exists := r.backendInitializers[manifest.Name]; !exists {
+			return fmt.Errorf("backend module %q has no runtime initializer", manifest.Name)
+		}
+	}
+	for name := range r.backendInitializers {
+		if _, exists := known[name]; !exists {
+			return fmt.Errorf("backend module initializer %q has no matching manifest", name)
 		}
 	}
 	return nil
