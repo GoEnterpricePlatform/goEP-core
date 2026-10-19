@@ -80,8 +80,16 @@ tasks:
       - go run cmd/api/env/dev/ts-compiler/main.go
     sources:
       - "./web/web-app/src/ts/**/*.ts"
+      - "./web/web-app/src/ts/**/*.tsx"
+      - "./addons/*/manifest.json"
+      - "./addons/*/static/assets.json"
+      - "./addons/*/static/src/ts/**/*.ts"
+      - "./addons/*/static/src/ts/**/*.tsx"
+      - "./addons/*/static/src/css/**/*.css"
+      - "./addons/*/static/public/**/*"
     generates:
       - "./web/web-app/resources/static/js/**/*.js"
+      - "./web/web-app/resources/static/modules/**/*"
 
   build:
     # We could also use goep-core.exe
@@ -94,6 +102,8 @@ tasks:
       {{else}}
       go build -tags=prod -o bin/main ./cmd/api/env/prod
       {{end}}
+    deps:
+      - deps
 
   deps:
     - build:templ
@@ -110,6 +120,13 @@ tasks:
         {{end}}
     deps:
       - build
+
+  docker:build:
+    desc: Generate Web App assets and build the Docker image.
+    cmds:
+      - docker build -t goep-core:latest .
+    deps:
+      - deps
 
   default:
     cmds:

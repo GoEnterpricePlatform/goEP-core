@@ -13,7 +13,9 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src"
@@ -72,10 +74,13 @@ func build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	if err := cleanModuleAssetOutput(resources.StaticDirectoryPath); err != nil {
+		return err
+	}
 	if err := copyModulePublicAssets(modules, resources.StaticDirectoryPath); err != nil {
 		return err
 	}
-	if len(entries) == 0 {
+	if len(entries) == 0 && !watch {
 		slog.Info("no TypeScript or CSS entry points found")
 		return nil
 	}
@@ -95,7 +100,11 @@ func build(ctx context.Context) error {
 	}
 
 	if watch {
-		return watchBuild(ctx, options)
+		return watchBuild(ctx, options, modules)
+	}
+	if len(entries) == 0 {
+		slog.Info("no TypeScript or CSS entry points found")
+		return nil
 	}
 
 	slog.Info("building module assets", "entryPoints", len(entries))
@@ -103,18 +112,45 @@ func build(ctx context.Context) error {
 	return buildError(result.Errors)
 }
 
-func watchBuild(ctx context.Context, options api.BuildOptions) error {
+func watchBuild(ctx context.Context, options api.BuildOptions, modules []moduleAssetFiles) error {
 	slog.Info("watching module assets", "entryPoints", len(options.EntryPointsAdvanced))
-	buildCtx, err := api.Context(options)
+	if len(options.EntryPointsAdvanced) > 0 {
+		buildCtx, err := api.Context(options)
+		if err != nil {
+			return err
+		}
+		defer buildCtx.Dispose()
+		if err := buildCtx.Watch(api.WatchOptions{}); err != nil {
+			return err
+		}
+	}
+	publicSignature, err := modulePublicSignature(modules)
 	if err != nil {
 		return err
 	}
-	defer buildCtx.Dispose()
-	if err := buildCtx.Watch(api.WatchOptions{}); err != nil {
-		return err
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-ticker.C:
+			nextSignature, err := modulePublicSignature(modules)
+			if err != nil {
+				slog.Error("inspect module public assets", "error", err)
+				continue
+			}
+			if nextSignature == publicSignature {
+				continue
+			}
+			if err := syncModulePublicAssets(modules, options.Outdir); err != nil {
+				slog.Error("sync module public assets", "error", err)
+				continue
+			}
+			publicSignature = nextSignature
+			slog.Info("synced changed module public assets")
+		}
 	}
-	<-ctx.Done()
-	return nil
 }
 
 func buildError(messages []api.Message) error {
@@ -397,4 +433,64 @@ func copyModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error
 		}
 	}
 	return nil
+}
+
+// cleanModuleAssetOutput removes only the generated module output directory.
+// Module sources live in addons/<module>/static and are never touched here.
+func cleanModuleAssetOutput(outputRoot string) error {
+	outputAbs, err := filepath.Abs(outputRoot)
+	if err != nil {
+		return err
+	}
+	modulesDir := filepath.Join(outputAbs, "modules")
+	modulesAbs, err := filepath.Abs(modulesDir)
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(outputAbs, modulesAbs)
+	if err != nil || relative != "modules" {
+		return fmt.Errorf("refusing to clean unexpected module asset output %q", modulesAbs)
+	}
+	if err := os.RemoveAll(modulesAbs); err != nil {
+		return fmt.Errorf("clean generated module assets %s: %w", modulesAbs, err)
+	}
+	return nil
+}
+
+func syncModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error {
+	for _, module := range modules {
+		publicOutput := filepath.Join(outputRoot, "modules", module.name, "public")
+		if err := os.RemoveAll(publicOutput); err != nil {
+			return fmt.Errorf("clean public asset output for module %q: %w", module.name, err)
+		}
+	}
+	return copyModulePublicAssets(modules, outputRoot)
+}
+
+func modulePublicSignature(modules []moduleAssetFiles) (string, error) {
+	var files []string
+	for _, module := range modules {
+		err := filepath.WalkDir(module.publicDir, func(filePath string, entry os.DirEntry, walkErr error) error {
+			if walkErr != nil {
+				if os.IsNotExist(walkErr) && filePath == module.publicDir {
+					return nil
+				}
+				return walkErr
+			}
+			if entry.IsDir() || entry.Name() == ".gitkeep" {
+				return nil
+			}
+			info, err := entry.Info()
+			if err != nil {
+				return err
+			}
+			files = append(files, fmt.Sprintf("%s|%d|%d", filePath, info.Size(), info.ModTime().UnixNano()))
+			return nil
+		})
+		if err != nil {
+			return "", fmt.Errorf("inspect public assets for module %q: %w", module.name, err)
+		}
+	}
+	sort.Strings(files)
+	return strings.Join(files, "\n"), nil
 }
