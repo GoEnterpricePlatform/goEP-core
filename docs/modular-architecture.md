@@ -1,6 +1,6 @@
 # Arquitectura modular de GoEP Core
 
-Esta guía describe cómo agregar, compilar, instalar y habilitar módulos de backend. Los módulos oficiales se enlazan estáticamente: el manifiesto permite descubrir metadatos, pero no carga código Go desde disco. Agregar una implementación requiere registrarla y compilar una nueva versión del ejecutable.
+Esta guía describe cómo agregar, compilar, instalar y habilitar módulos de backend. Los módulos oficiales se enlazan estáticamente: el manifiesto permite descubrir metadatos, pero no carga código Go desde disco. Agregar una implementación requiere regenerar el registro y compilar una nueva versión del ejecutable.
 
 ## Estados de un módulo
 
@@ -14,7 +14,7 @@ El cambio de estado se aplica en el siguiente arranque. Web App todavía no form
 
 ## Agregar un módulo backend
 
-1. Crea el directorio y el manifiesto bajo `addons/`. El nombre debe coincidir con el nombre de la fábrica compilada:
+1. Crea el directorio y el manifiesto bajo `addons/`:
 
    ```json
    {
@@ -27,17 +27,26 @@ El cambio de estado se aplica en el siguiente arranque. Web App todavía no form
 
    Para el módulo de IA existente, el directorio y el nombre son `ai-tool-calling`.
 
-2. Implementa el módulo y su constructor Go con configuración específica. Declara servicios requeridos en un `ModuleDeps` tipado y consume contratos de puerto, sin importar la implementación privada de otro módulo.
+2. Implementa el módulo y su constructor Go en `addons/<nombre>/config/`. El paquete debe exponer exactamente un constructor con esta forma: `func New...Module(ModuleConfig) (*Module, error)`. El generador lo detecta automáticamente.
 
-3. Registra la fábrica en `internal/modules/backend/factories.go`. El nombre debe ser idéntico al `name` del manifiesto. La fábrica vincula el constructor al ejecutable.
+3. Implementa `RegisterBackendModule(*modules.Registry) error` en el mismo paquete. Este adaptador arma el `ModuleConfig` tipado, obtiene dependencias con `modules.RequireService[T]` y publica contratos para otros módulos con `modules.ProvideService[T]`. Declara en `depends` los módulos que proveen esos contratos.
 
-4. Añade la construcción y la inyección de servicios en `internal/modules/backend/composition.go`, respetando el orden de dependencias. El resolver rechaza manifiestos sin fábrica, fábricas sin manifiesto, dependencias faltantes y ciclos antes de inicializar los módulos.
-
-5. Añade pruebas para el manifiesto, la fábrica, las dependencias, los contratos requeridos y las rutas públicas del módulo.
-
-6. Ejecuta las pruebas del sistema modular y genera un nuevo binario:
+4. Regenera el registro compilado:
 
    ```powershell
+   go generate ./internal/modules/backend
+   ```
+
+   El generador lee los manifiestos directos de `addons/` y actualiza `internal/modules/backend/factories_gen.go`. No edites ese archivo generado ni agregues imports manuales a `factories.go`.
+
+5. El backend inicializa el adaptador automáticamente según `depends`; no agregues una llamada al constructor en `internal/modules/backend/composition.go`. Si otro código de infraestructura, como `cmd/api/server/v1`, necesita un servicio del nuevo módulo, expón ese módulo desde `backend.Modules` y conecta ese servicio allí.
+
+6. Añade pruebas para el manifiesto, la fábrica, las dependencias, los contratos requeridos y las rutas públicas del módulo.
+
+7. En la última parte, ejecuta las pruebas del sistema modular y genera un nuevo binario:
+
+   ```powershell
+   go generate ./internal/modules/backend
    go test ./internal/modules/...
    go test ./cmd/api/...
    go build ./cmd/api/env/dev/main

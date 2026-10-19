@@ -1,8 +1,8 @@
 # Ejemplo: agregar un módulo de backend
 
-Esta guía muestra qué archivos crear y cuáles modificar para agregar un módulo GoEP Core llamado `reports`. El ejemplo sigue la composición actual de `posts`, `billing` y `catalog`: manifiestos para metadatos, fábricas compiladas y configuración tipada.
+Esta guía muestra qué archivos crear y cuáles modificar para agregar un módulo GoEP Core llamado `reports`. El registro de fábricas se genera desde los manifiestos; la conexión de dependencias entre módulos sigue siendo explícita en la composición.
 
-> Este README es una guía. No crees `addons/reports/` hasta que también vayas a registrar su fábrica y su composición: el descubridor requiere que cada subdirectorio de `addons/` tenga un `manifest.json`, y el bootstrap rechaza manifiestos sin implementación compilada.
+> Este README es una guía. El descubridor requiere que cada subdirectorio de `addons/` tenga un `manifest.json`, y el bootstrap rechaza manifiestos sin implementación compilada.
 
 ## 1. Estructura de archivos
 
@@ -12,7 +12,8 @@ Como punto de partida, crea solo las carpetas que el módulo necesita:
 addons/reports/
 ├── manifest.json                 # Obligatorio
 ├── config/
-│   └── module_config.go          # Obligatorio: configuración y constructor
+│   ├── module_config.go          # Obligatorio: configuración y constructor
+│   └── backend_module.go         # Obligatorio: adaptador de registro e inicio
 ├── domain/                       # Si hay entidades y reglas de dominio
 ├── port/
 │   └── ports.go                  # Si otro paquete consume sus servicios
@@ -51,7 +52,7 @@ Los nombres actuales son `identity`, `posts`, `billing`, `catalog` y `ai-tool-ca
 
 ## 3. Crear la configuración y el constructor
 
-El compositor entrega dependencias concretas mediante una estructura propia del módulo. Por ejemplo, si Reports expone rutas protegidas, puede recibir el contrato de autenticación que ya usa Posts:
+El módulo conserva una configuración tipada. Por ejemplo, si Reports expone rutas protegidas, declara el contrato de autenticación que necesita:
 
 ```go
 package config
@@ -90,7 +91,7 @@ func NewReportsModule(cfg ModuleConfig) (*Module, error) {
 
 Este esqueleto no implementa almacenamiento ni rutas. Si Reports no usa Mongo, elimina `DB`; si no requiere autenticación, elimina `Deps` y no agregues `identity` al manifiesto por ese motivo. Compara la implementación completa de [Posts](../addons/posts/config/module_config.go) antes de copiar patrones de Mongo o handlers.
 
-Las rutas se registran durante la construcción usando `cfg.APIv1`. Si el módulo necesita autenticación, sus handlers deben recibir `cfg.Deps.AuthApiMdw`, igual que [el handler de Posts](../addons/posts/handler/handler.go). El compositor entrega el mux público cuando el módulo está habilitado y un mux aislado cuando está deshabilitado.
+Las rutas se registran durante la construcción usando `cfg.APIv1`. Si el módulo necesita autenticación, sus handlers deben recibir `cfg.Deps.AuthApiMdw`, igual que [el handler de Posts](../addons/posts/handler/handler.go). El runtime entrega el mux público cuando el módulo está habilitado y un mux aislado cuando está deshabilitado.
 
 ## 4. Agregar contratos si otro módulo consume Reports
 
@@ -106,62 +107,69 @@ type ReportService interface {
 }
 ```
 
-El paquete del consumidor importa `addons/reports/port`, no `addons/reports/service` ni `addons/reports/config`. Añade el servicio a su propio `ModuleDeps` y conecta la interfaz desde el compositor. También agrega el nombre de Reports a `depends` del manifiesto consumidor para que el lifecycle manager aplique el orden y los requisitos de habilitación.
+El paquete del consumidor importa `addons/reports/port`, no `addons/reports/service` ni `addons/reports/config`. Añade el servicio a su propio `ModuleDeps`, luego su adaptador lo obtiene mediante `modules.RequireService[port.ReportService]`. También agrega el nombre de Reports a `depends` del manifiesto consumidor para que el runtime inicie primero Reports.
 
 No agregues `port/` solo para duplicar interfaces que nadie consume. En Posts, por ejemplo, los contratos compartidos están en `addons/posts/port/ports.go`.
 
-## 5. Registrar la fábrica compilada
+## 5. Generar el registro de fábricas
 
-Modifica `internal/modules/backend/factories.go`. Agrega el import:
+No edites `internal/modules/backend/factories_gen.go`. El generador busca una función exportada con esta forma en cada `addons/<nombre>/config/`:
 
 ```go
-reportsModule "github.com/GoEnterpricePlatform/goEP-core/addons/reports/config"
+func NewReportsModule(cfg ModuleConfig) (*Module, error)
 ```
 
-Y registra el constructor dentro de `NewCompiledRegistry`:
+Después de crear el manifiesto y el constructor, regenera la lista compilada:
+
+```powershell
+go generate ./internal/modules/backend
+```
+
+Esto actualiza `internal/modules/backend/factories_gen.go` con imports y fábricas tipadas. El código Go sigue enlazado estáticamente: agrega Reports al ejecutable cuando se genera y compila el registro.
+
+## 6. Crear el adaptador del módulo
+
+Cada módulo conecta su constructor tipado dentro de `config/backend_module.go`. El adaptador recibe la infraestructura común y resuelve contratos publicados por dependencias:
 
 ```go
-if err := modules.RegisterFactory(registry, modules.Factory[
-    reportsModule.ModuleConfig,
-    *reportsModule.Module,
-]{
-    Name: "reports",
-    New:  reportsModule.NewReportsModule,
-}); err != nil {
+func RegisterBackendModule(registry *modules.Registry) error {
+    if err := modules.RegisterFactory(registry, modules.Factory[ModuleConfig, *Module]{
+        Name: "reports",
+        New:  NewReportsModule,
+    }); err != nil {
+        return err
+    }
+
+    return modules.RegisterBackendInitializer(registry, "reports", func(runtime modules.BackendRuntime) (any, error) {
+        auth, err := modules.RequireService[middlewarePort.Authenticator](runtime.Services)
+        if err != nil {
+            return nil, err
+        }
+
+        reportModule, err := NewReportsModule(ModuleConfig{
+            AppEnvs:    runtime.AppEnvs,
+            AppClients: runtime.AppClients,
+            APIv1:      runtime.APIv1,
+            DB:         runtime.DB,
+            Deps:       ModuleDeps{AuthApiMdw: auth},
+        })
+        if err != nil {
+            return nil, err
+        }
+        return reportModule, nil
+    })
+}
+```
+
+El orden de llamada no se escribe en código: el backend lo calcula desde `depends`. Si otro módulo consume Reports, publica el contrato después de construirlo:
+
+```go
+if err := modules.ProvideService[reportPort.ReportService](runtime.Services, reportModule.ReportService); err != nil {
     return nil, err
 }
 ```
 
-El tipo de configuración y el tipo de retorno son específicos de Reports. No reemplaces estas fábricas tipadas por un contenedor genérico. El descubridor lee JSON; no carga automáticamente paquetes Go.
-
-## 6. Conectar la composición
-
-Modifica `internal/modules/backend/composition.go`:
-
-1. Importa `addons/reports/config`.
-2. Obtén su fábrica con `modules.GetFactory[reportsModule.ModuleConfig, *reportsModule.Module](registry, "reports")`.
-3. Construye el módulo pasando `AppEnvs`, `AppClients`, `DB`, el mux que devuelve `moduleRoutes(...)` y los contratos requeridos.
-4. Coloca la llamada después de los módulos de los que depende y antes de los consumidores de Reports.
-5. Si Web App u otro módulo consume un servicio de Reports, agrega ese servicio a `backend.Modules` o al `ModuleDeps` tipado del consumidor y conecta el valor aquí.
-
-Ejemplo para Reports protegido por Identity, después de crear Identity:
-
-```go
-reports, err := reportsFactory.New(reportsModule.ModuleConfig{
-    AppEnvs:    cfg.AppEnvs,
-    AppClients: cfg.AppClients,
-    APIv1:      moduleRoutes(cfg.APIv1, enabled, "reports"),
-    DB:         cfg.AppClients.DB,
-    Deps: reportsModule.ModuleDeps{
-        AuthApiMdw: identity.AuthApiMdw,
-    },
-})
-if err != nil {
-    return nil, err
-}
-```
-
-Si `Module` exporta un servicio usado por otro consumidor, devuelve la instancia de Reports dentro de `backend.Modules` y conecta su servicio explícitamente. `depends` valida el ciclo de vida; no realiza esa inyección por sí solo.
+El consumidor declara `"reports"` en su `depends` y pide `reportPort.ReportService` mediante `RequireService`. No edites `internal/modules/backend/composition.go` para conectar módulos. Si `cmd/api/server/v1` necesita directamente un servicio nuevo, expón el módulo en `backend.Modules` y conéctalo en ese límite de la aplicación.
 
 ## 7. Agregar pruebas
 
@@ -208,9 +216,10 @@ La aplicación aún no incluye una pantalla, endpoint HTTP ni comando CLI para e
 |---|---|
 | `addons/reports/manifest.json` | Siempre; metadatos y dependencias del nuevo módulo. |
 | `addons/reports/config/module_config.go` | Siempre; configuración tipada, servicios exportados y constructor. |
-| `internal/modules/backend/factories.go` | Siempre; enlaza el constructor al ejecutable. |
-| `internal/modules/backend/composition.go` | Siempre; orden de construcción e inyección explícita. |
+| `addons/reports/config/backend_module.go` | Siempre; enlaza el constructor y sus dependencias tipadas con el runtime modular. |
+| `internal/modules/backend/factories_gen.go` | Generado con `go generate`; no editar a mano. |
+| `internal/modules/backend/composition.go` | No se modifica para agregar módulos. |
 | Manifiesto del consumidor | Si otro módulo depende de Reports a nivel de lifecycle. |
-| `ModuleDeps` del consumidor y compositor | Si otro módulo consume un servicio de Reports. |
+| `ModuleDeps` del consumidor y el adaptador del consumidor | Si otro módulo consume un servicio de Reports. |
 | `internal/modules/backend/factories_test.go` | Si cambian las expectativas de fábricas oficiales. |
 | Pruebas del módulo | Para validar contratos, servicios, persistencia y rutas. |

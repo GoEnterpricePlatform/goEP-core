@@ -15,9 +15,11 @@
 
 ## Orden y contratos
 
-La composición real es `Identity → Posts → Billing → Catalog → AI`. Identity suministra autenticación a Posts, Billing y Catalog. Posts suministra `PostSrv` a AI. Las dependencias de servicios se entregan mediante `ModuleDeps` específicas y los contratos públicos mínimos; no se introdujo un contenedor genérico. El middleware real de Identity implementa `middlewares/port.Authenticator`, cuyo único método envuelve un handler HTTP con la validación del token.
+El orden se calcula desde `depends`: Identity se inicia antes de Posts, Billing y Catalog; Posts se inicia antes de AI. Identity suministra el contrato `middlewares/port.Authenticator`, y Posts suministra `posts/port.PostSrv`. Los adaptadores siguen rellenando `ModuleDeps` tipados dentro de cada paquete. El registro común busca servicios por sus interfaces Go, y los constructores conservan sus tipos concretos.
 
-`internal/modules/backend` es dueño de las llamadas a constructores, consulta el ciclo de vida y devuelve las instancias necesarias al bootstrap. El paquete `cmd/api/server/v1` sigue siendo dueño de los recursos globales, `/ping`, `/api/v1/`, middlewares globales y Web App. Las rutas de un módulo habilitado se registran en el mux público; las de un módulo deshabilitado se registran en un mux aislado. Los servicios siguen construyéndose para conservar las dependencias que Web App consume hasta una fase posterior. No se encontró un ciclo de imports entre `internal/modules/backend` y los módulos: el compositor importa los módulos, y éstos no importan al compositor.
+`internal/modules/backend` consulta el ciclo de vida, recorre el orden calculado desde los manifiestos y devuelve las instancias necesarias al bootstrap. Cada paquete de módulo implementa `RegisterBackendModule` para enlazar su constructor tipado y declarar los contratos que requiere o publica. El adaptador recibe `BackendRuntime`; los contratos entre módulos usan `RequireService[T]` y `ProvideService[T]`. El generador importa los paquetes con manifiesto, por lo que el ejecutable los enlaza estáticamente. Agregar un módulo no requiere editar `composition.go` ni `factories.go`.
+
+El paquete `cmd/api/server/v1` sigue siendo dueño de los recursos globales, `/ping`, `/api/v1/`, middlewares globales y Web App. Las rutas de un módulo habilitado se registran en el mux público; las de un módulo deshabilitado se registran en un mux aislado. Los servicios siguen construyéndose para conservar las dependencias que Web App consume. `backend.Modules` expone explícitamente los módulos cuyos servicios consume el bootstrap web.
 
 ## Referencias inspeccionadas
 
@@ -28,4 +30,9 @@ La composición real es `Identity → Posts → Billing → Catalog → AI`. Ide
 - `addons/billing/config/module_config.go`
 - `addons/catalog/config/module_config.go`
 - `addons/ai-tool-calling/config/module_config.go`
+- `addons/identity/config/backend_module.go`
+- `addons/posts/config/backend_module.go`
+- `addons/billing/config/backend_module.go`
+- `addons/catalog/config/backend_module.go`
+- `addons/ai-tool-calling/config/backend_module.go`
 - Puertos y handlers que consumen autenticación y Posts.

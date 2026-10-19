@@ -8,9 +8,9 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
 )
 
-func initializeModuleLifecycle(cfg Config) (*modules.Registry, map[string]bool, *lifecycle.Manager, error) {
+func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
 	if cfg.AppClients == nil || cfg.AppClients.DB == nil {
-		return nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
+		return nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
 	}
 	addonsDir := cfg.AddonsDir
 	if addonsDir == "" {
@@ -19,31 +19,34 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, map[string]bool, 
 
 	manifests, err := modules.NewDiscovery(addonsDir).Discover()
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("discover backend modules: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("discover backend modules: %w", err)
 	}
 	registry, err := NewCompiledRegistry()
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
+	}
+	if err := registry.ValidateBackend(manifests); err != nil {
+		return nil, nil, nil, nil, fmt.Errorf("validate backend module initializers: %w", err)
 	}
 	resolver, err := modules.NewDependencyResolver(manifests, registry)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
 	}
 
 	store := lifecycle.NewMongoStore(cfg.AppClients.DB)
 	if err := store.CreateIndexes(context.Background()); err != nil {
-		return nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
 	}
 	manager, err := lifecycle.NewManager(resolver, store)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	enabled, err := initializeModuleStates(context.Background(), manager, store, resolver)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
-	return registry, enabled, manager, nil
+	return registry, resolver.Order(), enabled, manager, nil
 }
 
 func initializeModuleStates(ctx context.Context, manager *lifecycle.Manager, store lifecycle.StateStore, resolver *modules.DependencyResolver) (map[string]bool, error) {

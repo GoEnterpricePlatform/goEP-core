@@ -17,8 +17,8 @@ func TestCompiledBackendRegistryMatchesOfficialManifests(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewCompiledRegistry() error = %v", err)
 	}
-	if err := registry.Validate(manifests); err != nil {
-		t.Fatalf("Registry.Validate(repository addons) error = %v", err)
+	if err := registry.ValidateBackend(manifests); err != nil {
+		t.Fatalf("Registry.ValidateBackend(repository addons) error = %v", err)
 	}
 	resolver, err := modules.NewDependencyResolver(manifests, registry)
 	if err != nil {
