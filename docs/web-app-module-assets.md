@@ -106,16 +106,31 @@ En la tabla, `static/` en las rutas de salida representa `web/web-app/resources/
 
 **Resultado:** agregar un módulo con assets ya no requiere editar una lista global del compilador. Las fuentes de Identity aún no se han movido; eso ocurrirá en la fase 4.
 
-### Fase 3: conectar desarrollo y producción
+### Fase 3: conectar desarrollo y producción — implementada
 
-- Asegurar que el servidor de desarrollo lea la salida generada desde `resources/static/`.
-- Ejecutar el compilador antes de iniciar la Web App, o documentar un comando/watch de desarrollo que lo mantenga actualizado.
-- Vigilar cambios en `static/public/` durante el modo `-watch` (por ahora se copian al iniciar el compilador).
-- Asegurar que la build de producción genere los assets antes de compilar Go, porque `go:embed` solo incluye los archivos presentes durante la compilación.
+- `task run` ejecuta el watcher del compilador TS y el proceso de estilos/plantillas de desarrollo. El servidor de desarrollo usa el tag `dev` y sirve los archivos generados desde el disco.
+- El compilador observa las entradas TS/CSS declaradas y sincroniza cambios, altas y eliminaciones en `addons/*/static/public/`.
+- `task build` prepara primero las dependencias generadas y luego compila Go, porque `go:embed` solo incluye los archivos presentes durante la compilación.
+- `task docker:build` prepara esos mismos archivos antes de ejecutar `docker build`. El Dockerfile solo compila la aplicación y empaqueta el resultado.
 - Mantener las URLs hash de producción que genera `hashfs` mediante `resources.StaticPath(...)`.
-- Limpiar la salida generada antigua antes de regenerar para que no se sirvan archivos obsoletos de módulos eliminados.
+- Limpiar `web/web-app/resources/static/modules/` antes de cada generación para no conservar archivos de módulos o entradas eliminados.
 
 **Resultado:** los mismos assets y URLs funcionan en desarrollo y en el ejecutable de producción.
+
+#### Comandos
+
+```sh
+# Arrancar el entorno de desarrollo (incluye los watchers de Taskfile).
+task run
+
+# Generar Templ, CSS y assets TS; después compilar el binario de producción.
+task build
+
+# Generar primero los assets y construir la imagen Docker.
+task docker:build
+```
+
+`task docker:build` es el flujo recomendado para Docker, ya que ejecuta la generación en el host antes de construir la imagen. Si se invoca `docker build` directamente, hay que ejecutar antes `task deps` para que `go:embed` encuentre la salida generada dentro del contexto Docker.
 
 ### Fase 4: actualizar plantillas y ciclo de vida
 
