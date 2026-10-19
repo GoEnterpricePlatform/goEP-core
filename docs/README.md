@@ -4,23 +4,26 @@ La guía general está en [Arquitectura modular de GoEP Core](modular-architectu
 
 Para agregar un módulo paso a paso, consulta [Agregar un módulo de backend](add-module.md).
 
-## Generador del registro de módulos
+## Crear el esqueleto desde la consola
 
-`cmd/generate-module-registry/main.go` es una herramienta de desarrollo. Lee los manifiestos de `addons/` y genera `internal/modules/backend/factories_gen.go`, que importa y registra los módulos disponibles para compilarlos dentro del ejecutable.
-
-El generador **no se ejecuta cuando arranca la API**, ni automáticamente con `go build` o `go test`. Se ejecuta mediante la directiva `//go:generate` de `internal/modules/backend/factories.go`. Después de agregar o quitar un módulo de `addons/`, corre desde la raíz del repositorio:
+Desde la raíz del repositorio, ejecuta el CLI e indica el nombre del módulo en minúsculas. Usa guiones para separar palabras:
 
 ```powershell
-go generate ./internal/modules/backend
+go run ./cmd/create-module invoices
 ```
 
-Ese comando invoca internamente `go run ../../../cmd/generate-module-registry` y actualiza `factories_gen.go`. Revisa e incluye ese archivo generado en el mismo cambio de código. No lo edites manualmente. Si no ejecutas el generador, el nuevo módulo no queda importado en el binario y la validación del registro fallará al descubrir su manifiesto.
+También puedes definir el resumen que quedará en el manifiesto:
 
-No hace falta ejecutarlo para cambios internos de un módulo que no alteren el manifiesto ni la lista de módulos.
+```powershell
+go run ./cmd/create-module --summary "Sales reports" sales-reports
+```
+
+El comando crea `manifest.json` y los paquetes base `config/` y `domain/` bajo `addons/<nombre>/`. Luego ejecuta `go generate ./internal/modules/backend` automáticamente para agregarlo al registro compilado. Si ya existe una carpeta con ese nombre, el CLI se detiene sin sobrescribirla. Después completa el constructor con los servicios y rutas que necesite el módulo; el esqueleto no agrega lógica de negocio.
 
 ## Documentos de referencia
 
 - [Composición e inyección de servicios](backend-module-composition.md)
 - [Descubrimiento de manifiestos](module-discovery.md)
 - [Registro compilado y dependencias](compiled-module-registry.md)
+- [Guía detallada del generador del registro](generate-module-registry.md)
 - [Persistencia del ciclo de vida](module-lifecycle.md)
