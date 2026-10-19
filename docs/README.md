@@ -18,7 +18,7 @@ También puedes definir el resumen que quedará en el manifiesto:
 go run ./cmd/create-module --summary "Sales reports" sales-reports
 ```
 
-El comando crea `manifest.json` y los paquetes base `config/` y `domain/` bajo `addons/<nombre>/`. Luego ejecuta `go generate ./internal/modules/backend` automáticamente para agregarlo al registro compilado. Si ya existe una carpeta con ese nombre, el CLI se detiene sin sobrescribirla. Después completa el constructor con los servicios y rutas que necesite el módulo; el esqueleto no agrega lógica de negocio.
+El comando crea `manifest.json`, los paquetes base `config/` y `domain/`, y `static/` con `assets.json`, `src/ts/`, `src/css/` y `public/` bajo `addons/<nombre>/`. Luego ejecuta `go generate ./internal/modules/backend` automáticamente para agregarlo al registro compilado. Si ya existe una carpeta con ese nombre, el CLI se detiene sin sobrescribirla. Después completa el constructor con los servicios, rutas y assets que necesite el módulo; el esqueleto no agrega lógica de negocio ni compila assets todavía.
 
 ## Documentos de referencia
 
@@ -26,4 +26,5 @@ El comando crea `manifest.json` y los paquetes base `config/` y `domain/` bajo `
 - [Descubrimiento de manifiestos](module-discovery.md)
 - [Registro compilado y dependencias](compiled-module-registry.md)
 - [Guía detallada del generador del registro](generate-module-registry.md)
+- [Hoja de ruta para assets de Web App por módulo](web-app-module-assets.md)
 - [Persistencia del ciclo de vida](module-lifecycle.md)

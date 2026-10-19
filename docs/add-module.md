@@ -14,6 +14,11 @@ addons/reports/
 ├── config/
 │   ├── module_config.go          # Obligatorio: configuración y constructor
 │   └── backend_module.go         # Obligatorio: adaptador de registro e inicio
+├── static/                       # Lo crea el CLI; assets opcionales de Web App
+│   ├── assets.json               # Puntos de entrada TS/CSS
+│   ├── src/ts/
+│   ├── src/css/
+│   └── public/                    # Imágenes y archivos públicos
 ├── domain/                       # Si hay entidades y reglas de dominio
 ├── port/
 │   └── ports.go                  # Si otro paquete consume sus servicios
@@ -26,6 +31,8 @@ addons/reports/
 ```
 
 No todos los módulos necesitan `domain`, `port`, `model` o `repository`. Mantén los puertos dentro de `port/` cuando otra capa o módulo necesite depender de una interfaz; evita crear paquetes vacíos.
+
+El CLI crea `static/` con un manifiesto vacío aunque el módulo todavía no tenga interfaz web. Consulta el [contrato de assets de Web App](web-app-module-assets.md#contrato-de-staticassetsjson) para declarar entradas TS/CSS y organizar recursos públicos. La compilación automática de esos assets corresponde a una fase posterior.
 
 ## 2. Crear el manifiesto
 

@@ -76,9 +76,13 @@ func createModule(root, name, summary string) (string, error) {
 	identifier := goIdentifier(name)
 	files := map[string]string{
 		"manifest.json": manifestTemplate(name, summary),
-		filepath.Join("config", "module_config.go"):  moduleConfigTemplate(identifier),
-		filepath.Join("config", "backend_module.go"): backendModuleTemplate(name),
-		filepath.Join("domain", "domain.go"):         domainTemplate(name),
+		filepath.Join("config", "module_config.go"):       moduleConfigTemplate(identifier),
+		filepath.Join("config", "backend_module.go"):      backendModuleTemplate(name),
+		filepath.Join("domain", "domain.go"):              domainTemplate(name),
+		filepath.Join("static", "assets.json"):            assetsManifestTemplate(),
+		filepath.Join("static", "src", "ts", ".gitkeep"):  "",
+		filepath.Join("static", "src", "css", ".gitkeep"): "",
+		filepath.Join("static", "public", ".gitkeep"):     "",
 	}
 	for relativePath, contents := range files {
 		path := filepath.Join(tempDir, relativePath)
@@ -195,6 +199,15 @@ func domainTemplate(name string) string {
 	return fmt.Sprintf(`// Package domain contains the business types and rules for the %s module.
 package domain
 `, strings.ReplaceAll(name, "-", " "))
+}
+
+func assetsManifestTemplate() string {
+	return `{
+  "version": 1,
+  "scripts": [],
+  "styles": []
+}
+`
 }
 
 func fatalf(format string, args ...any) {
