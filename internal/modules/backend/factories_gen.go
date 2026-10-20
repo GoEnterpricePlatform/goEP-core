@@ -6,7 +6,8 @@ import (
 	module1 "github.com/GoEnterpricePlatform/goEP-core/addons/billing/config"
 	module2 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
 	module3 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
-	module4 "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
+	module4 "github.com/GoEnterpricePlatform/goEP-core/addons/invoices/config"
+	module5 "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 )
 
@@ -26,6 +27,9 @@ func NewCompiledRegistry() (*modules.Registry, error) {
 		return nil, err
 	}
 	if err := module4.RegisterBackendModule(registry); err != nil {
+		return nil, err
+	}
+	if err := module5.RegisterBackendModule(registry); err != nil {
 		return nil, err
 	}
 	return registry, nil

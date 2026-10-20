@@ -22,8 +22,9 @@ type Config struct {
 
 // Modules exposes module-provided contracts to other application layers.
 type Modules struct {
-	Services  *modules.Services
-	Lifecycle *lifecycle.Manager
+	Services         *modules.Services
+	Lifecycle        *lifecycle.Manager
+	AvailableModules []modules.Manifest
 }
 
 // Initialize constructs backend modules in dependency order and registers
@@ -48,8 +49,9 @@ func Initialize(cfg Config) (*Modules, error) {
 	}
 
 	return &Modules{
-		Services:  services,
-		Lifecycle: lifecycleManager,
+		Services:         services,
+		Lifecycle:        lifecycleManager,
+		AvailableModules: order,
 	}, nil
 }
 

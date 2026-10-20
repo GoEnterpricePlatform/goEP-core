@@ -2,5 +2,6 @@
   "name": "billing",
   "version": "1.0.0",
   "summary": "Payment provider management",
+  "icon": "static/public/icon.svg",
   "depends": ["identity"]
 }

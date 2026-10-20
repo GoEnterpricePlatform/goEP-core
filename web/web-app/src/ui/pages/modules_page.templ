@@ -1,0 +1,55 @@
+package pages
+
+import "github.com/GoEnterpricePlatform/goEP-core/web/web-app/src/ui/layouts"
+
+templ ModulesPage(modules []ModuleCard) {
+	@layouts.BaseLayout("modules", ModulesContent(modules))
+}
+
+templ ModulesContent(modules []ModuleCard) {
+	<div class="min-h-screen bg-white">
+		<header class="border-b border-zinc-200">
+			<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
+				<a href="/v1/goep-admin/modules" class="text-sm font-bold tracking-[0.2em] text-black">GOEP CORE</a>
+				<span class="text-sm text-zinc-500">Administration</span>
+			</div>
+		</header>
+
+		<main class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+			<div class="mb-8 border-b border-zinc-200 pb-6">
+				<p class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Workspace</p>
+				<h1 class="mt-2 text-3xl font-semibold tracking-tight text-black">Modules</h1>
+				<p class="mt-2 max-w-2xl text-sm leading-6 text-zinc-600">
+					Available modules in this GoEP Core installation.
+				</p>
+			</div>
+
+			if len(modules) == 0 {
+				<div class="rounded-xl border border-dashed border-zinc-300 px-6 py-14 text-center">
+					<p class="text-sm font-medium text-zinc-700">No modules found.</p>
+				</div>
+			} else {
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					for _, module := range modules {
+						<article class="group rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-500">
+							<div class="flex items-start gap-4">
+								<div class="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+									if module.IconURL != "" {
+										<img src={ module.IconURL } alt={ module.Name + " icon" } class="size-full object-contain p-1"/>
+									} else {
+										<span class="text-lg font-semibold uppercase text-zinc-700">{ module.Name[:1] }</span>
+									}
+								</div>
+								<div class="min-w-0 flex-1">
+									<h2 class="truncate text-base font-semibold text-black">{ module.Name }</h2>
+									<p class="mt-1 text-xs text-zinc-500">Version { module.Version }</p>
+								</div>
+							</div>
+							<p class="mt-5 min-h-10 text-sm leading-5 text-zinc-600">{ module.Summary }</p>
+						</article>
+					}
+				</div>
+			}
+		</main>
+	</div>
+}

@@ -11,6 +11,7 @@ Como punto de partida, crea solo las carpetas que el módulo necesita:
 ```text
 addons/reports/
 ├── manifest.json                 # Obligatorio
+├── static_assets_gen.go          # Generado por go generate; embed del módulo
 ├── config/
 │   ├── module_config.go          # Obligatorio: configuración y constructor
 │   └── backend_module.go         # Obligatorio: adaptador de registro e inicio
@@ -32,7 +33,7 @@ addons/reports/
 
 No todos los módulos necesitan `domain`, `port`, `model` o `repository`. Mantén los puertos dentro de `port/` cuando otra capa o módulo necesite depender de una interfaz; evita crear paquetes vacíos.
 
-El CLI crea `static/` con un manifiesto vacío aunque el módulo todavía no tenga interfaz web. Consulta el [contrato de assets de Web App](web-app-module-assets.md#contrato-de-staticassetsjson) para declarar entradas TS/CSS y organizar recursos públicos. La compilación automática de esos assets corresponde a una fase posterior.
+El CLI crea `static/` con un manifiesto vacío aunque el módulo todavía no tenga interfaz web. Al terminar, el generador crea `static_assets_gen.go` en la raíz del addon y actualiza los dos registros generados del backend. No edites esos archivos a mano. Consulta el [contrato de assets de Web App](web-app-module-assets.md#contrato-de-staticassetsjson) para declarar entradas TS/CSS y organizar recursos públicos. Al ejecutar el compilador de assets, la salida se genera en `static/dist/` dentro del mismo módulo.
 
 ## 2. Crear el manifiesto
 
@@ -43,6 +44,7 @@ Crea `addons/reports/manifest.json`:
   "name": "reports",
   "version": "1.0.0",
   "summary": "Report generation",
+  "icon": "static/public/icon.svg",
   "depends": ["identity"]
 }
 ```
@@ -50,6 +52,7 @@ Crea `addons/reports/manifest.json`:
 Reglas para este archivo:
 
 - `name` y `version` son obligatorios.
+- `icon` es opcional; cuando existe, apunta a un archivo dentro de `static/public/`. La Web App lo publica bajo `/static/modules/<nombre>/public/`.
 - `name` debe coincidir con el nombre registrado en la fábrica.
 - `depends` contiene nombres de módulos requeridos, no nombres de servicios o paquetes Go.
 - Declara `identity` si el módulo necesita autenticación o depende funcionalmente de Identity. Si solo necesita infraestructura compartida, no agregues esa dependencia por costumbre.

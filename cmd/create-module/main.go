@@ -46,7 +46,7 @@ func main() {
 		fatalf("create module: %v", err)
 	}
 	fmt.Printf("Created %s\n", filepath.ToSlash(filepath.Join("addons", name)))
-	fmt.Println("Generating the compiled module registry...")
+	fmt.Println("Generating the backend and static asset registries...")
 
 	generate := exec.Command("go", "generate", "./internal/modules/backend")
 	generate.Dir = root
@@ -55,7 +55,7 @@ func main() {
 	if err := generate.Run(); err != nil {
 		fatalf("module files were created at %s, but registry generation failed: %v", moduleDir, err)
 	}
-	fmt.Printf("Module %q is ready and included in the compiled registry.\n", name)
+	fmt.Printf("Module %q is ready and included in the backend and static asset registries.\n", name)
 }
 
 func createModule(root, name, summary string) (string, error) {
