@@ -132,14 +132,14 @@ task docker:build
 
 `task docker:build` es el flujo recomendado para Docker, ya que ejecuta la generación en el host antes de construir la imagen. Si se invoca `docker build` directamente, hay que ejecutar antes `task deps` para que `go:embed` encuentre la salida generada dentro del contexto Docker.
 
-### Fase 4: actualizar plantillas y ciclo de vida
+### Fase 4: migrar Identity y actualizar sus plantillas — implementada
 
-- Mover los TS actuales de `web/web-app/src/ts/modules/identity/` a `addons/identity/static/src/` y declarar sus entradas.
-- Actualizar las plantillas Templ para usar las nuevas rutas por módulo mediante `resources.StaticPath(...)`.
-- Determinar cómo se comportan los assets de un módulo deshabilitado. Los assets públicos no deben tratarse como secretos; si el requisito es que no se sirvan mientras el módulo está deshabilitado, el servidor estático debe consultar el estado del módulo.
-- Actualizar y probar el flujo de creación de un módulo con y sin assets.
+- Mover las validaciones TypeScript de Identity a `addons/identity/static/src/ts/validations/` y declarar `index.ts` en `addons/identity/static/assets.json`.
+- Actualizar las páginas de inicio y registro de administrador para usar `resources.StaticPath("modules/identity/js/validations/index.js")`.
+- Tratar los bundles del navegador y los archivos bajo `static/public/` como recursos públicos. No contienen secretos ni sustituyen la autorización de las API.
+- El handler estático sirve esos archivos aunque el módulo esté deshabilitado; el ciclo de vida actual no filtra `/static/` por estado de módulo.
 
-**Resultado:** Identity usa la nueva estructura y las futuras plantillas de módulos siguen el mismo contrato.
+**Resultado:** las fuentes editables y la declaración de assets de Identity viven con el módulo, y sus páginas apuntan a la salida generada bajo `modules/identity/`.
 
 ## Qué significa instalar o desinstalar
 
@@ -147,7 +147,7 @@ Poner fuentes en `addons/<módulo>/static/` organiza y entrega propiedad de esos
 
 - Agregar o quitar un módulo del código requiere regenerar el registro backend y reconstruir la aplicación.
 - Los assets generados quedan incluidos en la build de producción.
-- El ciclo de vida de la aplicación puede habilitar o deshabilitar módulos ya compilados. Si se requiere que un módulo deshabilitado tampoco sirva sus archivos estáticos, eso debe implementarse como una regla del servidor estático.
+- El ciclo de vida de la aplicación puede habilitar o deshabilitar módulos ya compilados. Los archivos estáticos son públicos y no se filtran por ese estado.
 - No se guardan los archivos de assets en MongoDB.
 
 ## Cambios involucrados
@@ -160,10 +160,10 @@ La migración afecta varios puntos del repositorio:
 | `cmd/create-module` | Esqueleto estático para módulos nuevos |
 | `web/web-app/resources` | Mantener el servicio común y el embedding de la salida generada |
 | Plantillas Templ | Actualizar las URLs de scripts, estilos e imágenes de módulo |
-| `Makefile` y flujo de build | Ejecutar compilación de assets antes de servir o compilar el binario |
-| Ciclo de vida | Decidir si los assets de módulos deshabilitados siguen siendo accesibles |
+| `Taskfile.yml` y flujo de build | Ejecutar compilación de assets antes de compilar el binario o la imagen |
+| Ciclo de vida | Los assets estáticos son públicos y no se filtran por estado de módulo |
 
-Por eso conviene implementarlo por fases y migrar un módulo primero. La primera migración propuesta es Identity, porque ya tiene páginas y TypeScript propios.
+La migración de Identity sirve como ejemplo del contrato para los próximos módulos.
 
 ## Fuera de alcance
 

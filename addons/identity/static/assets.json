@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "scripts": [
+    "src/ts/validations/index.ts"
+  ],
+  "styles": []
+}

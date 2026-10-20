@@ -8,10 +8,10 @@ import (
 
 templ AdminSignUpPage() {
 	// first we load the validation functions, then we load datastar with BaseLayout so it can find them
-	// they are small functions that make the UI interactive 
+	// they are small functions that make the UI interactive
 	<script
 		type="module"
-		src={ resources.StaticPath("js/modules/identity/validations/index.js") }
+		src={ resources.StaticPath("modules/identity/js/validations/index.js") }
 	></script>
 	@layouts.BaseLayout("admin sign up", AdminSignUpContent())
 }
@@ -55,8 +55,8 @@ templ AdminSignUpContent() {
 					@components.EmailField()
 					@components.PasswordFieldSignUp()
 					@components.ConfirmPasswordField()
-	
-					
+
+
 					<div
 					    class="hidden mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
 					    data-style:display="$error != '' ? 'block' : 'none'"
@@ -73,10 +73,10 @@ templ AdminSignUpContent() {
 
 					// field status in real time
 					@components.FormStateSignUp()
-					
+
 				</form>
 			</div>
 		</div>
 	</section>
 }
-	
+
