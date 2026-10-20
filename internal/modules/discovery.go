@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 const manifestFilename = "manifest.json"
@@ -56,6 +57,28 @@ func (d *Discovery) Discover() ([]Manifest, error) {
 		manifest, err := ParseManifest(data)
 		if err != nil {
 			return nil, fmt.Errorf("invalid manifest %q: %w", manifestPath, err)
+		}
+		if manifest.Icon != "" {
+			iconPath := filepath.Join(addonDir, filepath.FromSlash(manifest.Icon))
+			iconInfo, err := os.Stat(iconPath)
+			if err != nil {
+				return nil, fmt.Errorf("module %q icon %q: %w", manifest.Name, manifest.Icon, err)
+			}
+			if !iconInfo.Mode().IsRegular() {
+				return nil, fmt.Errorf("module %q icon %q is not a regular file", manifest.Name, manifest.Icon)
+			}
+			addonReal, err := filepath.EvalSymlinks(addonDir)
+			if err != nil {
+				return nil, fmt.Errorf("resolve addon directory %q: %w", addonDir, err)
+			}
+			iconReal, err := filepath.EvalSymlinks(iconPath)
+			if err != nil {
+				return nil, fmt.Errorf("resolve module %q icon: %w", manifest.Name, err)
+			}
+			relativeIcon, err := filepath.Rel(addonReal, iconReal)
+			if err != nil || relativeIcon == ".." || strings.HasPrefix(relativeIcon, ".."+string(filepath.Separator)) {
+				return nil, fmt.Errorf("module %q icon path escapes addon directory", manifest.Name)
+			}
 		}
 		if previousDir, exists := manifestDirs[manifest.Name]; exists {
 			return nil, fmt.Errorf("duplicate module name %q in %q and %q", manifest.Name, previousDir, addonDir)

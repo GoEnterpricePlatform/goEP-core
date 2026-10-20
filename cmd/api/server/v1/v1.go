@@ -124,6 +124,7 @@ func New() http.Handler {
 			PostService: postService,
 			RolesSrv:    rolesSrv,
 		},
+		AvailableModules: backend.AvailableModules,
 	})
 
 	return apiHandler

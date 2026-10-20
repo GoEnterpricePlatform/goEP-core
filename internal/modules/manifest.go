@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path"
 	"strings"
 )
 
@@ -13,6 +14,7 @@ type Manifest struct {
 	Name    string   `json:"name"`
 	Version string   `json:"version"`
 	Summary string   `json:"summary"`
+	Icon    string   `json:"icon,omitempty"`
 	Depends []string `json:"depends"`
 }
 
@@ -46,6 +48,12 @@ func (m Manifest) Validate() error {
 	}
 	if strings.TrimSpace(m.Version) == "" {
 		return fmt.Errorf("module manifest %q: version is required", m.Name)
+	}
+	if m.Icon != "" {
+		cleanIcon := path.Clean(m.Icon)
+		if strings.Contains(m.Icon, `\`) || cleanIcon != m.Icon || !strings.HasPrefix(cleanIcon, "static/public/") {
+			return fmt.Errorf("module manifest %q: icon must be a clean path inside static/public/", m.Name)
+		}
 	}
 
 	seen := make(map[string]struct{}, len(m.Depends))

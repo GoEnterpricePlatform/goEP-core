@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
@@ -27,10 +28,11 @@ import (
 )
 
 type ModuleConfig struct {
-	AppEnvs    *config.AppEnvs
-	Mux        *http.ServeMux
-	TemplateV1 *http.ServeMux
-	Deps       ModuleDeps
+	AppEnvs          *config.AppEnvs
+	Mux              *http.ServeMux
+	TemplateV1       *http.ServeMux
+	Deps             ModuleDeps
+	AvailableModules []modules.Manifest
 }
 
 // ModuleDeps groups the external dependencies (from other modules/services)
@@ -55,10 +57,10 @@ func NewWebAppModule(cfg ModuleConfig) {
 	adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
 	adminH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
 
-	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, cfg.Deps.PostService, mdwSrvTmpl, cfg.Deps.RolesSrv)
+	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, cfg.Deps.PostService, mdwSrvTmpl, cfg.Deps.RolesSrv, cfg.AvailableModules)
 
-	roleH := handler.NewRolesTmplHandler(cfg.Deps.RolesSrv,cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
-	roleH.RegisterRoutes(cfg.Mux,cfg.TemplateV1)
+	roleH := handler.NewRolesTmplHandler(cfg.Deps.RolesSrv, cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
+	roleH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
 
 	// Templates - admin
 	// adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)

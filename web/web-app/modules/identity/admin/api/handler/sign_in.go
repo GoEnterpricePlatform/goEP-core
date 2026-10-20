@@ -67,5 +67,5 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	// redirect to goep-admin
 	sse := datastar.NewSSE(w, r)
-	sse.Redirect("/v1/goep-admin/general")
+	sse.Redirect("/v1/goep-admin/modules")
 }

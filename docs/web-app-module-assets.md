@@ -34,21 +34,25 @@ addons/
         └── public/           # Imágenes y archivos que no requieren compilación
 ```
 
-Los recursos globales siguen en `web/web-app/resources/static/`: favicon, CSS base de la Web App y librerías compartidas. Los archivos generados por el build se escriben bajo una ruta separada por módulo, por ejemplo:
+Los recursos globales siguen en `web/web-app/resources/static/`: favicon, CSS base de la Web App y librerías compartidas. Los archivos generados permanecen dentro del módulo, por ejemplo:
 
 ```text
+addons/identity/static/
+├── assets.json
+├── src/
+├── public/
+└── dist/                     # Salida generada; no editar a mano
+    ├── js/
+    ├── css/
+    └── public/
+
 web/web-app/resources/static/
 ├── assets/favicon.ico
-├── css/app.css
-├── js/libs/
-└── modules/
-    └── identity/             # Salida generada; no editar a mano
-        ├── js/
-        ├── css/
-        └── public/
+├── css/app.css               # CSS base de toda la Web App
+└── js/libs/                  # Librerías compartidas
 ```
 
-Así se centraliza el directorio que el servidor expone y embebe, pero las fuentes editables quedan agrupadas en `addons/<módulo>/static/`. El prefijo `modules/<módulo>/` evita choques entre nombres iguales de archivo.
+Cada módulo conserva sus fuentes, recursos públicos y salida compilada. El servidor mantiene URLs como `/static/modules/identity/js/...`: en desarrollo resuelve esa URL directamente a `addons/identity/static/dist/`; en producción cada addon embebe su propio `static/dist/` y el registro generado de `internal/modules/backend/` reúne esos sistemas de archivos. El prefijo `modules/<módulo>/` evita choques entre módulos.
 
 ### Contrato de `static/assets.json`
 
@@ -73,15 +77,15 @@ La fase 1 fija este formato inicial:
 - Ambos arreglos pueden estar vacíos, como en el módulo esqueleto.
 - Los archivos dentro de `static/public/` son recursos públicos sin compilación y se copian manteniendo la ruta relativa.
 
-La salida acordada conserva el nombre relativo del archivo y agrega una carpeta por módulo. Por ejemplo:
+La salida conserva el nombre relativo del archivo y lo genera dentro de `static/dist/`. La URL agrega una carpeta por módulo. Por ejemplo:
 
 | Fuente | Salida generada | URL pública |
 | --- | --- | --- |
-| `static/src/ts/validations/index.ts` | `static/modules/identity/js/validations/index.js` | `/static/modules/identity/js/validations/index.js` |
-| `static/src/css/identity.css` | `static/modules/identity/css/identity.css` | `/static/modules/identity/css/identity.css` |
-| `static/public/images/logo.svg` | `static/modules/identity/public/images/logo.svg` | `/static/modules/identity/public/images/logo.svg` |
+| `static/src/ts/validations/index.ts` | `addons/identity/static/dist/js/validations/index.js` | `/static/modules/identity/js/validations/index.js` |
+| `static/src/css/identity.css` | `addons/identity/static/dist/css/identity.css` | `/static/modules/identity/css/identity.css` |
+| `static/public/images/logo.svg` | `addons/identity/static/dist/public/images/logo.svg` | `/static/modules/identity/public/images/logo.svg` |
 
-En la tabla, `static/` en las rutas de salida representa `web/web-app/resources/static/`. En producción `resources.StaticPath(...)` transformará la ruta a su URL con hash.
+En la tabla, las rutas de salida son absolutas desde la raíz del repositorio. En producción `resources.StaticPath(...)` transforma la URL a su ruta con hash.
 
 ## Fases propuestas
 
@@ -89,7 +93,7 @@ En la tabla, `static/` en las rutas de salida representa `web/web-app/resources/
 
 - Estructura estándar: `addons/<nombre>/static/{assets.json,src/ts,src/css,public}`.
 - Formato `assets.json` versión 1 con listas `scripts` y `styles`.
-- Rutas de salida y URLs bajo `modules/<nombre>/`.
+- Salida generada en `addons/<nombre>/static/dist/` y URLs bajo `modules/<nombre>/`.
 - Favicon, CSS base y librerías compartidas permanecen en `web-app/resources/static/`.
 - `cmd/create-module` genera las carpetas y un `assets.json` vacío para un módulo nuevo.
 
@@ -99,8 +103,8 @@ En la tabla, `static/` en las rutas de salida representa `web/web-app/resources/
 
 - Reemplazar el `entryMap` escrito a mano por descubrimiento de archivos TypeScript en el directorio legacy actual.
 - Recorrer módulos con `static/`, leer `assets.json` y validar versión, extensiones, ubicación y existencia de las entradas declaradas.
-- Compilar TypeScript y CSS declarados a `web/web-app/resources/static/modules/<nombre>/{js,css}/`.
-- Copiar `static/public/` a `web/web-app/resources/static/modules/<nombre>/public/`.
+- Compilar TypeScript y CSS declarados a `addons/<nombre>/static/dist/{js,css}/`.
+- Copiar `static/public/` a `addons/<nombre>/static/dist/public/`.
 - Informar qué módulo o entrada causó un error.
 - Mantener temporalmente los TS de `web/web-app/src/ts/` compilándose en sus rutas actuales para no romper las páginas antes de la fase 4.
 
@@ -113,7 +117,7 @@ En la tabla, `static/` en las rutas de salida representa `web/web-app/resources/
 - `task build` prepara primero las dependencias generadas y luego compila Go, porque `go:embed` solo incluye los archivos presentes durante la compilación.
 - `task docker:build` prepara esos mismos archivos antes de ejecutar `docker build`. El Dockerfile solo compila la aplicación y empaqueta el resultado.
 - Mantener las URLs hash de producción que genera `hashfs` mediante `resources.StaticPath(...)`.
-- Limpiar `web/web-app/resources/static/modules/` antes de cada generación para no conservar archivos de módulos o entradas eliminados.
+- Limpiar `addons/*/static/dist/` antes de cada generación para no conservar archivos de módulos o entradas eliminados.
 
 **Resultado:** los mismos assets y URLs funcionan en desarrollo y en el ejecutable de producción.
 
@@ -146,7 +150,7 @@ task docker:build
 Poner fuentes en `addons/<módulo>/static/` organiza y entrega propiedad de esos archivos al módulo. No hace que Go cargue o elimine código en caliente.
 
 - Agregar o quitar un módulo del código requiere regenerar el registro backend y reconstruir la aplicación.
-- Los assets generados quedan incluidos en la build de producción.
+- Los assets de los addons quedan incluidos en la build de producción; el servidor solo expone los archivos bajo `dist/`.
 - El ciclo de vida de la aplicación puede habilitar o deshabilitar módulos ya compilados. Los archivos estáticos son públicos y no se filtran por ese estado.
 - No se guardan los archivos de assets en MongoDB.
 

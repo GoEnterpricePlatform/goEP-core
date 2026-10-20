@@ -89,7 +89,7 @@ tasks:
       - "./addons/*/static/public/**/*"
     generates:
       - "./web/web-app/resources/static/js/**/*.js"
-      - "./web/web-app/resources/static/modules/**/*"
+      - "./addons/*/static/dist/**/*"
 
   build:
     # We could also use goep-core.exe

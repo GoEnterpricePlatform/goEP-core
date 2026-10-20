@@ -17,7 +17,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src"
 	"github.com/evanw/esbuild/pkg/api"
 )
@@ -28,8 +27,9 @@ var (
 )
 
 const (
-	addonsDirectory = "addons"
-	staticDirectory = "static"
+	addonsDirectory       = "addons"
+	staticDirectory       = "static"
+	globalStaticDirectory = "web/web-app/resources/static"
 )
 
 type moduleManifest struct {
@@ -70,14 +70,25 @@ func run(ctx context.Context) error {
 }
 
 func build(ctx context.Context) error {
-	entries, modules, err := discoverEntries(addonsDirectory, src.TsDirectoryPath)
+	legacyEntries, err := discoverLegacyEntries(src.TsDirectoryPath)
 	if err != nil {
 		return err
 	}
-	if err := cleanModuleAssetOutput(resources.StaticDirectoryPath); err != nil {
+	modules, err := discoverModuleAssets(addonsDirectory)
+	if err != nil {
 		return err
 	}
-	if err := copyModulePublicAssets(modules, resources.StaticDirectoryPath); err != nil {
+	entries := append([]api.EntryPoint(nil), legacyEntries...)
+	for _, module := range modules {
+		entries = append(entries, module.entries...)
+	}
+	if err := cleanModuleAssetOutputs(addonsDirectory); err != nil {
+		return err
+	}
+	if err := ensureModuleAssetMarkers(modules); err != nil {
+		return err
+	}
+	if err := syncModulePublicAssets(modules); err != nil {
 		return err
 	}
 	if len(entries) == 0 && !watch {
@@ -86,8 +97,7 @@ func build(ctx context.Context) error {
 	}
 
 	options := api.BuildOptions{
-		Outdir:              resources.StaticDirectoryPath,
-		EntryPointsAdvanced: entries,
+		EntryPointsAdvanced: legacyEntries,
 		Bundle:              true,
 		Format:              api.FormatESModule,
 		LogLevel:            api.LogLevelInfo,
@@ -108,22 +118,73 @@ func build(ctx context.Context) error {
 	}
 
 	slog.Info("building module assets", "entryPoints", len(entries))
-	result := api.Build(options)
-	return buildError(result.Errors)
+	if len(legacyEntries) > 0 {
+		legacyOptions := options
+		legacyOptions.Outdir = globalStaticDirectory
+		result := api.Build(legacyOptions)
+		if err := buildError(result.Errors); err != nil {
+			return err
+		}
+	}
+	for _, module := range modules {
+		if len(module.entries) == 0 {
+			continue
+		}
+		moduleOptions := options
+		moduleOptions.Outdir = module.distDir
+		moduleOptions.EntryPointsAdvanced = module.entries
+		result := api.Build(moduleOptions)
+		if err := buildError(result.Errors); err != nil {
+			return fmt.Errorf("build assets for module %q: %w", module.name, err)
+		}
+	}
+	return nil
 }
 
 func watchBuild(ctx context.Context, options api.BuildOptions, modules []moduleAssetFiles) error {
 	slog.Info("watching module assets", "entryPoints", len(options.EntryPointsAdvanced))
+	contexts := make([]api.BuildContext, 0, len(modules)+1)
 	if len(options.EntryPointsAdvanced) > 0 {
-		buildCtx, err := api.Context(options)
+		legacyOptions := options
+		legacyOptions.Outdir = globalStaticDirectory
+		buildCtx, err := api.Context(legacyOptions)
 		if err != nil {
 			return err
 		}
-		defer buildCtx.Dispose()
 		if err := buildCtx.Watch(api.WatchOptions{}); err != nil {
+			buildCtx.Dispose()
 			return err
 		}
+		contexts = append(contexts, buildCtx)
 	}
+	for _, module := range modules {
+		if len(module.entries) == 0 {
+			continue
+		}
+		moduleOptions := options
+		moduleOptions.Outdir = module.distDir
+		moduleOptions.EntryPointsAdvanced = module.entries
+		buildCtx, err := api.Context(moduleOptions)
+		if err != nil {
+			for _, ctx := range contexts {
+				ctx.Dispose()
+			}
+			return err
+		}
+		if err := buildCtx.Watch(api.WatchOptions{}); err != nil {
+			buildCtx.Dispose()
+			for _, ctx := range contexts {
+				ctx.Dispose()
+			}
+			return err
+		}
+		contexts = append(contexts, buildCtx)
+	}
+	defer func() {
+		for _, ctx := range contexts {
+			ctx.Dispose()
+		}
+	}()
 	publicSignature, err := modulePublicSignature(modules)
 	if err != nil {
 		return err
@@ -143,7 +204,7 @@ func watchBuild(ctx context.Context, options api.BuildOptions, modules []moduleA
 			if nextSignature == publicSignature {
 				continue
 			}
-			if err := syncModulePublicAssets(modules, options.Outdir); err != nil {
+			if err := syncModulePublicAssets(modules); err != nil {
 				slog.Error("sync module public assets", "error", err)
 				continue
 			}
@@ -213,6 +274,7 @@ func discoverLegacyEntries(tsDir string) ([]api.EntryPoint, error) {
 type moduleAssetFiles struct {
 	name      string
 	publicDir string
+	distDir   string
 	entries   []api.EntryPoint
 }
 
@@ -280,10 +342,11 @@ func loadModuleAssets(addonPath, directoryName, staticDir string) (moduleAssetFi
 	result := moduleAssetFiles{
 		name:      module.Name,
 		publicDir: filepath.Join(staticDir, "public"),
+		distDir:   filepath.Join(staticDir, "dist"),
 	}
 	seen := make(map[string]struct{}, len(assets.Scripts)+len(assets.Styles))
 	for _, script := range assets.Scripts {
-		entry, key, err := moduleEntry(staticDir, module.Name, script, "src/ts", "js", isTypeScript)
+		entry, key, err := moduleEntry(staticDir, script, "src/ts", "js", isTypeScript)
 		if err != nil {
 			return moduleAssetFiles{}, fmt.Errorf("module %q scripts: %w", module.Name, err)
 		}
@@ -294,7 +357,7 @@ func loadModuleAssets(addonPath, directoryName, staticDir string) (moduleAssetFi
 		result.entries = append(result.entries, entry)
 	}
 	for _, style := range assets.Styles {
-		entry, key, err := moduleEntry(staticDir, module.Name, style, "src/css", "css", func(p string) bool {
+		entry, key, err := moduleEntry(staticDir, style, "src/css", "css", func(p string) bool {
 			return strings.EqualFold(filepath.Ext(p), ".css")
 		})
 		if err != nil {
@@ -329,7 +392,7 @@ func decodeAssetManifest(data []byte, filePath string) (assetManifest, error) {
 	return manifest, nil
 }
 
-func moduleEntry(staticDir, moduleName, relativePath, requiredRoot, outputRoot string, validExt func(string) bool) (api.EntryPoint, string, error) {
+func moduleEntry(staticDir, relativePath, requiredRoot, outputRoot string, validExt func(string) bool) (api.EntryPoint, string, error) {
 	if relativePath == "" || strings.Contains(relativePath, `\`) {
 		return api.EntryPoint{}, "", fmt.Errorf("invalid path %q; use a non-empty slash-separated path relative to static/", relativePath)
 	}
@@ -373,7 +436,7 @@ func moduleEntry(staticDir, moduleName, relativePath, requiredRoot, outputRoot s
 	}
 
 	insideRoot := strings.TrimPrefix(clean, requiredRoot+"/")
-	output := path.Join("modules", moduleName, outputRoot, strings.TrimSuffix(insideRoot, path.Ext(insideRoot)))
+	output := path.Join(outputRoot, strings.TrimSuffix(insideRoot, path.Ext(insideRoot)))
 	return api.EntryPoint{InputPath: inputAbs, OutputPath: output}, clean, nil
 }
 
@@ -382,7 +445,7 @@ func isTypeScript(filePath string) bool {
 	return ext == ".ts" || ext == ".tsx"
 }
 
-func copyModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error {
+func copyModulePublicAssets(modules []moduleAssetFiles) error {
 	for _, module := range modules {
 		if _, err := os.Stat(module.publicDir); os.IsNotExist(err) {
 			continue
@@ -415,7 +478,7 @@ func copyModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error
 			if err != nil {
 				return err
 			}
-			destination := filepath.Join(outputRoot, "modules", module.name, "public", relative)
+			destination := filepath.Join(module.distDir, "public", relative)
 			if err := os.MkdirAll(filepath.Dir(destination), 0o755); err != nil {
 				return fmt.Errorf("create public asset output directory: %w", err)
 			}
@@ -435,36 +498,71 @@ func copyModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error
 	return nil
 }
 
-// cleanModuleAssetOutput removes only the generated module output directory.
-// Module sources live in addons/<module>/static and are never touched here.
-func cleanModuleAssetOutput(outputRoot string) error {
-	outputAbs, err := filepath.Abs(outputRoot)
-	if err != nil {
-		return err
-	}
-	modulesDir := filepath.Join(outputAbs, "modules")
-	modulesAbs, err := filepath.Abs(modulesDir)
-	if err != nil {
-		return err
-	}
-	relative, err := filepath.Rel(outputAbs, modulesAbs)
-	if err != nil || relative != "modules" {
-		return fmt.Errorf("refusing to clean unexpected module asset output %q", modulesAbs)
-	}
-	if err := os.RemoveAll(modulesAbs); err != nil {
-		return fmt.Errorf("clean generated module assets %s: %w", modulesAbs, err)
+func ensureModuleAssetMarkers(modules []moduleAssetFiles) error {
+	for _, module := range modules {
+		if err := os.MkdirAll(module.distDir, 0o755); err != nil {
+			return fmt.Errorf("create generated asset directory for module %q: %w", module.name, err)
+		}
+		marker := filepath.Join(module.distDir, "module-assets.json")
+		if err := os.WriteFile(marker, []byte("{\"generatedBy\":\"goep\"}\n"), 0o644); err != nil {
+			return fmt.Errorf("write generated asset marker for module %q: %w", module.name, err)
+		}
 	}
 	return nil
 }
 
-func syncModulePublicAssets(modules []moduleAssetFiles, outputRoot string) error {
+// cleanModuleAssetOutputs removes only generated dist directories below addons.
+// Module sources and manifests under static/ are never touched here.
+func cleanModuleAssetOutputs(addonsDir string) error {
+	addonsAbs, err := filepath.Abs(addonsDir)
+	if err != nil {
+		return err
+	}
+	entries, err := os.ReadDir(addonsAbs)
+	if err != nil {
+		return fmt.Errorf("read addons directory %s: %w", addonsAbs, err)
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() || !validModuleName.MatchString(entry.Name()) {
+			continue
+		}
+		staticAbs, err := filepath.Abs(filepath.Join(addonsAbs, entry.Name(), staticDirectory))
+		if err != nil {
+			return err
+		}
+		staticInfo, err := os.Lstat(staticAbs)
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("inspect module static directory %s: %w", staticAbs, err)
+		}
+		if staticInfo.Mode()&os.ModeSymlink != 0 || !staticInfo.IsDir() {
+			return fmt.Errorf("refusing to clean generated assets below non-directory or symlink %s", staticAbs)
+		}
+		distAbs, err := filepath.Abs(filepath.Join(staticAbs, "dist"))
+		if err != nil {
+			return err
+		}
+		relative, err := filepath.Rel(staticAbs, distAbs)
+		if err != nil || relative != "dist" {
+			return fmt.Errorf("refusing to clean unexpected module asset output %q", distAbs)
+		}
+		if err := os.RemoveAll(distAbs); err != nil {
+			return fmt.Errorf("clean generated module assets %s: %w", distAbs, err)
+		}
+	}
+	return nil
+}
+
+func syncModulePublicAssets(modules []moduleAssetFiles) error {
 	for _, module := range modules {
-		publicOutput := filepath.Join(outputRoot, "modules", module.name, "public")
+		publicOutput := filepath.Join(module.distDir, "public")
 		if err := os.RemoveAll(publicOutput); err != nil {
 			return fmt.Errorf("clean public asset output for module %q: %w", module.name, err)
 		}
 	}
-	return copyModulePublicAssets(modules, outputRoot)
+	return copyModulePublicAssets(modules)
 }
 
 func modulePublicSignature(modules []moduleAssetFiles) (string, error) {
