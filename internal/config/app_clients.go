@@ -3,12 +3,12 @@ package config
 import (
 	"net/smtp"
 
-	gmailsmtp "github.com/GoEnterpricePlatform/goEP-core/internal/gmail-smtp"
-	minioClient "github.com/GoEnterpricePlatform/goEP-core/internal/minio"
-	mongoClient "github.com/GoEnterpricePlatform/goEP-core/internal/mongo"
-	openai "github.com/GoEnterpricePlatform/goEP-core/internal/open-ai"
-	paddleClient "github.com/GoEnterpricePlatform/goEP-core/internal/paddle"
-	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/resend"
+	gmailsmtp "github.com/GoEnterpricePlatform/goEP-core/internal/clients/gmail-smtp"
+	minioClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/minio"
+	mongoClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/mongo"
+	openai "github.com/GoEnterpricePlatform/goEP-core/internal/clients/open-ai"
+	paddleClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/paddle"
+	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/resend"
 
 	"github.com/resend/resend-go/v2"
 	"go.mongodb.org/mongo-driver/v2/mongo"
