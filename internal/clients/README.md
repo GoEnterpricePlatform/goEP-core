@@ -1,0 +1,1 @@
+In this folder we will put the base clients to start goep-core
