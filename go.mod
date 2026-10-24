@@ -3,12 +3,14 @@ module github.com/GoEnterpricePlatform/goEP-core
 go 1.26.0
 
 require (
+	github.com/PaddleHQ/paddle-go-sdk/v5 v5.2.0
 	github.com/a-h/templ v0.3.1020
 	github.com/benbjohnson/hashfs v0.2.2
 	github.com/evanw/esbuild v0.28.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/joho/godotenv v1.5.1
 	github.com/minio/minio-go/v7 v7.0.95
 	github.com/openai/openai-go/v3 v3.24.0
@@ -39,8 +41,6 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.59.0 // indirect
 	github.com/Ladicle/tabwriter v1.0.0 // indirect
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
-	github.com/PaddleHQ/paddle-go-sdk v1.0.0 // indirect
-	github.com/PaddleHQ/paddle-go-sdk/v5 v5.2.0 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
 	github.com/air-verse/air v1.67.1 // indirect
 	github.com/alecthomas/chroma/v2 v2.27.0 // indirect
@@ -118,7 +118,7 @@ require (
 	github.com/hookenz/gotailwind/v4 v4.3.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.11.0 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/klauspost/pgzip v1.2.6 // indirect

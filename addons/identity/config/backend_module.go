@@ -25,6 +25,7 @@ func RegisterBackendModule(registry *modules.Registry) error {
 			AppClients: runtime.AppClients,
 			APIv1:      runtime.APIv1,
 			DB:         runtime.DB,
+			PGConn:     runtime.PGConn,
 		})
 		if err != nil {
 			return nil, err

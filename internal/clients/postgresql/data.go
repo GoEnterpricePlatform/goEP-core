@@ -3,10 +3,10 @@ package postgresql
 import (
 	"context"
 	"log"
-	"os"
 	"sync"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -16,35 +16,43 @@ var (
 
 // data manages the connection to database.
 type Data struct {
-	DB *pgx.Conn
+	DB   *pgx.Conn
+	Pool *pgxpool.Pool
 }
 
 // new returns a new instance of data with the database connection ready.
-func New() *Data {
+func New(dbURI string) *Data {
 	//aqui se puede poner la connexion a la base de datos pero, que remos solo una ves
-	once.Do(initDB)
+	once.Do(func() {
+		initDB(dbURI)
+	})
 	return data
 }
 
-func initDB() {
-	db, err := getConnection()
+func initDB(dbURI string) {
+	db, err := getConnection(dbURI)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	// se usa para produccion?
-	// eliminará las tablas
-	// para entorno de produccion usar makefile
-	// no causa probemas de rendimiento ?
-	if os.Getenv("APP_ENV") == "dev" {
-		err = MakeMigration(db)
-		if err != nil {
-			log.Panic(err)
-		}
+	pool, err := pgxpool.New(context.Background(), dbURI)
+	if err != nil {
+		log.Panic(err)
 	}
 
+	// is used for production or use migrations
+	// Will it delete the tables?
+	// for production environment use makefile
+	//if os.Getenv("APP_ENV") == "dev" {
+	err = MakeMigration(db)
+	if err != nil {
+		log.Panic(err)
+	}
+	//}
+
 	data = &Data{
-		DB: db,
+		DB:   db,
+		Pool: pool,
 	}
 }
 

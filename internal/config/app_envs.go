@@ -11,6 +11,10 @@ type AppEnvs struct {
 	MongoDBUri  string
 	MongoInitDB string
 
+	// PostgreSQL
+	PostgreSQLUri string
+	PostgreSQLInitDB string
+
 	// File Storage provider
 	FileStorageProvider FSProvider
 

@@ -8,6 +8,7 @@ import (
 	mongoClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/mongo"
 	openai "github.com/GoEnterpricePlatform/goEP-core/internal/clients/open-ai"
 	paddleClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/paddle"
+	postgresqlClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/postgresql"
 	resendClient "github.com/GoEnterpricePlatform/goEP-core/internal/clients/resend"
 
 	"github.com/resend/resend-go/v2"
@@ -22,6 +23,8 @@ type AppClients struct {
 	// DB
 	MongoConn *mongoClient.Data
 	DB        *mongo.Database
+
+	PGConn *postgresqlClient.Data
 
 	// File Storage
 	MinioCli *minioClient.MinioClient
@@ -48,6 +51,8 @@ func (ac *AppClients) GetClients(appEnvs *AppEnvs) error {
 	switch appEnvs.DBProvider {
 	case DBMongo:
 		ac.MongoConn = mongoClient.New(appEnvs.MongoDBUri)
+	case DBPostgresql:
+		ac.PGConn = postgresqlClient.New(appEnvs.PostgreSQLUri)
 	}
 
 	switch appEnvs.FileStorageProvider {

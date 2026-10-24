@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	adminService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/service"
 	authHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/handler"
 	authService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/service"
@@ -29,15 +28,19 @@ import (
 	userHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/handler"
 	userRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/repository/mongo"
 	userService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/service"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/service"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	"github.com/jackc/pgx/v5"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
 	mailerP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/mailer/port"
+	otpCodeP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/port"
+	permissionP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/port"
 	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
+	sessionP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
-	userFSP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/port"
 	userP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/port"
 	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 
@@ -49,7 +52,8 @@ type ModuleConfig struct {
 	AppClients *config.AppClients
 	APIv1      *http.ServeMux
 
-	DB *mongo.Database
+	DB     *mongo.Database
+	PGConn *pgx.Conn
 }
 
 type Module struct {
@@ -73,7 +77,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	}
 
 	// File Storage
-	var userFileStg userFSP.UserFileStg
+	var userFileStg userP.UserFileStg
 	switch cfg.AppEnvs.FileStorageProvider {
 	case config.FSMinio:
 		userFileStg = userFileStorage.NewUserFileStg(cfg.AppClients.MinioCli.Client, cfg.AppEnvs.MinioBucketName, 0)
@@ -84,32 +88,43 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	// module name
 	mdlName := "identity"
 
-	// collections
-	userCollName := fmt.Sprintf("%s_users", mdlName)
-	userColl := cfg.DB.Collection(userCollName)
+	// Database
+	var userRepo userP.UserRepo
+	var sessionRepo sessionP.SessionRepo
+	var otpCodeRepo otpCodeP.OtpCodeRepo
+	var roleRepo roleP.RoleRepo
+	var permissionRepo permissionP.PermissionRepo
 
-	sessionCollName := fmt.Sprintf("%s_sessions", mdlName)
-	sessionColl := cfg.DB.Collection(sessionCollName)
+	switch cfg.AppEnvs.DBProvider {
+	case config.DBMongo:
+		// collections
+		userCollName := fmt.Sprintf("%s_users", mdlName)
+		userColl := cfg.DB.Collection(userCollName)
 
-	otpCodeCollName := fmt.Sprintf("%s_opt-codes", mdlName)
-	otpCodeColl := cfg.DB.Collection(otpCodeCollName)
+		sessionCollName := fmt.Sprintf("%s_sessions", mdlName)
+		sessionColl := cfg.DB.Collection(sessionCollName)
 
-	roleCollName := fmt.Sprintf("%s_roles", mdlName)
-	roleColl := cfg.DB.Collection(roleCollName)
+		otpCodeCollName := fmt.Sprintf("%s_opt-codes", mdlName)
+		otpCodeColl := cfg.DB.Collection(otpCodeCollName)
 
-	permissionCollName := fmt.Sprintf("%s_permissions", mdlName)
-	permissionColl := cfg.DB.Collection(permissionCollName)
+		roleCollName := fmt.Sprintf("%s_roles", mdlName)
+		roleColl := cfg.DB.Collection(roleCollName)
 
-	userRepo := userRepository.NewUserRepo(cfg.AppClients.MongoConn.DB, userColl, roleCollName)
-	sessionRepo := sessionRepository.NewSessionRepo(cfg.AppClients.MongoConn.DB, sessionColl)
-	otpCodeRepo := otpCodeRepository.NewOtpCodeRepo(cfg.AppClients.MongoConn.DB, otpCodeColl)
-	roleRepo := roleRepository.NewRoleRepo(cfg.AppClients.MongoConn.DB, roleColl)
-	permissionRepo := permissionRepository.NewPermissionRepo(cfg.AppClients.MongoConn.DB, permissionColl)
+		permissionCollName := fmt.Sprintf("%s_permissions", mdlName)
+		permissionColl := cfg.DB.Collection(permissionCollName)
 
-	// Indexes
-	err := userRepo.CreateIndexes()
-	if err != nil {
-		return nil, err
+		userRepo = userRepository.NewUserRepo(cfg.AppClients.MongoConn.DB, userColl, roleCollName)
+		sessionRepo = sessionRepository.NewSessionRepo(cfg.AppClients.MongoConn.DB, sessionColl)
+		otpCodeRepo = otpCodeRepository.NewOtpCodeRepo(cfg.AppClients.MongoConn.DB, otpCodeColl)
+		roleRepo = roleRepository.NewRoleRepo(cfg.AppClients.MongoConn.DB, roleColl)
+		permissionRepo = permissionRepository.NewPermissionRepo(cfg.AppClients.MongoConn.DB, permissionColl)
+
+		// Indexes
+		err := userRepo.CreateIndexes()
+		if err != nil {
+			return nil, err
+		}
+	case config.DBPostgresql:
 	}
 
 	// Before indexes, create initializers

@@ -21,6 +21,10 @@ func (s *testLifecycleStore) Find(_ context.Context, name string) (lifecycle.Mod
 	return state, exists, nil
 }
 
+func (s *testLifecycleStore) CreateIndexes(_ context.Context) error {
+	return nil
+}
+
 func (s *testLifecycleStore) List(_ context.Context) ([]lifecycle.ModuleState, error) {
 	states := make([]lifecycle.ModuleState, 0, len(s.states))
 	for _, state := range s.states {
