@@ -41,6 +41,7 @@ func Initialize(cfg Config) (*Modules, error) {
 			AppClients: cfg.AppClients,
 			APIv1:      moduleRoutes(cfg.APIv1, enabled, manifest.Name),
 			DB:         cfg.AppClients.DB,
+			PGConn:     cfg.AppClients.PGConn.DB,
 			Services:   services,
 		})
 		if err != nil {

@@ -1,4 +1,4 @@
-package lifecycle
+package mongo
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
 	"github.com/google/uuid"
 	driver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -32,7 +33,7 @@ func TestMongoStorePersistsStateAcrossClients(t *testing.T) {
 		_ = firstClient.Disconnect(context.Background())
 		t.Fatalf("CreateIndexes() error = %v", err)
 	}
-	want := ModuleState{
+	want := lifecycle.ModuleState{
 		Name:        "catalog",
 		Version:     "1.2.3",
 		Installed:   true,

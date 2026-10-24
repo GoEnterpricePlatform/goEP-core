@@ -4,14 +4,25 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle/repository/mongo"
+	postgres "github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle/repository/postgresql"
 )
 
 func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
-	if cfg.AppClients == nil || cfg.AppClients.DB == nil {
-		return nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
+	switch cfg.AppEnvs.DBProvider {
+	case config.DBMongo:
+		if cfg.AppClients == nil || cfg.AppClients.DB == nil {
+			return nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
+		}
+	case config.DBPostgresql:
+		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
+			return nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
+		}
 	}
+
 	addonsDir := cfg.AddonsDir
 	if addonsDir == "" {
 		addonsDir = "addons"
@@ -33,16 +44,26 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 		return nil, nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
 	}
 
-	store := lifecycle.NewMongoStore(cfg.AppClients.DB)
-	if err := store.CreateIndexes(context.Background()); err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
+	var storeRepo lifecycle.StateStore
+	switch cfg.AppEnvs.DBProvider {
+	case config.DBMongo:
+		storeRepo = mongo.NewMongoStore(cfg.AppClients.DB)
+		if err := storeRepo.CreateIndexes(context.Background()); err != nil {
+			return nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
+		}
+	case config.DBPostgresql:
+		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
+			return nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
+		}
+		storeRepo = postgres.NewPostgresStore(cfg.AppClients.PGConn.Pool)
 	}
-	manager, err := lifecycle.NewManager(resolver, store)
+
+	manager, err := lifecycle.NewManager(resolver, storeRepo)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
 
-	enabled, err := initializeModuleStates(context.Background(), manager, store, resolver)
+	enabled, err := initializeModuleStates(context.Background(), manager, storeRepo, resolver)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

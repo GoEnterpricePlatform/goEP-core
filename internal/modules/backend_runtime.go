@@ -6,16 +6,21 @@ import (
 	"reflect"
 
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 // BackendRuntime contains shared infrastructure passed to a module-local
 // initializer. Module-specific services stay behind typed contracts.
+
+// mas adelante: en ves de pasar *mongo.Database y *pgx.Conn seria pasarle  Data o agrupar
+// ambos DBData y poner ahi ambos clientes 
 type BackendRuntime struct {
 	AppEnvs    *appConfig.AppEnvs
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
 	DB         *mongo.Database
+	PGConn 		*pgx.Conn
 	Services   *Services
 }
 

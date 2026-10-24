@@ -28,6 +28,8 @@ type StateStore interface {
 	Find(ctx context.Context, name string) (ModuleState, bool, error)
 	List(ctx context.Context) ([]ModuleState, error)
 	Save(ctx context.Context, state ModuleState) error
+
+	CreateIndexes(ctx context.Context) error
 }
 
 // ModuleStatus combines discovered metadata with persisted installation state.

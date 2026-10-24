@@ -19,6 +19,8 @@ type UserRepo interface {
 
 	// Admin
 	ExistsAdmin(ctx context.Context) (bool, error)
+
+	CreateIndexes() error
 }
 
 type UserSrv interface {

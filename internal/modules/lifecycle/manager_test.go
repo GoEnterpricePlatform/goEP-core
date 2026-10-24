@@ -22,6 +22,10 @@ func (s *memoryStateStore) Find(_ context.Context, name string) (ModuleState, bo
 	return state, exists, nil
 }
 
+func (s *memoryStateStore) CreateIndexes(_ context.Context) error {
+	return nil
+}
+
 func (s *memoryStateStore) List(_ context.Context) ([]ModuleState, error) {
 	states := make([]ModuleState, 0, len(s.states))
 	for _, state := range s.states {

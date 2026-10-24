@@ -14,6 +14,7 @@ const (
 
 const (
 	DBMongo DBProvider = "mongo"
+	DBPostgresql DBProvider = "postgresql"
 )
 
 const (

@@ -11,7 +11,7 @@ import (
 
 func (ae *AppEnvs) Load() {
 	// Database
-	dbProviderValue := cmp.Or(os.Getenv("DB_PROVIDER"), "mongo")
+	dbProviderValue := strings.ToLower(cmp.Or(os.Getenv("DB_PROVIDER"), "postgresql"))
 	var dbProvider DBProvider
 	dbProvider = DBProvider(dbProviderValue)
 
@@ -19,11 +19,17 @@ func (ae *AppEnvs) Load() {
 	var mongoInitDB string
 	var mongoDBUri string
 
+	// Postgresql
+	var postgreSQLInitDB string
+	var postgreSQLDBUri string
+
 	switch dbProvider {
 	case DBMongo:
 		mongoInitDB = cmp.Or(os.Getenv("MONGO_INITDB_DATABASE"), "goep-core")
 		mongoDBUri = mustGetEnv("MONGO_DB_URI")
-
+	case DBPostgresql:
+		postgreSQLInitDB = cmp.Or(os.Getenv("PG_INITDB_DATABASE"), "goep-core")
+		postgreSQLDBUri = mustGetEnv("PG_DB_URI")
 	default:
 		log.Fatalf("invalid DB_PROVIDER: %q", dbProviderValue)
 	}
@@ -172,6 +178,8 @@ func (ae *AppEnvs) Load() {
 	ae.DBProvider = dbProvider
 	ae.MongoDBUri = mongoDBUri
 	ae.MongoInitDB = mongoInitDB
+	ae.PostgreSQLInitDB = postgreSQLInitDB
+	ae.PostgreSQLUri = postgreSQLDBUri
 	ae.FileStorageProvider = fileStorageProvider
 	ae.MinioEndpoint = minioEndpoint
 	ae.MinioAccessKey = minioAccessKey
