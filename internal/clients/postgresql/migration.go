@@ -11,7 +11,13 @@ import (
 func MakeMigration(conn *pgx.Conn) error {
 
 	//files\database\sql\model.sql
-	path := filepath.Join("/internal/clients/postgresql/model/model.sql")
+	path := filepath.Join(
+		"internal",
+		"clients",
+		"postgresql",
+		"model",
+		"model.sql",
+	)
 
 	b, err := os.ReadFile(path)
 	if err != nil {

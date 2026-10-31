@@ -95,18 +95,19 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	var roleRepo roleP.RoleRepo
 	var permissionRepo permissionP.PermissionRepo
 
+	fmt.Println("---------------------------------")
 	switch cfg.AppEnvs.DBProvider {
 	case config.DBMongo:
 		// collections
 		userCollName := fmt.Sprintf("%s_users", mdlName)
 		userColl := cfg.DB.Collection(userCollName)
-
+		
 		sessionCollName := fmt.Sprintf("%s_sessions", mdlName)
 		sessionColl := cfg.DB.Collection(sessionCollName)
-
+		
 		otpCodeCollName := fmt.Sprintf("%s_opt-codes", mdlName)
 		otpCodeColl := cfg.DB.Collection(otpCodeCollName)
-
+		
 		roleCollName := fmt.Sprintf("%s_roles", mdlName)
 		roleColl := cfg.DB.Collection(roleCollName)
 
@@ -126,6 +127,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 		}
 	case config.DBPostgresql:
 	}
+	fmt.Println("---------------------------------2")
 
 	// Before indexes, create initializers
 	permissionItz := permissionInitializer.NewPermissionItz(permissionRepo)
@@ -141,6 +143,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	if err := roleItz.AddPermissionsToRole(context.Background(), string(domain.RoleSystemAdmin), permissions); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("---------------------------------3")
 
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(cfg.AppEnvs.JWTAccessSecret, cfg.AppEnvs.JWTRefreshSecret, cfg.AppEnvs.JWTAccessExpIn, cfg.AppEnvs.JWTRefreshExpIn, cfg.AppEnvs.JWTRefreshRememberMeExpIn, cfg.AppEnvs.JWTIssuer)
@@ -159,6 +162,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	// Register handlers
 	authHandler.NewAuthHandler(cfg.APIv1, authSrv, tokenSrv, cfg.AppEnvs.AppEnv, authApiMdw)
 	userHandler.NewUserHandler(cfg.APIv1, userSrv, authApiMdw)
+	fmt.Println("---------------------------------4")
 
 	return &Module{
 		AuthSrv:    authSrv,
