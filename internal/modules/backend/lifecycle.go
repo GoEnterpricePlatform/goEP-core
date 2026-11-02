@@ -39,6 +39,14 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 	if err := registry.ValidateBackend(manifests); err != nil {
 		return nil, nil, nil, nil, fmt.Errorf("validate backend module initializers: %w", err)
 	}
+	manifests = filterManifestsByDatabase(manifests, string(cfg.AppEnvs.DBProvider))
+	if len(manifests) == 0 {
+		return nil, nil, nil, nil, fmt.Errorf("no backend modules support database provider %q", cfg.AppEnvs.DBProvider)
+	}
+	registry, err = registry.Subset(manifests)
+	if err != nil {
+		return nil, nil, nil, nil, fmt.Errorf("select backend modules for database provider %q: %w", cfg.AppEnvs.DBProvider, err)
+	}
 	resolver, err := modules.NewDependencyResolver(manifests, registry)
 	if err != nil {
 		return nil, nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
@@ -68,6 +76,16 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 		return nil, nil, nil, nil, err
 	}
 	return registry, resolver.Order(), enabled, manager, nil
+}
+
+func filterManifestsByDatabase(manifests []modules.Manifest, provider string) []modules.Manifest {
+	compatible := make([]modules.Manifest, 0, len(manifests))
+	for _, manifest := range manifests {
+		if manifest.SupportsDatabase(provider) {
+			compatible = append(compatible, manifest)
+		}
+	}
+	return compatible
 }
 
 func initializeModuleStates(ctx context.Context, manager *lifecycle.Manager, store lifecycle.StateStore, resolver *modules.DependencyResolver) (map[string]bool, error) {

@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "summary": "AI tool calling with backend service integrations",
   "icon": "static/public/icon.svg",
-  "depends": ["posts"]
+  "depends": ["posts"],
+  "database_providers": ["mongo"]
 }

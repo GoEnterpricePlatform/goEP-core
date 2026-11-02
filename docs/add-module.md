@@ -45,7 +45,8 @@ Crea `addons/reports/manifest.json`:
   "version": "1.0.0",
   "summary": "Report generation",
   "icon": "static/public/icon.svg",
-  "depends": ["identity"]
+  "depends": ["identity"],
+  "database_providers": ["mongo"]
 }
 ```
 
@@ -55,6 +56,7 @@ Reglas para este archivo:
 - `icon` es opcional; cuando existe, apunta a un archivo dentro de `static/public/`. La Web App lo publica bajo `/static/modules/<nombre>/public/`.
 - `name` debe coincidir con el nombre registrado en la fábrica.
 - `depends` contiene nombres de módulos requeridos, no nombres de servicios o paquetes Go.
+- `database_providers` declara los proveedores para los que el módulo tiene implementada su persistencia (`mongo` o `postgresql`). Si el módulo no persiste datos propios, omite el campo: se considera compatible con cualquier proveedor y no se excluye del backend. La base de datos global sigue siendo necesaria para guardar el estado del ciclo de vida de los módulos.
 - Declara `identity` si el módulo necesita autenticación o depende funcionalmente de Identity. Si solo necesita infraestructura compartida, no agregues esa dependencia por costumbre.
 - Un directorio directo de `addons/` sin `manifest.json` hace fallar el descubrimiento.
 

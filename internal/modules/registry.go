@@ -117,6 +117,29 @@ func (r *Registry) Names() []string {
 	return names
 }
 
+// Subset returns a registry containing only the implementations named by the
+// supplied manifests. This is useful when runtime capabilities make some
+// compiled modules unavailable for the current deployment.
+func (r *Registry) Subset(manifests []Manifest) (*Registry, error) {
+	if r == nil {
+		return nil, fmt.Errorf("module registry is nil")
+	}
+	subset := NewRegistry()
+	for _, manifest := range manifests {
+		factory, exists := r.factories[manifest.Name]
+		if !exists {
+			return nil, fmt.Errorf("module %q is discovered but has no compiled implementation", manifest.Name)
+		}
+		initializer, exists := r.backendInitializers[manifest.Name]
+		if !exists {
+			return nil, fmt.Errorf("backend module %q has no runtime initializer", manifest.Name)
+		}
+		subset.factories[manifest.Name] = factory
+		subset.backendInitializers[manifest.Name] = initializer
+	}
+	return subset, nil
+}
+
 // Validate checks that every discovered module has a compiled factory and
 // every registered factory has a corresponding manifest.
 func (r *Registry) Validate(manifests []Manifest) error {

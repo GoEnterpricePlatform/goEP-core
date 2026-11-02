@@ -9,6 +9,7 @@ import (
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
+	//"github.com/jackc/pgx/v5"
 )
 
 // Config contains the infrastructure shared by backend modules and their route
@@ -42,7 +43,7 @@ func Initialize(cfg Config) (*Modules, error) {
 			APIv1:      moduleRoutes(cfg.APIv1, enabled, manifest.Name),
 			DB:         cfg.AppClients.DB,
 			PGConn:     cfg.AppClients.PGConn.DB,
-			Services:   services,
+			Services: services,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("initialize backend module %q: %w", manifest.Name, err)

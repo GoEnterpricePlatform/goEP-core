@@ -76,14 +76,8 @@ func New() http.Handler {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tcService, err := modules.RequireService[tcPort.ToolCallingSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-	postService, err := modules.RequireService[postPort.PostSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tcService, _ := modules.RequireService[tcPort.ToolCallingSrv](backend.Services)
+	postService, _ := modules.RequireService[postPort.PostSrv](backend.Services)
 	rolesSrv, err := modules.RequireService[rolePort.RoleSrv](backend.Services)
 	if err != nil {
 		log.Fatal(err)
