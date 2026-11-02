@@ -11,11 +11,27 @@ import (
 
 // Manifest describes a GoEP module independently from its Go implementation.
 type Manifest struct {
-	Name    string   `json:"name"`
-	Version string   `json:"version"`
-	Summary string   `json:"summary"`
-	Icon    string   `json:"icon,omitempty"`
-	Depends []string `json:"depends"`
+	Name              string   `json:"name"`
+	Version           string   `json:"version"`
+	Summary           string   `json:"summary"`
+	Icon              string   `json:"icon,omitempty"`
+	Depends           []string `json:"depends"`
+	DatabaseProviders []string `json:"database_providers,omitempty"`
+}
+
+// SupportsDatabase reports whether the module declares support for a database
+// provider. An empty list preserves compatibility with manifests created
+// before database provider support was declared.
+func (m Manifest) SupportsDatabase(provider string) bool {
+	if len(m.DatabaseProviders) == 0 {
+		return true
+	}
+	for _, supported := range m.DatabaseProviders {
+		if supported == provider {
+			return true
+		}
+	}
+	return false
 }
 
 // ParseManifest decodes and validates a manifest encoded as JSON.
@@ -69,6 +85,18 @@ func (m Manifest) Validate() error {
 			return fmt.Errorf("module manifest %q: duplicate dependency %q", m.Name, dependency)
 		}
 		seen[dependency] = struct{}{}
+	}
+
+	seenProviders := make(map[string]struct{}, len(m.DatabaseProviders))
+	for _, provider := range m.DatabaseProviders {
+		provider = strings.TrimSpace(provider)
+		if provider == "" {
+			return fmt.Errorf("module manifest %q: database_providers entries must not be empty", m.Name)
+		}
+		if _, exists := seenProviders[provider]; exists {
+			return fmt.Errorf("module manifest %q: duplicate database provider %q", m.Name, provider)
+		}
+		seenProviders[provider] = struct{}{}
 	}
 	return nil
 }

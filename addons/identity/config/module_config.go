@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	adminService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/service"
@@ -95,19 +94,21 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	var roleRepo roleP.RoleRepo
 	var permissionRepo permissionP.PermissionRepo
 
-	fmt.Println("---------------------------------")
 	switch cfg.AppEnvs.DBProvider {
 	case config.DBMongo:
+		if cfg.DB == nil {
+			return nil, fmt.Errorf("identity requires a MongoDB database")
+		}
 		// collections
 		userCollName := fmt.Sprintf("%s_users", mdlName)
 		userColl := cfg.DB.Collection(userCollName)
-		
+
 		sessionCollName := fmt.Sprintf("%s_sessions", mdlName)
 		sessionColl := cfg.DB.Collection(sessionCollName)
-		
+
 		otpCodeCollName := fmt.Sprintf("%s_opt-codes", mdlName)
 		otpCodeColl := cfg.DB.Collection(otpCodeCollName)
-		
+
 		roleCollName := fmt.Sprintf("%s_roles", mdlName)
 		roleColl := cfg.DB.Collection(roleCollName)
 
@@ -126,24 +127,25 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 			return nil, err
 		}
 	case config.DBPostgresql:
+		return nil, fmt.Errorf("identity does not support database provider %q yet", cfg.AppEnvs.DBProvider)
+	default:
+		return nil, fmt.Errorf("identity does not support database provider %q", cfg.AppEnvs.DBProvider)
 	}
-	fmt.Println("---------------------------------2")
 
 	// Before indexes, create initializers
 	permissionItz := permissionInitializer.NewPermissionItz(permissionRepo)
 	permissions, err := permissionItz.SeedEssentialPermissions(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("seed essential permissions: %w", err)
 	}
 
 	roleItz := roleInitializer.NewRoleItz(roleRepo)
 	if err := roleItz.SeedEssentialRoles(context.Background()); err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("seed essential roles: %w", err)
 	}
 	if err := roleItz.AddPermissionsToRole(context.Background(), string(domain.RoleSystemAdmin), permissions); err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("assign essential permissions to system administrator role: %w", err)
 	}
-	fmt.Println("---------------------------------3")
 
 	// Services
 	tokenSrv := tokenService.NewTokenSrv(cfg.AppEnvs.JWTAccessSecret, cfg.AppEnvs.JWTRefreshSecret, cfg.AppEnvs.JWTAccessExpIn, cfg.AppEnvs.JWTRefreshExpIn, cfg.AppEnvs.JWTRefreshRememberMeExpIn, cfg.AppEnvs.JWTIssuer)
@@ -162,8 +164,6 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	// Register handlers
 	authHandler.NewAuthHandler(cfg.APIv1, authSrv, tokenSrv, cfg.AppEnvs.AppEnv, authApiMdw)
 	userHandler.NewUserHandler(cfg.APIv1, userSrv, authApiMdw)
-	fmt.Println("---------------------------------4")
-
 	return &Module{
 		AuthSrv:    authSrv,
 		UserSrv:    userSrv,

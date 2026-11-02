@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "summary": "Post management",
   "icon": "static/public/icon.svg",
-  "depends": ["identity"]
+  "depends": ["identity"],
+  "database_providers": ["mongo"]
 }

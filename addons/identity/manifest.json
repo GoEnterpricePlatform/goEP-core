@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "summary": "User identity, authentication, and authorization",
   "icon": "static/public/icon.svg",
-  "depends": []
+  "depends": [],
+  "database_providers": ["mongo"]
 }
