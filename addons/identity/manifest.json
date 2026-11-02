@@ -4,5 +4,5 @@
   "summary": "User identity, authentication, and authorization",
   "icon": "static/public/icon.svg",
   "depends": [],
-  "database_providers": ["mongo"]
+  "database_providers": ["mongo","postgresql"]
 }
