@@ -12,20 +12,25 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/mailer/adapter/resend"
 	mailerService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/mailer/service"
 	otpCodeRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/repository/mongo"
+	otpCodePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/repository/postgresql"
 	otpCodeService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/service"
 	permissionInitializer "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/initializer"
 	permissionRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/repository/mongo"
+	permissionPostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/repository/postgresql"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 	roleInitializer "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/initializer"
 	roleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/repository/mongo"
+	rolePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/repository/postgresql"
 	roleService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/service"
 	sessionRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/repository/mongo"
+	sessionPostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/repository/postgresql"
 	sessionService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/service"
 	tokenService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/service"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/file-storage/disabled"
 	userFileStorage "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/file-storage/minio"
 	userHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/handler"
 	userRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/repository/mongo"
+	userPostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/repository/postgresql"
 	userService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/service"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	cookieService "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/service"
@@ -127,7 +132,16 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 			return nil, err
 		}
 	case config.DBPostgresql:
-		return nil, fmt.Errorf("identity does not support database provider %q yet", cfg.AppEnvs.DBProvider)
+		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil || cfg.AppClients.PGConn.Pool == nil {
+			return nil, fmt.Errorf("PostgreSQL pool is required to initialize identity repositories")
+		}
+		pool := cfg.AppClients.PGConn.Pool
+		userRepo = userPostgresRepository.NewUserRepo(pool)
+		sessionRepo = sessionPostgresRepository.NewSessionRepo(pool)
+		otpCodeRepo = otpCodePostgresRepository.NewOtpCodeRepo(pool)
+		roleRepo = rolePostgresRepository.NewRoleRepo(pool)
+		permissionRepo = permissionPostgresRepository.NewPermissionRepo(pool)
+		// return nil, fmt.Errorf("identity does not support database provider %q yet", cfg.AppEnvs.DBProvider)
 	default:
 		return nil, fmt.Errorf("identity does not support database provider %q", cfg.AppEnvs.DBProvider)
 	}

@@ -20,21 +20,29 @@ body:json {
 
 script:post-response {
   // Parse the response body
-  const response = res.getBody();
-  const jsonResponse = response;
+  const jsonResponse = res.getBody();
   
-  // Save the access token to environment variables (SECRET - stored in vars:secret)
-  bru.setEnvVar('access_token', jsonResponse.session.access_token);
+  // Save access token only if it exists
+  const accessToken = jsonResponse?.session?.access_token;
   
-  // Optional: Save other user data (these can be in vars if not sensitive)
-  // bru.setEnvVar('user_id', jsonResponse.user.id);
-  // bru.setEnvVar('user_email', jsonResponse.user.email);
+  if (accessToken) {
+    bru.setEnvVar('access_token', accessToken);
+    console.log('Access token saved successfully');
+  }
   
-  // Optional: Save token expiration time if available
-  // bru.setEnvVar('token_expires_at', jsonResponse.session.expires_at);
+  // Optional: Save other user data if available
+  if (jsonResponse?.user?.id) {
+    bru.setEnvVar('user_id', jsonResponse.user.id);
+  }
   
-  // Optional: Log success (only for debugging)
-  // console.log('Access token saved successfully');
+  if (jsonResponse?.user?.email) {
+    bru.setEnvVar('user_email', jsonResponse.user.email);
+  }
+  
+  // Optional: Save token expiration if available
+  if (jsonResponse?.session?.expires_at) {
+    bru.setEnvVar('token_expires_at', jsonResponse.session.expires_at);
+  }
 }
 
 settings {
