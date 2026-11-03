@@ -141,7 +141,7 @@ func generate(addonsDir, output, assetsOutput, modulePath string) error {
 	if err := os.MkdirAll(filepath.Dir(output), 0o755); err != nil {
 		return fmt.Errorf("create output directory: %w", err)
 	}
-	if err := os.WriteFile(output, formatted, 0o644); err != nil {
+	if err := writeFileIfChanged(output, formatted, 0o644); err != nil {
 		return fmt.Errorf("write generated registry: %w", err)
 	}
 	if err := writeStaticAssetsRegistry(assetsOutput, modules); err != nil {
@@ -157,7 +157,7 @@ func writeModuleAssetsSource(addonDir string) error {
 		return err
 	}
 	marker := filepath.Join(distDir, "module-assets.json")
-	if err := os.WriteFile(marker, []byte("{\"generatedBy\":\"goep\"}\n"), 0o644); err != nil {
+	if err := writeFileIfChanged(marker, []byte("{\"generatedBy\":\"goep\"}\n"), 0o644); err != nil {
 		return err
 	}
 
@@ -175,7 +175,23 @@ var StaticAssets embed.FS
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(addonDir, "static_assets_gen.go"), formatted, 0o644)
+	return writeFileIfChanged(filepath.Join(addonDir, "static_assets_gen.go"), formatted, 0o644)
+}
+
+func writeFileIfChanged(path string, contents []byte, mode os.FileMode) error {
+	current, err := os.ReadFile(path)
+	if err == nil {
+		// Generated files may already use CRLF on Windows. Compare normalized
+		// line endings so an otherwise identical file is not rewritten on each run.
+		normalizedCurrent := bytes.ReplaceAll(current, []byte("\r\n"), []byte("\n"))
+		if bytes.Equal(normalizedCurrent, contents) {
+			return nil
+		}
+	}
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return os.WriteFile(path, contents, mode)
 }
 
 func writeStaticAssetsRegistry(output string, modules []moduleInfo) error {
@@ -208,7 +224,7 @@ func writeStaticAssetsRegistry(output string, modules []moduleInfo) error {
 	if err := os.MkdirAll(filepath.Dir(output), 0o755); err != nil {
 		return fmt.Errorf("create static registry output directory: %w", err)
 	}
-	if err := os.WriteFile(output, formatted, 0o644); err != nil {
+	if err := writeFileIfChanged(output, formatted, 0o644); err != nil {
 		return fmt.Errorf("write static registry: %w", err)
 	}
 	return nil
