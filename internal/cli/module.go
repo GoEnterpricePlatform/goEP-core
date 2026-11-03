@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"flag"
@@ -15,27 +15,29 @@ const modulePath = "github.com/GoEnterpricePlatform/goEP-core"
 
 var validModuleName = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
 
-func main() {
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: go run ./cmd/create-module [--summary \"description\"] <module-name>\n")
-		fmt.Fprintln(flag.CommandLine.Output(), "Example: go run ./cmd/create-module --summary \"Sales reports\" sales-reports")
-		flag.PrintDefaults()
+func CreateModule(args []string) error {
+	flags := flag.NewFlagSet("create-module", flag.ContinueOnError)
+	flags.Usage = func() {
+		fmt.Fprintln(flags.Output(), "Usage: go run ./cmd/goep create-module [--summary \"description\"] <module-name>")
+		fmt.Fprintln(flags.Output(), "Example: go run ./cmd/goep create-module --summary \"Sales reports\" sales-reports")
+		flags.PrintDefaults()
 	}
-	summary := flag.String("summary", "", "short description written to the module manifest")
-	flag.Parse()
-
-	if flag.NArg() != 1 {
-		flag.Usage()
-		os.Exit(2)
+	summary := flags.String("summary", "", "short description written to the module manifest")
+	if err := flags.Parse(args); err != nil {
+		return err
 	}
-	name := flag.Arg(0)
+	if flags.NArg() != 1 {
+		flags.Usage()
+		return fmt.Errorf("expected one module name")
+	}
+	name := flags.Arg(0)
 	if !validModuleName.MatchString(name) {
-		fatalf("invalid module name %q: use lowercase letters and numbers separated by single hyphens", name)
+		return fmt.Errorf("invalid module name %q: use lowercase letters and numbers separated by single hyphens", name)
 	}
 
 	root, err := findRepositoryRoot()
 	if err != nil {
-		fatalf("find repository root: %v", err)
+		return fmt.Errorf("find repository root: %w", err)
 	}
 	if *summary == "" {
 		*summary = strings.ReplaceAll(name, "-", " ") + " module"
@@ -43,7 +45,7 @@ func main() {
 
 	moduleDir, err := createModule(root, name, *summary)
 	if err != nil {
-		fatalf("create module: %v", err)
+		return fmt.Errorf("create module: %w", err)
 	}
 	fmt.Printf("Created %s\n", filepath.ToSlash(filepath.Join("addons", name)))
 	fmt.Println("Generating the backend and static asset registries...")
@@ -53,9 +55,10 @@ func main() {
 	generate.Stdout = os.Stdout
 	generate.Stderr = os.Stderr
 	if err := generate.Run(); err != nil {
-		fatalf("module files were created at %s, but registry generation failed: %v", moduleDir, err)
+		return fmt.Errorf("module files were created at %s, but registry generation failed: %w", moduleDir, err)
 	}
 	fmt.Printf("Module %q is ready and included in the backend and static asset registries.\n", name)
+	return nil
 }
 
 func createModule(root, name, summary string) (string, error) {
@@ -208,9 +211,4 @@ func assetsManifestTemplate() string {
   "styles": []
 }
 `
-}
-
-func fatalf(format string, args ...any) {
-	fmt.Fprintf(os.Stderr, "create-module: "+format+"\n", args...)
-	os.Exit(1)
 }

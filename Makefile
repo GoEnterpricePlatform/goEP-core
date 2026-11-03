@@ -24,7 +24,6 @@ test:
 compose-dev:
 	@docker-compose -f docker-compose.dev.yml --env-file .env up
 
-
 ## Other optional commands to improve the development experience 
 git-diff:
 	@git diff --staged -- . ':(exclude)go.mod' ':(exclude)go.sum' ':(exclude)*_templ.go' ':(exclude)*.bru' ':(exclude)addons/web-app/resources/static/js/libs/**' ':(exclude)*.js.map' ':(exclude)addons/web-app/resources/static/css/app.css'
