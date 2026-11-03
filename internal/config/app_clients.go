@@ -52,7 +52,7 @@ func (ac *AppClients) GetClients(appEnvs *AppEnvs) error {
 	case DBMongo:
 		ac.MongoConn = mongoClient.New(appEnvs.MongoDBUri)
 	case DBPostgresql:
-		ac.PGConn = postgresqlClient.New(appEnvs.PostgreSQLUri)
+		ac.PGConn = postgresqlClient.New(appEnvs.PostgreSQLUri, appEnvs.AppEnv)
 	}
 
 	switch appEnvs.FileStorageProvider {
