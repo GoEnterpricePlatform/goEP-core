@@ -6,7 +6,7 @@ Sí hay cambios importantes. Los archivos fuente pasarían de estar centralizado
 
 Esta propuesta cubre solo la Web App GoEP del backend. **Next.js queda fuera de este alcance.**
 
-La fase 1 establece el contrato descrito aquí y hace que `cmd/create-module` cree su estructura. Las fases posteriores conectarán el compilador, las URLs de las plantillas y el build de producción.
+La fase 1 establece el contrato descrito aquí y hace que `go run ./cmd/goep create-module` cree su estructura. Las fases posteriores conectarán el compilador, las URLs de las plantillas y el build de producción.
 
 ## Cómo funciona hoy
 
@@ -95,7 +95,7 @@ En la tabla, las rutas de salida son absolutas desde la raíz del repositorio. E
 - Formato `assets.json` versión 1 con listas `scripts` y `styles`.
 - Salida generada en `addons/<nombre>/static/dist/` y URLs bajo `modules/<nombre>/`.
 - Favicon, CSS base y librerías compartidas permanecen en `web-app/resources/static/`.
-- `cmd/create-module` genera las carpetas y un `assets.json` vacío para un módulo nuevo.
+- `go run ./cmd/goep create-module` genera las carpetas y un `assets.json` vacío para un módulo nuevo.
 
 **Resultado:** el contrato y el esqueleto ya están definidos. El compilador todavía no descubre ni procesa estos manifiestos.
 
@@ -161,7 +161,7 @@ La migración afecta varios puntos del repositorio:
 | Área | Cambio |
 | --- | --- |
 | `cmd/api/env/dev/ts-compiler` | Descubrimiento de manifiestos de assets y compilación por módulo |
-| `cmd/create-module` | Esqueleto estático para módulos nuevos |
+| `go run ./cmd/goep create-module` | Esqueleto estático para módulos nuevos |
 | `addons/web-app/resources` | Mantener el servicio común y el embedding de la salida generada |
 | Plantillas Templ | Actualizar las URLs de scripts, estilos e imágenes de módulo |
 | `Taskfile.yml` y flujo de build | Ejecutar compilación de assets antes de compilar el binario o la imagen |

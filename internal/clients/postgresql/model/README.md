@@ -1,10 +1,25 @@
-Puntos importantes al diseñar la db
+# PostgreSQL schema
 
-1. Verificar que tablas tendrán created_at y updated_at
-2. Como se manejara las eliminaciones eliminando en disco (aqui entraria el tema de eliminacion en cascada claro otra forma es usando transacciones para asegurarnos que sean solo las tablas que queremos), poniendo en otra tabla, o creo mas simple es 
-   añadiendo un campo deleted_at a la tabla y en el servicio validar, si fue eliminado,
+The schema is owned by the core and its addons:
 
+- `core.sql` contains shared platform tables.
+- `addons/<module>/database/postgresql/schema.sql` contains that addon's tables.
 
-Migraciones
-1. ¿Cuándo usar migraciones?
-2. ¿Cómo ejecutarlas segun ambientes de prod y desarollo? y que no afecten a prod 
+Run `make schema` (or `go run ./cmd/goep schema`) from the repository root
+to regenerate the full `schema.sql` bundle here. It uses `IF NOT EXISTS` for
+tables and indexes so development startup can apply it repeatedly without
+dropping existing data. This only creates missing objects; it does not alter
+existing tables. The assembler uses an explicit order: core, identity, posts,
+catalog, billing. Keep this order in sync with foreign-key dependencies when
+adding modules or tables.
+
+`dev_reset.sql` is generated as an optional destructive reset for a disposable
+development database; it is not run by the application. Production bootstrap
+can use `schema.sql` on a new database. This is not a versioned migration
+system; add that when deployed databases need safe incremental schema changes.
+
+## Schema design reminders
+
+- Decide which tables need `created_at` and `updated_at`.
+- Choose deletion behavior deliberately: hard delete, soft delete with
+  `deleted_at`, or explicit transactional cleanup.
