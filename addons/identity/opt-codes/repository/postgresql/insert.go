@@ -7,7 +7,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/domain"
 	"github.com/jackc/pgx/v5/pgconn"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 
 	"github.com/google/uuid"
 )

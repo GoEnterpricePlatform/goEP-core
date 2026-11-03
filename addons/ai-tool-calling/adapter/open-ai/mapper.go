@@ -1,7 +1,7 @@
 package openai
 
 import (
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/ai/contract"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
 )

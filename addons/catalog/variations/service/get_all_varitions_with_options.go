@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) GetAllVariationsWithOptions(ctx context.Context) ([]*domain.Variation, error) {

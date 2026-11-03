@@ -9,7 +9,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/pages"
 	moduleRegistry "github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 type Handler struct {

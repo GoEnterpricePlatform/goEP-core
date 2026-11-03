@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/core"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

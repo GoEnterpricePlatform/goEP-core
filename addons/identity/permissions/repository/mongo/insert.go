@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/model"
-	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

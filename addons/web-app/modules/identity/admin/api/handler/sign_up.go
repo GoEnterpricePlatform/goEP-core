@@ -6,8 +6,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/core"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) CreateVarOption(ctx context.Context, varOption *domain.VarOption) error {

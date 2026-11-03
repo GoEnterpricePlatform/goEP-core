@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // Delete handles DELETE /paddle/plans/{id} when an authenticated administrator removes a Paddle-backed catalog plan.

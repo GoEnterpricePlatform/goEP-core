@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 type Handler struct {

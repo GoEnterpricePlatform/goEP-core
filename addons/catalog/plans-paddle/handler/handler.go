@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/port"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 
 	paddleSDK "github.com/PaddleHQ/paddle-go-sdk/v5"
 	"net/http"

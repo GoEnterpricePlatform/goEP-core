@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"github.com/go-playground/validator/v10"
 )
 

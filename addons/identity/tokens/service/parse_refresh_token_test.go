@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/service"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"

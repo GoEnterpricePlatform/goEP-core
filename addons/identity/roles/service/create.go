@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) Create(ctx context.Context, role *domain.Role) error {

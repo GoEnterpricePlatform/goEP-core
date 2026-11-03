@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

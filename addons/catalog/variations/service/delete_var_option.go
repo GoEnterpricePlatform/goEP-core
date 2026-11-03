@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) DeleteVarOption(ctx context.Context, id string, variationID string) error {

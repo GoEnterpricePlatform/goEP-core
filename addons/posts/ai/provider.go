@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/ai/contract"
 )
 
 func (p *Provider) GetAITools() []contract.ToolDefinition {

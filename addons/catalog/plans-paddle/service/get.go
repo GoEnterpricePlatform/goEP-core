@@ -6,7 +6,7 @@ import (
 	paddlPlanD "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/domain"
 	helpers "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/helper"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // tambien las imagenes si no es nil ImgPath

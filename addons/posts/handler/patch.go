@@ -7,8 +7,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (h Handler) Patch(w http.ResponseWriter, r *http.Request) {

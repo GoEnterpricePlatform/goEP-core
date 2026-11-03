@@ -5,7 +5,7 @@ import (
 
 	sessionD "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/domain"
 	userD "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) GetSession(ctx context.Context, rTokenID string, userID string) (*userD.User, *sessionD.Session, error) {

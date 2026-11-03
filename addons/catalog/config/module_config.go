@@ -28,7 +28,7 @@ import (
 	varOptionRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/repository/var-option/mongo"
 	variationRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/repository/variation/mongo"
 	variationService "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/service"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 	mongoDriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 

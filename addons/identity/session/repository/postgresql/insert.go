@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/google/uuid"

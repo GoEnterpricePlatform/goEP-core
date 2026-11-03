@@ -72,7 +72,7 @@ package config
 import (
     "net/http"
 
-    middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+    middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
     appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
     "go.mongodb.org/mongo-driver/v2/mongo"
 )

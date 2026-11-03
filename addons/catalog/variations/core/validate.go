@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // ValidateCreate checks the fields required for creating a varOption

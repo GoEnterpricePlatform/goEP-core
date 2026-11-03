@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (r *Repository) DeleteByRTokenID(ctx context.Context, tokenID string) error {

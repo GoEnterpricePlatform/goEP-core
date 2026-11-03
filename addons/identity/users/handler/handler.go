@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/port"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares"
 )
 
 type Handler struct {

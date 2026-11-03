@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (r CreatePaddlePlanReq) Validate() error {

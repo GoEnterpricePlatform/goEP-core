@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) Create(ctx context.Context, pProvider *domain.PaymentProvider) error {

@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // RefreshToken renews the user's session.

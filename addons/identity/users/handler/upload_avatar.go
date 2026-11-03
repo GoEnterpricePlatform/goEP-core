@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (h Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {

@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
-	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // ResendVerifyEmail handles the HTTP request to resend a verification email to the user.

@@ -9,7 +9,7 @@ import (
 	postRepository "github.com/GoEnterpricePlatform/goEP-core/addons/posts/repository/mongo"
 	postService "github.com/GoEnterpricePlatform/goEP-core/addons/posts/service"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

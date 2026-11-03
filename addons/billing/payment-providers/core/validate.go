@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func validatePaymentProviderFields(provider *CreateProviderReq) error {

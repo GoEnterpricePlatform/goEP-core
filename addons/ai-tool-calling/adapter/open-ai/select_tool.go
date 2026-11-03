@@ -8,8 +8,8 @@ import (
 	"regexp"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/ai/contract"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"

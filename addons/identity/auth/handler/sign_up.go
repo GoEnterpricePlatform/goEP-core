@@ -7,8 +7,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/domain"
-	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // Signup handles user registration, validates input, creates a new user, and returns a JSON response.

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) SignOut(ctx context.Context, rTokenID string) error {

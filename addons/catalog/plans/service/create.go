@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/domain"
 )

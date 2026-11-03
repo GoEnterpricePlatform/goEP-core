@@ -6,8 +6,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // Update handles PUT /paddle/plans/{id} when an authenticated administrator changes a Paddle-backed catalog plan.

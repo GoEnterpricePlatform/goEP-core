@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
