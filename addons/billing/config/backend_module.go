@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 )
 
 // RegisterBackendModule connects Billing to shared infrastructure and the

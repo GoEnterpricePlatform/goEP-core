@@ -1,6 +1,6 @@
 package core
 
-import sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+import sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 
 // VerifyEmailReq represents the request payload for verifying a user's email address.
 // It is used after registration when the user receives an OTP code via email.

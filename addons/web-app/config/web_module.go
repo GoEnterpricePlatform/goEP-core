@@ -8,7 +8,7 @@ import (
 	tokenPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	postPort "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
+	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
 )
 
 // RegisterWebModule connects Web App to the modular web bootstrap.

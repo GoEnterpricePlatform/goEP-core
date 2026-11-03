@@ -8,7 +8,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/service/helpers"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) handleTransactionWebhook(ctx context.Context, event *domain.PaddleWebhookEvent, eventAt time.Time) error {

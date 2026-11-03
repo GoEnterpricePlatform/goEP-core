@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/ai/contract"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/ai/contract"
 )
 
 type Initializer struct {

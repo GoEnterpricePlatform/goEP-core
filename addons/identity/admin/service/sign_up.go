@@ -7,7 +7,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/encryption"
 	roleD "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) SignUp(ctx context.Context, user *domain.User) error {

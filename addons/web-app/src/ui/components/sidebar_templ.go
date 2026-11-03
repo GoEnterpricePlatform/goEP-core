@@ -12,7 +12,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 func Sidebar(

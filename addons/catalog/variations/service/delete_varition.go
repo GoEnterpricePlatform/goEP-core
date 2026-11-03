@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) DeleteVariation(ctx context.Context, id string) error {

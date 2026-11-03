@@ -3,7 +3,7 @@ package core
 import (
 	"strings"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // Note: We use pointers for both fields to distinguish between "not provided" and "explicitly empty".

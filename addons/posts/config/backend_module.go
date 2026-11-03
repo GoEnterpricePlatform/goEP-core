@@ -3,7 +3,7 @@ package config
 import (
 	postPort "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 )
 
 // RegisterBackendModule connects Posts to shared infrastructure and the

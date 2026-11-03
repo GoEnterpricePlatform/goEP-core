@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"net/http"
 )
 

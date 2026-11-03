@@ -7,8 +7,8 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (h Handler) CreateVarOption(w http.ResponseWriter, r *http.Request) {

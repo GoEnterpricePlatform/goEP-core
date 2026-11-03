@@ -33,8 +33,8 @@ import (
 	userPostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/repository/postgresql"
 	userService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/service"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
-	cookieService "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/service"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
+	cookieService "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/service"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares"
 	"github.com/jackc/pgx/v5"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
@@ -46,7 +46,7 @@ import (
 	sessionP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/session/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	userP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/port"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

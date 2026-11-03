@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/payment-providers/model"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"

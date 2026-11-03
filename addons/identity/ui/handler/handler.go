@@ -6,7 +6,7 @@ import (
 	rolePort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
 	rolesHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/roles/handler"
 	sharedNavigation "github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 	"github.com/a-h/templ"
 )
 

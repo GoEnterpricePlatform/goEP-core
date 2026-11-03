@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 // SignOut handles user logout by removing the refresh token both

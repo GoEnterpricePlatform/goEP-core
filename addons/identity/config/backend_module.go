@@ -6,8 +6,8 @@ import (
 	rolePort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
 	tokenPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
-	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/port"
+	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
+	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 )
 
 // RegisterBackendModule connects Identity's typed constructor to the generic

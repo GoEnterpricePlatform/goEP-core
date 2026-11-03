@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
-	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedDomain "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"

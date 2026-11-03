@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/domain"
 	helpers "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/helper"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) GetAll(ctx context.Context, limit int64, page int64) ([]*domain.Plan, int64, int64, error) {

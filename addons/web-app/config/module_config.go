@@ -9,13 +9,13 @@ import (
 	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
 	authP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
 
 	tcP "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/port"
 	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 
 	adminHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/admin/api/handler"
-	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 
 	/* postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/api/posts/handler"
 	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/handler"

@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/core"
-	sharedH "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler"
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
-	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/core"
+	sharedH "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
+	cShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/core"
 )
 
 // SignIn handles user authentication requests

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

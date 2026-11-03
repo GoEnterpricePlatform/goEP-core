@@ -4,16 +4,14 @@ import (
 	"net/http"
 
 	adminP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
-	"github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/renderer"
-	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 type Handler struct {
 	AdminSrv      adminP.AdminSrv
 	CookieSrv     cookieP.CookieSrv
 	ApiBaseUrl    string
-	AdminRenderer *renderer.Renderer
 	MdwSrvTmpl    *middlewares.MdwSrvTmpl
 }
 

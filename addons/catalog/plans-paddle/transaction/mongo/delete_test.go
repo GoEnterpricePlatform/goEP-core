@@ -7,7 +7,7 @@ import (
 	paddleD "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
 	paddleP "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/port"
 	planP "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans/port"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 type deletePaddleRepo struct {

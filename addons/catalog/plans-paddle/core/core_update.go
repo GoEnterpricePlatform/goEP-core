@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 type UpdatePaddlePlanReq struct {

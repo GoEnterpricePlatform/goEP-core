@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/opt-codes/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
-	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
+	dShared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) ResendVerifyEmail(ctx context.Context, email string) (string, error) {

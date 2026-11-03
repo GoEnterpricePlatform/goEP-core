@@ -7,7 +7,7 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/core"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/components"
-	sharedC "github.com/GoEnterpricePlatform/goEP-core/web/shared/core"
+	sharedC "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/core"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/domain"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/repository/memory"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) SelectTool(ctx context.Context, prompt string) error {

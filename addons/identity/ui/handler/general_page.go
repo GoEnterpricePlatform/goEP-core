@@ -5,7 +5,7 @@ import (
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/claim"
 	identityPages "github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/pages"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 func (h *Handler) GeneralPage(w http.ResponseWriter, r *http.Request) {

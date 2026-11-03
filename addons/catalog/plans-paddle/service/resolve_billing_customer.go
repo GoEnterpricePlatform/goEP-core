@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) resolveBillingCustomer(ctx context.Context, userID, paddleCustomerID string) (string, string, error) {

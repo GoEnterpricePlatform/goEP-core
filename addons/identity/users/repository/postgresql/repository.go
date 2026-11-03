@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/users/port"
-	shared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	shared "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )

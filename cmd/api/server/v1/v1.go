@@ -7,9 +7,9 @@ import (
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	backendModules "github.com/GoEnterpricePlatform/goEP-core/internal/modules/backend"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/logger"
-	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/internal/shared/handler"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/logger"
+	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/handler"
 )
 
 func New() http.Handler {

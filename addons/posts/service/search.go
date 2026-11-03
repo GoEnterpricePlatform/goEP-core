@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/domain"
-	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/domain"
+	sharedD "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/domain"
 )
 
 func (s *Service) Search(ctx context.Context, query string, limit int) ([]*domain.Post, error) {
