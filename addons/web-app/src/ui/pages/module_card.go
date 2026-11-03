@@ -6,4 +6,5 @@ type ModuleCard struct {
 	Version string
 	Summary string
 	IconURL string
+	Href    string
 }

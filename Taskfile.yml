@@ -71,6 +71,7 @@ tasks:
       - "./addons/web-app/src/css/**/*.css"
       - "./addons/web-app/src/ui/**/*.templ"
       - "./addons/web-app/modules/**/*.templ"
+      - "./addons/identity/**/*.templ"
     generates:
       - "{{.STATIC_DIR}}/css/app.css"
 

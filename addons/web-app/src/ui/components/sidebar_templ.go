@@ -11,14 +11,15 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
 	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
-	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/navigation"
 )
 
 func Sidebar(
 	activePage string,
 	roles []string,
 	permissions []string,
+	menu []navigation.Item,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -40,11 +41,11 @@ func Sidebar(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"hidden w-64 shrink-0 border-r border-zinc-200 bg-white md:block\"><div class=\"flex h-16 items-center border-b border-zinc-200 px-6\"><a href=\"/v1/goep-admin/general\" class=\"text-lg font-bold tracking-tight text-black\">GoEP</a></div><nav class=\"p-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"hidden w-64 shrink-0 border-r border-zinc-200 bg-white md:block\"><div class=\"flex h-16 items-center border-b border-zinc-200 px-6\"><a href=\"/v1/goep-admin/modules\" class=\"text-lg font-bold tracking-tight text-black\">GoEP</a></div><nav class=\"p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, item := range navigation.DashboardMenu {
+		for _, item := range menu {
 			if middlewares.HasRole(roles, "ROLE_SYSTEM_ADMIN") ||
 				middlewares.HasPermission(permissions, item.Permission) {
 				var templ_7745c5c3_Var2 = []any{"mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, item.ActivePage)}
@@ -59,7 +60,7 @@ func Sidebar(
 				var templ_7745c5c3_Var3 templ.SafeURL
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(item.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `addons/web-app/src/ui/components/sidebar.templ`, Line: 32, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `addons/web-app/src/ui/components/sidebar.templ`, Line: 33, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -85,7 +86,7 @@ func Sidebar(
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `addons/web-app/src/ui/components/sidebar.templ`, Line: 35, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `addons/web-app/src/ui/components/sidebar.templ`, Line: 36, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {

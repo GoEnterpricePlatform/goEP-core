@@ -12,12 +12,14 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/components"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
 )
 
 func DashboardLayout(
 	activePage string,
 	roles []string,
 	permissions []string,
+	menu []navigation.Item,
 	content templ.Component,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -42,7 +44,7 @@ func DashboardLayout(
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = BaseLayout(
 			activePage,
-			DashboardLayoutContent(activePage, roles, permissions, content),
+			DashboardLayoutContent(activePage, roles, permissions, menu, content),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -55,6 +57,7 @@ func DashboardLayoutContent(
 	activePage string,
 	roles []string,
 	permissions []string,
+	menu []navigation.Item,
 	content templ.Component,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -81,7 +84,7 @@ func DashboardLayoutContent(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Sidebar(activePage, roles, permissions).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Sidebar(activePage, roles, permissions, menu).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

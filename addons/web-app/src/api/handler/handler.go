@@ -5,25 +5,22 @@ import (
 	"path"
 	"strings"
 
-	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
-	moduleRegistry "github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/pages"
+	moduleRegistry "github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+	"github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 )
 
 type Handler struct {
 	PostSrv          port.PostSrv
-	RoleSrv          roleP.RoleSrv
 	MdwSrvTmpl       *middlewares.MdwSrvTmpl
 	AvailableModules []moduleRegistry.Manifest
 }
 
-func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, postSrv port.PostSrv, mdwSrvtmpl *middlewares.MdwSrvTmpl, roleSrv roleP.RoleSrv, availableModules []moduleRegistry.Manifest) *Handler {
+func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, postSrv port.PostSrv, mdwSrvtmpl *middlewares.MdwSrvTmpl, availableModules []moduleRegistry.Manifest) *Handler {
 	h := &Handler{
 		PostSrv:          postSrv,
-		RoleSrv:          roleSrv,
 		MdwSrvTmpl:       mdwSrvtmpl,
 		AvailableModules: availableModules,
 	}
@@ -38,40 +35,7 @@ func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, postSrv port.P
 	mux.HandleFunc("/blog", h.BlogPage)
 	mux.HandleFunc("/contact", h.ContactPage)
 	templateV1.Handle("GET /goep-admin/modules", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.ModulesPage)))
-
-	templateV1.Handle("/goep-admin/general",
-		h.MdwSrvTmpl.Authenticate(
-			h.MdwSrvTmpl.RequirePermission(
-				"view.general",
-				http.HandlerFunc(h.GeneralPage),
-			),
-		),
-	)
-	templateV1.Handle("/goep-admin/users",
-		h.MdwSrvTmpl.Authenticate(
-			h.MdwSrvTmpl.RequirePermission(
-				"view.users",
-				http.HandlerFunc(h.UsersPage),
-			),
-		),
-	)
-	templateV1.Handle("/goep-admin/roles-permissions",
-		h.MdwSrvTmpl.Authenticate(
-			h.MdwSrvTmpl.RequirePermission(
-				"view.roles.permissions",
-				http.HandlerFunc(h.RolesPermissionsPage),
-			),
-		),
-	)
-
-	templateV1.Handle("/goep-admin/settings",
-		h.MdwSrvTmpl.Authenticate(
-			h.MdwSrvTmpl.RequirePermission(
-				"view.settings",
-				http.HandlerFunc(h.SettingsPage),
-			),
-		),
-	)
+	templateV1.Handle("GET /goep-admin/modules/{module}", h.MdwSrvTmpl.Authenticate(http.HandlerFunc(h.ModulePage)))
 
 	templateV1.HandleFunc("/goep-admin/access-denied", h.AccessDeniedPage)
 
@@ -91,10 +55,32 @@ func (h *Handler) ModulesPage(w http.ResponseWriter, r *http.Request) {
 			Version: manifest.Version,
 			Summary: manifest.Summary,
 			IconURL: iconURL,
+			Href:    moduleAdminHref(manifest.Name),
 		})
 	}
 
 	if err := pages.ModulesPage(cards).Render(r.Context(), w); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+}
+
+func moduleAdminHref(name string) string {
+	if name == "identity" {
+		return "/v1/goep-admin/general"
+	}
+	return "/v1/goep-admin/modules/" + name
+}
+
+func (h *Handler) ModulePage(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("module")
+	for _, manifest := range h.AvailableModules {
+		if manifest.Name != name {
+			continue
+		}
+		if err := pages.ModulePage(manifest.Name, manifest.Summary).Render(r.Context(), w); err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+		return
+	}
+	http.NotFound(w, r)
 }
