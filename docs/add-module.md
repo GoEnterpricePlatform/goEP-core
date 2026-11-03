@@ -33,7 +33,7 @@ addons/reports/
 
 No todos los módulos necesitan `domain`, `port`, `model` o `repository`. Mantén los puertos dentro de `port/` cuando otra capa o módulo necesite depender de una interfaz; evita crear paquetes vacíos.
 
-El CLI crea `static/` con un manifiesto vacío aunque el módulo todavía no tenga interfaz web. Al terminar, el generador crea `static_assets_gen.go` en la raíz del addon y actualiza los dos registros generados del backend. No edites esos archivos a mano. Consulta el [contrato de assets de Web App](web-app-module-assets.md#contrato-de-staticassetsjson) para declarar entradas TS/CSS y organizar recursos públicos. Al ejecutar el compilador de assets, la salida se genera en `static/dist/` dentro del mismo módulo.
+El CLI crea `static/` con un manifiesto vacío aunque el módulo todavía no tenga interfaz web. Al terminar, el generador crea `static_assets_gen.go` en la raíz del addon y actualiza el registro de módulos y el registro compartido de assets. No edites esos archivos a mano. Consulta el [contrato de assets de Web App](web-app-module-assets.md#contrato-de-staticassetsjson) para declarar entradas TS/CSS y organizar recursos públicos. Al ejecutar el compilador de assets, la salida se genera en `static/dist/` dentro del mismo módulo.
 
 ## 2. Crear el manifiesto
 

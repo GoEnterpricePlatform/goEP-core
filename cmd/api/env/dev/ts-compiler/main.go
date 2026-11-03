@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoEnterpricePlatform/goEP-core/web/web-app/src"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src"
 	"github.com/evanw/esbuild/pkg/api"
 )
 
@@ -29,7 +29,7 @@ var (
 const (
 	addonsDirectory       = "addons"
 	staticDirectory       = "static"
-	globalStaticDirectory = "web/web-app/resources/static"
+	globalStaticDirectory = "addons/web-app/resources/static"
 )
 
 type moduleManifest struct {

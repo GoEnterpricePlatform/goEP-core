@@ -4,19 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	tcPort "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/port"
-	adminPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
-	authPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
-	rolePort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
-	tokenPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
-	postPort "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
-	webAppModule "github.com/GoEnterpricePlatform/goEP-core/web/web-app/config"
-
 	backendModules "github.com/GoEnterpricePlatform/goEP-core/internal/modules/backend"
 
-	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/handler/cookie/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/api/middlewares/logger"
 	sharedHandler "github.com/GoEnterpricePlatform/goEP-core/internal/shared/handler"
@@ -48,78 +38,21 @@ func New() http.Handler {
 	// It is used to know if the server is running
 	mux.HandleFunc("GET /ping", sharedHandler.Ping)
 
-	// Call the modules
+	// Web pages do not have the /api prefix.
+	templateV1 := http.NewServeMux()
+	mux.Handle("/v1/", http.StripPrefix("/v1", templateV1))
 
-	backend, err := backendModules.Initialize(backendModules.Config{
+	_, err := backendModules.Initialize(backendModules.Config{
 		AppEnvs:    appEnvs,
 		AppClients: appClients,
 		APIv1:      v1,
+		WebMux:     mux,
+		TemplateV1: templateV1,
 		AddonsDir:  "addons",
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	tokenSrv, err := modules.RequireService[tokenPort.TokenSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-	authSrv, err := modules.RequireService[authPort.AuthSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-	cookieSrv, err := modules.RequireService[cookiePort.CookieSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-	adminSrv, err := modules.RequireService[adminPort.AdminSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-	tcService, _ := modules.RequireService[tcPort.ToolCallingSrv](backend.Services)
-	postService, _ := modules.RequireService[postPort.PostSrv](backend.Services)
-	rolesSrv, err := modules.RequireService[rolePort.RoleSrv](backend.Services)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// web pages do not have the /api prefix
-	templateV1 := http.NewServeMux()
-	mux.Handle("/v1/", http.StripPrefix("/v1", templateV1))
-
-	// Web modules
-
-	// for import module :
-	// standardWebModule "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/config"
-	/* standardWebModule.NewStandardWebModule(standardWebModule.ModuleConfig{
-		AppEnvs: appEnvs,
-		Mux: mux,
-		TemplateV1: templateV1,
-		Deps: standardWebModule.ModuleDeps{
-			TokenSrv: identityMdl.TokenSrv,
-			AuthSrv: identityMdl.AuthSrv,
-			CookieSrv: identityMdl.CookieSrv,
-			AdminSrv: identityMdl.AdminSrv,
-			TCService: aiMdl.TCService,
-			PostService: postMdl.PostService,
-		},
-	}) */
-
-	webAppModule.NewWebAppModule(webAppModule.ModuleConfig{
-		AppEnvs:    appEnvs,
-		Mux:        mux,
-		TemplateV1: templateV1,
-		Deps: webAppModule.ModuleDeps{
-			TokenSrv:    tokenSrv,
-			AuthSrv:     authSrv,
-			CookieSrv:   cookieSrv,
-			AdminSrv:    adminSrv,
-			TCService:   tcService,
-			PostService: postService,
-			RolesSrv:    rolesSrv,
-		},
-		AvailableModules: backend.AvailableModules,
-	})
 
 	return apiHandler
 }

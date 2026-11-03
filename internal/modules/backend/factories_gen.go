@@ -8,10 +8,11 @@ import (
 	module3 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
 	module4 "github.com/GoEnterpricePlatform/goEP-core/addons/invoices/config"
 	module5 "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
+	module6 "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 )
 
-// NewCompiledRegistry registers each module's typed factory and backend initializer.
+// NewCompiledRegistry registers backend and web module initializers.
 func NewCompiledRegistry() (*modules.Registry, error) {
 	registry := modules.NewRegistry()
 	if err := module0.RegisterBackendModule(registry); err != nil {
@@ -30,6 +31,9 @@ func NewCompiledRegistry() (*modules.Registry, error) {
 		return nil, err
 	}
 	if err := module5.RegisterBackendModule(registry); err != nil {
+		return nil, err
+	}
+	if err := module6.RegisterWebModule(registry); err != nil {
 		return nil, err
 	}
 	return registry, nil

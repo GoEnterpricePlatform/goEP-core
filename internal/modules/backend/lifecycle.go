@@ -11,15 +11,15 @@ import (
 	postgres "github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle/repository/postgresql"
 )
 
-func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
+func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifest, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
 	switch cfg.AppEnvs.DBProvider {
 	case config.DBMongo:
 		if cfg.AppClients == nil || cfg.AppClients.DB == nil {
-			return nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
+			return nil, nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
 		}
 	case config.DBPostgresql:
 		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
-			return nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
+			return nil, nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
 		}
 	}
 
@@ -28,28 +28,32 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 		addonsDir = "addons"
 	}
 
-	manifests, err := modules.NewDiscovery(addonsDir).Discover()
+	allManifests, err := modules.NewDiscovery(addonsDir).DiscoverAll()
 	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("discover backend modules: %w", err)
+		return nil, nil, nil, nil, nil, fmt.Errorf("discover modules: %w", err)
 	}
+	manifests, webManifests := splitModuleManifests(allManifests)
 	registry, err := NewCompiledRegistry()
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, err
 	}
 	if err := registry.ValidateBackend(manifests); err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("validate backend module initializers: %w", err)
+		return nil, nil, nil, nil, nil, fmt.Errorf("validate backend module initializers: %w", err)
+	}
+	if err := registry.ValidateWeb(webManifests); err != nil {
+		return nil, nil, nil, nil, nil, fmt.Errorf("validate web module initializers: %w", err)
 	}
 	manifests = filterManifestsByDatabase(manifests, string(cfg.AppEnvs.DBProvider))
 	if len(manifests) == 0 {
-		return nil, nil, nil, nil, fmt.Errorf("no backend modules support database provider %q", cfg.AppEnvs.DBProvider)
+		return nil, nil, nil, nil, nil, fmt.Errorf("no backend modules support database provider %q", cfg.AppEnvs.DBProvider)
 	}
 	registry, err = registry.Subset(manifests)
 	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("select backend modules for database provider %q: %w", cfg.AppEnvs.DBProvider, err)
+		return nil, nil, nil, nil, nil, fmt.Errorf("select backend modules for database provider %q: %w", cfg.AppEnvs.DBProvider, err)
 	}
 	resolver, err := modules.NewDependencyResolver(manifests, registry)
 	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
+		return nil, nil, nil, nil, nil, fmt.Errorf("resolve backend module dependencies: %w", err)
 	}
 
 	var storeRepo lifecycle.StateStore
@@ -57,25 +61,38 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 	case config.DBMongo:
 		storeRepo = mongo.NewMongoStore(cfg.AppClients.DB)
 		if err := storeRepo.CreateIndexes(context.Background()); err != nil {
-			return nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
+			return nil, nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
 		}
 	case config.DBPostgresql:
 		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
-			return nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
+			return nil, nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
 		}
 		storeRepo = postgres.NewPostgresStore(cfg.AppClients.PGConn.Pool)
 	}
 
 	manager, err := lifecycle.NewManager(resolver, storeRepo)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, err
 	}
 
 	enabled, err := initializeModuleStates(context.Background(), manager, storeRepo, resolver)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, err
 	}
-	return registry, resolver.Order(), enabled, manager, nil
+	return registry, resolver.Order(), webManifests, enabled, manager, nil
+}
+
+func splitModuleManifests(manifests []modules.Manifest) ([]modules.Manifest, []modules.Manifest) {
+	backend := make([]modules.Manifest, 0, len(manifests))
+	web := make([]modules.Manifest, 0)
+	for _, manifest := range manifests {
+		if manifest.Type == "web" {
+			web = append(web, manifest)
+			continue
+		}
+		backend = append(backend, manifest)
+	}
+	return backend, web
 }
 
 func filterManifestsByDatabase(manifests []modules.Manifest, provider string) []modules.Manifest {

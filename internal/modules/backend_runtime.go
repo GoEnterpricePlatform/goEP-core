@@ -14,14 +14,24 @@ import (
 // initializer. Module-specific services stay behind typed contracts.
 
 // mas adelante: en ves de pasar *mongo.Database y *pgx.Conn seria pasarle  Data o agrupar
-// ambos DBData y poner ahi ambos clientes 
+// ambos DBData y poner ahi ambos clientes
 type BackendRuntime struct {
 	AppEnvs    *appConfig.AppEnvs
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
 	DB         *mongo.Database
-	PGConn 		*pgx.Conn
+	PGConn     *pgx.Conn
 	Services   *Services
+}
+
+// WebRuntime contains the shared services and route muxes passed to web modules
+// after backend modules have been initialized.
+type WebRuntime struct {
+	AppEnvs          *appConfig.AppEnvs
+	Mux              *http.ServeMux
+	TemplateV1       *http.ServeMux
+	Services         *Services
+	AvailableModules []Manifest
 }
 
 // Services stores module contracts by their Go interface or concrete type.

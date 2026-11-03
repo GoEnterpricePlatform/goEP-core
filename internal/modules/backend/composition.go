@@ -1,4 +1,4 @@
-// Package backend owns the composition of the statically linked backend modules.
+// Package backend owns the composition of statically linked backend and web modules.
 // It keeps constructor and dependency wiring details out of the HTTP bootstrap.
 package backend
 
@@ -18,6 +18,8 @@ type Config struct {
 	AppEnvs    *appConfig.AppEnvs
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
+	WebMux     *http.ServeMux
+	TemplateV1 *http.ServeMux
 	AddonsDir  string
 }
 
@@ -28,10 +30,10 @@ type Modules struct {
 	AvailableModules []modules.Manifest
 }
 
-// Initialize constructs backend modules in dependency order and registers
-// their API routes on cfg.APIv1.
+// Initialize constructs backend modules in dependency order and then initializes
+// web modules with the services they provide.
 func Initialize(cfg Config) (*Modules, error) {
-	registry, order, enabled, lifecycleManager, err := initializeModuleLifecycle(cfg)
+	registry, order, webManifests, enabled, lifecycleManager, err := initializeModuleLifecycle(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -43,10 +45,24 @@ func Initialize(cfg Config) (*Modules, error) {
 			APIv1:      moduleRoutes(cfg.APIv1, enabled, manifest.Name),
 			DB:         cfg.AppClients.DB,
 			PGConn:     cfg.AppClients.PGConn.DB,
-			Services: services,
+			Services:   services,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("initialize backend module %q: %w", manifest.Name, err)
+		}
+	}
+	if len(webManifests) > 0 {
+		if cfg.WebMux == nil || cfg.TemplateV1 == nil {
+			return nil, fmt.Errorf("web muxes are required to initialize web modules")
+		}
+		if err := registry.InitializeWebModules(webManifests, modules.WebRuntime{
+			AppEnvs:          cfg.AppEnvs,
+			Mux:              cfg.WebMux,
+			TemplateV1:       cfg.TemplateV1,
+			Services:         services,
+			AvailableModules: order,
+		}); err != nil {
+			return nil, err
 		}
 	}
 
@@ -61,8 +77,7 @@ func moduleRoutes(apiV1 *http.ServeMux, enabled map[string]bool, moduleName stri
 	if enabled[moduleName] {
 		return apiV1
 	}
-	// Backend services are still constructed during this transition because
-	// Web App consumes them directly. A private mux keeps disabled API routes
-	// out of the public router until Web App joins the lifecycle manager.
+	// Backend services are constructed even when disabled because web modules
+	// can depend on their service contracts. A private mux keeps their API routes isolated.
 	return http.NewServeMux()
 }

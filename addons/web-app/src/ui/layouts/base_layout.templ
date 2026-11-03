@@ -1,0 +1,29 @@
+package layouts
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
+)
+
+templ BaseLayout(activePage string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="icon" type="image/x-icon" href={ resources.StaticPath("assets/favicon.ico") }/>
+			
+			<title>Mi app</title>
+			<script defer type="module" src={ resources.StaticPath("js/libs/datastar/datastar.js") }></script>
+			<link href={ resources.StaticPath("css/app.css") } rel="stylesheet" type="text/css"/>
+
+		</head>
+
+		<body class="min-h-screen bg-white text-black antialiased">
+			
+			@content
+
+			/* <script src={ resources.StaticPath("js/hello-world.js") }></script> */
+			
+		</body>
+	</html>
+}

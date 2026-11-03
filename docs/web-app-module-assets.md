@@ -2,7 +2,7 @@
 
 ## Decisión propuesta
 
-Sí hay cambios importantes. Los archivos fuente pasarían de estar centralizados en `web/web-app/src/ts` a vivir junto al módulo que los usa, dentro de `addons/<módulo>/static/`. Para hacer funcionar ese cambio hay que actualizar el compilador de TypeScript, la salida que se sirve, la inclusión de archivos en producción y las referencias de las plantillas.
+Sí hay cambios importantes. Los archivos fuente pasarían de estar centralizados en `addons/web-app/src/ts` a vivir junto al módulo que los usa, dentro de `addons/<módulo>/static/`. Para hacer funcionar ese cambio hay que actualizar el compilador de TypeScript, la salida que se sirve, la inclusión de archivos en producción y las referencias de las plantillas.
 
 Esta propuesta cubre solo la Web App GoEP del backend. **Next.js queda fuera de este alcance.**
 
@@ -10,9 +10,9 @@ La fase 1 establece el contrato descrito aquí y hace que `cmd/create-module` cr
 
 ## Cómo funciona hoy
 
-Actualmente, las fuentes TypeScript están en `web/web-app/src/ts/modules/`. El compilador de [cmd/api/env/dev/ts-compiler/main.go](../cmd/api/env/dev/ts-compiler/main.go) tiene un `entryMap` escrito manualmente y genera JavaScript en `web/web-app/resources/static/js/`.
+Actualmente, las fuentes TypeScript están en `addons/web-app/src/ts/modules/`. El compilador de [cmd/api/env/dev/ts-compiler/main.go](../cmd/api/env/dev/ts-compiler/main.go) tiene un `entryMap` escrito manualmente y genera JavaScript en `addons/web-app/resources/static/js/`.
 
-La Web App sirve `/static/` desde `web/web-app/resources/static/`. En desarrollo usa el directorio del disco; en producción [resources/static_prod.go](../web/web-app/resources/static_prod.go) incluye `static/` en el ejecutable mediante `go:embed`. Las plantillas referencian esas rutas con `resources.StaticPath(...)`.
+La Web App sirve `/static/` desde `addons/web-app/resources/static/`. En desarrollo usa el directorio del disco; en producción [resources/static_prod.go](../addons/web-app/resources/static_prod.go) incluye `static/` en el ejecutable mediante `go:embed`. Las plantillas referencian esas rutas con `resources.StaticPath(...)`.
 
 El compilador TypeScript se ejecuta aparte. El target actual `make run` inicia el servidor Go, pero no ejecuta ese compilador automáticamente.
 
@@ -34,7 +34,7 @@ addons/
         └── public/           # Imágenes y archivos que no requieren compilación
 ```
 
-Los recursos globales siguen en `web/web-app/resources/static/`: favicon, CSS base de la Web App y librerías compartidas. Los archivos generados permanecen dentro del módulo, por ejemplo:
+Los recursos globales siguen en `addons/web-app/resources/static/`: favicon, CSS base de la Web App y librerías compartidas. Los archivos generados permanecen dentro del módulo, por ejemplo:
 
 ```text
 addons/identity/static/
@@ -46,7 +46,7 @@ addons/identity/static/
     ├── css/
     └── public/
 
-web/web-app/resources/static/
+addons/web-app/resources/static/
 ├── assets/favicon.ico
 ├── css/app.css               # CSS base de toda la Web App
 └── js/libs/                  # Librerías compartidas
@@ -106,7 +106,7 @@ En la tabla, las rutas de salida son absolutas desde la raíz del repositorio. E
 - Compilar TypeScript y CSS declarados a `addons/<nombre>/static/dist/{js,css}/`.
 - Copiar `static/public/` a `addons/<nombre>/static/dist/public/`.
 - Informar qué módulo o entrada causó un error.
-- Mantener temporalmente los TS de `web/web-app/src/ts/` compilándose en sus rutas actuales para no romper las páginas antes de la fase 4.
+- Mantener temporalmente los TS de `addons/web-app/src/ts/` compilándose en sus rutas actuales para no romper las páginas antes de la fase 4.
 
 **Resultado:** agregar un módulo con assets ya no requiere editar una lista global del compilador. Las fuentes de Identity aún no se han movido; eso ocurrirá en la fase 4.
 
@@ -162,7 +162,7 @@ La migración afecta varios puntos del repositorio:
 | --- | --- |
 | `cmd/api/env/dev/ts-compiler` | Descubrimiento de manifiestos de assets y compilación por módulo |
 | `cmd/create-module` | Esqueleto estático para módulos nuevos |
-| `web/web-app/resources` | Mantener el servicio común y el embedding de la salida generada |
+| `addons/web-app/resources` | Mantener el servicio común y el embedding de la salida generada |
 | Plantillas Templ | Actualizar las URLs de scripts, estilos e imágenes de módulo |
 | `Taskfile.yml` y flujo de build | Ejecutar compilación de assets antes de compilar el binario o la imagen |
 | Ciclo de vida | Los assets estáticos son públicos y no se filtran por estado de módulo |

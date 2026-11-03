@@ -25,14 +25,53 @@ type namedFactory interface {
 type Registry struct {
 	factories           map[string]namedFactory
 	backendInitializers map[string]func(BackendRuntime) (any, error)
+	webInitializers     map[string]func(WebRuntime) error
 }
 
-// NewRegistry creates an empty registry for statically compiled factories.
+// NewRegistry creates an empty registry for statically compiled modules.
 func NewRegistry() *Registry {
 	return &Registry{
 		factories:           make(map[string]namedFactory),
 		backendInitializers: make(map[string]func(BackendRuntime) (any, error)),
+		webInitializers:     make(map[string]func(WebRuntime) error),
 	}
+}
+
+// RegisterWebInitializer adds the module-local bootstrap adapter used by the
+// web composition loop.
+func RegisterWebInitializer(registry *Registry, name string, initializer func(WebRuntime) error) error {
+	if registry == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return fmt.Errorf("web module initializer name is required")
+	}
+	if initializer == nil {
+		return fmt.Errorf("web module initializer %q has no initializer", name)
+	}
+	if _, exists := registry.webInitializers[name]; exists {
+		return fmt.Errorf("web module initializer %q is already registered", name)
+	}
+	registry.webInitializers[name] = initializer
+	return nil
+}
+
+// InitializeWebModules invokes each web module's adapter after backend services exist.
+func (r *Registry) InitializeWebModules(manifests []Manifest, runtime WebRuntime) error {
+	if r == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	for _, manifest := range manifests {
+		initializer, exists := r.webInitializers[manifest.Name]
+		if !exists {
+			return fmt.Errorf("web module initializer %q is not registered", manifest.Name)
+		}
+		if err := initializer(runtime); err != nil {
+			return fmt.Errorf("initialize web module %q: %w", manifest.Name, err)
+		}
+	}
+	return nil
 }
 
 // RegisterBackendInitializer adds the module-local bootstrap adapter used by
@@ -137,6 +176,9 @@ func (r *Registry) Subset(manifests []Manifest) (*Registry, error) {
 		subset.factories[manifest.Name] = factory
 		subset.backendInitializers[manifest.Name] = initializer
 	}
+	for name, initializer := range r.webInitializers {
+		subset.webInitializers[name] = initializer
+	}
 	return subset, nil
 }
 
@@ -187,6 +229,36 @@ func (r *Registry) ValidateBackend(manifests []Manifest) error {
 	for name := range r.backendInitializers {
 		if _, exists := known[name]; !exists {
 			return fmt.Errorf("backend module initializer %q has no matching manifest", name)
+		}
+	}
+	return nil
+}
+
+// ValidateWeb checks that every discovered web module has a compiled
+// initializer and that no compiled web initializer lacks a manifest.
+func (r *Registry) ValidateWeb(manifests []Manifest) error {
+	if r == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	known := make(map[string]struct{}, len(manifests))
+	for _, manifest := range manifests {
+		if err := manifest.Validate(); err != nil {
+			return err
+		}
+		if manifest.Type != "web" {
+			return fmt.Errorf("module %q is not a web module", manifest.Name)
+		}
+		if _, exists := known[manifest.Name]; exists {
+			return fmt.Errorf("duplicate web module manifest %q", manifest.Name)
+		}
+		known[manifest.Name] = struct{}{}
+		if _, exists := r.webInitializers[manifest.Name]; !exists {
+			return fmt.Errorf("web module %q is discovered but has no compiled initializer", manifest.Name)
+		}
+	}
+	for name := range r.webInitializers {
+		if _, exists := known[name]; !exists {
+			return fmt.Errorf("compiled web module initializer %q has no matching manifest", name)
 		}
 	}
 	return nil
