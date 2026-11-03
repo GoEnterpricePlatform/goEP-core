@@ -14,17 +14,18 @@ import (
 	tcP "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/port"
 	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 
-	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 	adminHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/admin/api/handler"
-	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/roles/api/handler"
+	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/web/shared/api/middlewares"
 
 	/* postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/api/posts/handler"
 	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/handler"
 	toolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/posts/handler"
 	*/
 	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
+	identityUIHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/handler"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	srcHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/api/handler"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/layouts"
 )
 
 type ModuleConfig struct {
@@ -57,10 +58,15 @@ func NewWebAppModule(cfg ModuleConfig) {
 	adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
 	adminH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
 
-	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, cfg.Deps.PostService, mdwSrvTmpl, cfg.Deps.RolesSrv, cfg.AvailableModules)
+	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, cfg.Deps.PostService, mdwSrvTmpl, cfg.AvailableModules)
 
-	roleH := handler.NewRolesTmplHandler(cfg.Deps.RolesSrv, cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
-	roleH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
+	identityUI := identityUIHandler.NewHandler(
+		cfg.Deps.RolesSrv,
+		cfg.AppEnvs.ApiBaseUrl,
+		mdwSrvTmpl,
+		layouts.DashboardLayout,
+	)
+	identityUI.RegisterRoutes(cfg.TemplateV1)
 
 	// Templates - admin
 	// adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)

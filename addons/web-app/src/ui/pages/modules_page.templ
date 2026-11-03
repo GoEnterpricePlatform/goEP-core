@@ -31,7 +31,7 @@ templ ModulesContent(modules []ModuleCard) {
 			} else {
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					for _, module := range modules {
-						<article class="group rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-500">
+						<a href={ templ.SafeURL(module.Href) } class="group block rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-500">
 							<div class="flex items-start gap-4">
 								<div class="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
 									if module.IconURL != "" {
@@ -46,7 +46,7 @@ templ ModulesContent(modules []ModuleCard) {
 								</div>
 							</div>
 							<p class="mt-5 min-h-10 text-sm leading-5 text-zinc-600">{ module.Summary }</p>
-						</article>
+						</a>
 					}
 				</div>
 			}

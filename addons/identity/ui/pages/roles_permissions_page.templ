@@ -1,0 +1,62 @@
+package pages
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/components"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
+)
+
+templ RolesPermissionsContent(roles []*domain.Role) {
+	<div data-signals="{
+			role_form: {
+				id: '',
+				name: '',
+			},
+			modal: {
+				domain:'',
+				action: '',
+			},
+			error: '',
+			is_loading: false,			
+		}"
+	>
+		<section class="w-full">
+			<div class="mb-6 flex items-center justify-between gap-5">
+
+				<div>
+					<h1 class="text-2xl font-bold tracking-tight text-black">
+						Roles and permissions
+					</h1>
+
+					<p class="mt-1.5 text-sm text-zinc-500">
+						Manage application roles and their permissions.
+					</p>
+				</div>
+
+			</div>
+
+			<div class="flex justify-end mb-5">
+				<button
+					type="button"
+					class="rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+					data-on:click="
+						$role_form.id = '';
+						$role_form.name = '';
+
+						$error = '';
+
+						$modal.domain = 'role';
+						$modal.action = 'form';
+					"
+				>
+					Create
+				</button>
+			</div>
+
+			<div id="role-list">
+				@components.RoleList(roles)
+			</div>
+
+			@components.ModalManager()
+		</section>
+	</div>
+}

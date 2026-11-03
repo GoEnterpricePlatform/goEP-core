@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/ui/pages"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/pages"
 )
 
 func (h *Handler) GoepAdminPage(w http.ResponseWriter, r *http.Request) {
