@@ -34,7 +34,7 @@ COPY --from=builder /app/goep-core /app/goep-core
 COPY --from=builder /app/pkg /app/pkg
 
 # Copy the already-generated static files
-COPY --from=builder /app/web/web-app/resources/static /app/web/web-app/resources/static
+COPY --from=builder /app/addons/web-app/resources/static /app/addons/web-app/resources/static
 
 # Start the application
 CMD ["./goep-core"]

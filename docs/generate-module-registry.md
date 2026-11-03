@@ -8,11 +8,11 @@ El generador lee los módulos dentro de `addons/` y actualiza estos archivos Go:
 
 ```text
 internal/modules/backend/factories_gen.go
-internal/modules/backend/static_assets_gen.go
+internal/modules/assets/static_assets_gen.go
 addons/<modulo>/static_assets_gen.go
 ```
 
-Los dos archivos del backend y los archivos `static_assets_gen.go` de cada addon son código generado, quedan dentro del repositorio y Go los compila dentro de la aplicación. El generador no guarda registros en MongoDB.
+El registro de módulos, el registro compartido de assets y los archivos `static_assets_gen.go` de cada addon son código generado, quedan dentro del repositorio y Go los compila dentro de la aplicación. El generador no guarda registros en MongoDB.
 
 ## Quién lo usa y cuándo
 
@@ -36,7 +36,7 @@ Si creas o eliminas el módulo manualmente, ejecútalo desde la raíz del reposi
 go generate ./internal/modules/backend
 ```
 
-Ese comando encuentra la directiva `//go:generate` de `internal/modules/backend/factories.go`. La directiva ejecuta `cmd/generate-module-registry/main.go` con `addons/` como entrada. Genera `factories_gen.go`, un `static_assets_gen.go` dentro de cada addon con `static/`, y `internal/modules/backend/static_assets_gen.go`, que los agrupa para producción.
+Ese comando encuentra la directiva `//go:generate` de `internal/modules/backend/factories.go`. La directiva ejecuta `cmd/generate-module-registry/main.go` con `addons/` como entrada. Genera `factories_gen.go`, un `static_assets_gen.go` dentro de cada addon con `static/`, y `internal/modules/assets/static_assets_gen.go`, que los agrupa para producción.
 
 También puedes ejecutar el programa directamente desde la raíz. Sus valores por defecto usan las mismas rutas:
 
@@ -48,11 +48,11 @@ En el trabajo normal, usa el CLI para crear módulos y `go generate` para regene
 
 ## Qué archivos lee
 
-El generador recorre cada subdirectorio directo de `addons/`. Para cada módulo requiere:
+El generador recorre cada subdirectorio directo de `addons/`. Para cada módulo backend (manifiesto sin `type` o con `"type": "backend"`) requiere un constructor y `RegisterBackendModule`. Para cada módulo con `"type": "web"` requiere `RegisterWebModule(*modules.Registry) error`. Ambos tipos se enlazan en `NewCompiledRegistry`; el compositor inicializa primero los módulos backend y después los módulos web con los servicios disponibles.
 
 1. `manifest.json` con un campo `name` no vacío.
 2. Un paquete `config/` con exactamente un constructor exportado cuya forma sea `func Nombre(ModuleConfig) (*Module, error)`.
-3. Una función `RegisterBackendModule` declarada en algún archivo Go de `config/`.
+3. Para módulos backend, una función `RegisterBackendModule`; para módulos web, una función `RegisterWebModule`. Debe estar declarada en algún archivo Go de `config/`.
 
 Por ejemplo, para `addons/invoices/`, espera una estructura similar a esta:
 
@@ -68,9 +68,9 @@ El generador no inspecciona ni genera código para `domain/`, `service/`, `handl
 
 ## Qué código genera
 
-`factories_gen.go` importa el paquete `config` de cada módulo y crea `NewCompiledRegistry()`. Esa función crea un registro en memoria y llama a `RegisterBackendModule` para cada módulo encontrado.
+`factories_gen.go` importa el paquete `config` de cada módulo y crea `NewCompiledRegistry()`. Esa función crea un registro en memoria y llama a `RegisterBackendModule` para módulos backend y `RegisterWebModule` para módulos web.
 
-Para assets, genera `addons/<modulo>/static_assets_gen.go` junto al código del módulo. Cada archivo embebe solo `static/dist/`. Luego `internal/modules/backend/static_assets_gen.go` crea un mapa que relaciona el nombre del manifiesto con el filesystem embebido del addon. En forma simplificada:
+Para assets, genera `addons/<modulo>/static_assets_gen.go` junto al código del módulo. Cada archivo embebe solo `static/dist/`. Luego `internal/modules/assets/static_assets_gen.go` crea un mapa que relaciona el nombre del manifiesto con el filesystem embebido del addon. Este paquete separado evita que el servicio estático dependa del paquete de composición backend. En forma simplificada:
 
 ```go
 // addons/invoices/static_assets_gen.go
@@ -81,7 +81,9 @@ import "embed"
 //go:embed static/dist
 var StaticAssets embed.FS
 
-// internal/modules/backend/static_assets_gen.go
+// internal/modules/assets/static_assets_gen.go
+package assets
+
 var StaticDirectories = map[string]fs.FS{
     "invoices": assetModuleN.StaticAssets,
 }
@@ -110,7 +112,7 @@ func NewCompiledRegistry() (*modules.Registry, error) {
     if err := module1.RegisterBackendModule(registry); err != nil {
         return nil, err
     }
-    // ...una llamada por cada módulo...
+    // ...una llamada al registrador correspondiente por módulo...
     return registry, nil
 }
 ```
@@ -160,10 +162,10 @@ La aplicación sí usa MongoDB durante el arranque para consultar y guardar el e
 - **Agregaste un módulo y ejecutas `make run` sin generar:** el descubrimiento encontrará su manifiesto, pero el registro compilado no tendrá su implementación. El backend informará que el módulo descubierto no tiene implementación compilada.
 - **Eliminaste el paquete del módulo y no regeneraste:** `factories_gen.go` puede seguir importando el paquete eliminado y la compilación fallará.
 - **Eliminaste solo el manifiesto y no regeneraste:** el registro puede contener una fábrica que ya no tiene manifiesto, y la validación del arranque fallará.
-- **Cambiaste lógica dentro de un módulo existente:** no necesitas regenerar mientras sigan iguales la lista de módulos, el manifiesto, el constructor y `RegisterBackendModule`.
+- **Cambiaste lógica dentro de un módulo existente:** no necesitas regenerar mientras sigan iguales la lista de módulos, el manifiesto y su registrador (`RegisterBackendModule` o `RegisterWebModule`).
 
 ## Errores que puede reportar
 
-La generación se detiene si no puede leer un manifiesto, falta `name`, el paquete `config` no tiene exactamente un constructor con la forma esperada o no encuentra `RegisterBackendModule`. Corrige el módulo señalado y vuelve a ejecutar `go generate ./internal/modules/backend`.
+La generación se detiene si no puede leer un manifiesto, falta `name`, un módulo backend no tiene exactamente un constructor con la forma esperada o falta el registrador correspondiente al tipo. Corrige el módulo señalado y vuelve a ejecutar `go generate ./internal/modules/backend`.
 
 Los archivos generados deben incluirse en el cambio junto con los archivos del módulo. Así, quien compile el repositorio obtiene los mismos registros sin ejecutar el generador al arrancar la aplicación.

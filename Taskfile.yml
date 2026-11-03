@@ -1,7 +1,7 @@
 version: "3"
 
 env:
-  STATIC_DIR: "web/web-app/resources/static"
+  STATIC_DIR: "addons/web-app/resources/static"
 
 dotenv: ['.env']
 
@@ -17,7 +17,7 @@ tasks:
   
   run:web:styles:
     cmds:
-      - go tool gotailwind -i web/web-app/src/css/app.css -o $STATIC_DIR/css/app.css
+      - go tool gotailwind -i addons/web-app/src/css/app.css -o $STATIC_DIR/css/app.css
 
   run:server:
     cmds:
@@ -28,7 +28,7 @@ tasks:
          {{if eq OS "linux"}}-build.cmd "go build -tags=dev -o tmp/bin/main ./cmd/api/env/dev/main/main.go" \
           -build.entrypoint "tmp/bin/main"{{end}} \
          -build.entrypoint "tmp/bin/main" \
-         -build.exclude_dir "web" \
+         -build.exclude_dir "addons/web-app/resources/static" \
          -build.include_ext "go,templ" \
          -misc.clean_on_exit "true"
 
@@ -64,13 +64,13 @@ tasks:
   
   build:web:styles:
     cmds:
-      - go tool gotailwind -i web/web-app/src/css/app.css -o $STATIC_DIR/css/app.css
+      - go tool gotailwind -i addons/web-app/src/css/app.css -o $STATIC_DIR/css/app.css
     
     # These are all the files that can affect your generated CSS.
     sources:
-      - "./web/web-app/src/css/**/*.css"
-      - "./web/web-app/src/ui/**/*.templ"
-      - "./web/web-app/modules/**/*.templ"
+      - "./addons/web-app/src/css/**/*.css"
+      - "./addons/web-app/src/ui/**/*.templ"
+      - "./addons/web-app/modules/**/*.templ"
     generates:
       - "{{.STATIC_DIR}}/css/app.css"
 
@@ -79,8 +79,8 @@ tasks:
     cmds:
       - go run cmd/api/env/dev/ts-compiler/main.go
     sources:
-      - "./web/web-app/src/ts/**/*.ts"
-      - "./web/web-app/src/ts/**/*.tsx"
+      - "./addons/web-app/src/ts/**/*.ts"
+      - "./addons/web-app/src/ts/**/*.tsx"
       - "./addons/*/manifest.json"
       - "./addons/*/static/assets.json"
       - "./addons/*/static/src/ts/**/*.ts"
@@ -88,7 +88,7 @@ tasks:
       - "./addons/*/static/src/css/**/*.css"
       - "./addons/*/static/public/**/*"
     generates:
-      - "./web/web-app/resources/static/js/**/*.js"
+      - "./addons/web-app/resources/static/js/**/*.js"
       - "./addons/*/static/dist/**/*"
 
   build:

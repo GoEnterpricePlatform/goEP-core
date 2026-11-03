@@ -1,0 +1,15 @@
+package pages
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/layouts"
+	// "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
+)
+
+templ GoepAdminPage() {
+	@layouts.BaseLayout("goep admin", GoepAdminContent())
+}
+
+templ GoepAdminContent() {
+	<h1>GoEp admin page</h1>	
+}
+	

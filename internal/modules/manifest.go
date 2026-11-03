@@ -10,7 +10,9 @@ import (
 )
 
 // Manifest describes a GoEP module independently from its Go implementation.
+// An omitted Type is treated as "backend" for existing addon manifests.
 type Manifest struct {
+	Type              string   `json:"type,omitempty"`
 	Name              string   `json:"name"`
 	Version           string   `json:"version"`
 	Summary           string   `json:"summary"`
@@ -59,6 +61,9 @@ func ReadManifest(r io.Reader) (Manifest, error) {
 
 // Validate checks required metadata and basic dependency-list consistency.
 func (m Manifest) Validate() error {
+	if m.Type != "" && m.Type != "backend" && m.Type != "web" {
+		return fmt.Errorf("module manifest %q: type must be \"backend\" or \"web\"", m.Name)
+	}
 	if strings.TrimSpace(m.Name) == "" {
 		return fmt.Errorf("module manifest: name is required")
 	}

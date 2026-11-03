@@ -10,7 +10,7 @@ import (
 
 const manifestFilename = "manifest.json"
 
-// Discovery reads module metadata from the immediate child directories of root.
+// Discovery reads backend module metadata from the immediate child directories of root.
 type Discovery struct {
 	root string
 }
@@ -20,10 +20,25 @@ func NewDiscovery(root string) *Discovery {
 	return &Discovery{root: root}
 }
 
-// Discover reads and validates every child directory's manifest. A directory
+// Discover validates child manifests and returns backend modules. A directory
 // without manifest.json is treated as an incomplete addon and causes an error.
-// The function reads metadata only; it never loads or executes Go source files.
+// Web modules are validated but omitted. Discovery never loads or executes Go source files.
 func (d *Discovery) Discover() ([]Manifest, error) {
+	manifests, err := d.DiscoverAll()
+	if err != nil {
+		return nil, err
+	}
+	backend := make([]Manifest, 0, len(manifests))
+	for _, manifest := range manifests {
+		if manifest.Type != "web" {
+			backend = append(backend, manifest)
+		}
+	}
+	return backend, nil
+}
+
+// DiscoverAll validates and returns backend and web module manifests sorted by name.
+func (d *Discovery) DiscoverAll() ([]Manifest, error) {
 	rootInfo, err := os.Stat(d.root)
 	if err != nil {
 		return nil, fmt.Errorf("inspect addons directory %q: %w", d.root, err)
@@ -58,6 +73,10 @@ func (d *Discovery) Discover() ([]Manifest, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid manifest %q: %w", manifestPath, err)
 		}
+		if previousDir, exists := manifestDirs[manifest.Name]; exists {
+			return nil, fmt.Errorf("duplicate module name %q in %q and %q", manifest.Name, previousDir, addonDir)
+		}
+		manifestDirs[manifest.Name] = addonDir
 		if manifest.Icon != "" {
 			iconPath := filepath.Join(addonDir, filepath.FromSlash(manifest.Icon))
 			iconInfo, err := os.Stat(iconPath)
@@ -80,10 +99,6 @@ func (d *Discovery) Discover() ([]Manifest, error) {
 				return nil, fmt.Errorf("module %q icon path escapes addon directory", manifest.Name)
 			}
 		}
-		if previousDir, exists := manifestDirs[manifest.Name]; exists {
-			return nil, fmt.Errorf("duplicate module name %q in %q and %q", manifest.Name, previousDir, addonDir)
-		}
-		manifestDirs[manifest.Name] = addonDir
 		manifests = append(manifests, manifest)
 	}
 
