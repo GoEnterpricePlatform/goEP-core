@@ -4,5 +4,5 @@
   "summary": "Product plans, variations, and subscriptions",
   "icon": "static/public/icon.svg",
   "depends": ["identity"],
-  "database_providers": ["mongo"]
+  "database_providers": ["mongo", "postgresql"]
 }
