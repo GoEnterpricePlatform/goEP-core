@@ -21,15 +21,15 @@ type Data struct {
 }
 
 // new returns a new instance of data with the database connection ready.
-func New(dbURI string, appEnv string) *Data {
+func New(dbURI string) *Data {
 	//aqui se puede poner la connexion a la base de datos pero, que remos solo una ves
 	once.Do(func() {
-		initDB(dbURI, appEnv)
+		initDB(dbURI)
 	})
 	return data
 }
 
-func initDB(dbURI string, appEnv string) {
+func initDB(dbURI string) {
 	db, err := getConnection(dbURI)
 	if err != nil {
 		log.Panic(err)
@@ -38,16 +38,6 @@ func initDB(dbURI string, appEnv string) {
 	pool, err := pgxpool.New(context.Background(), dbURI)
 	if err != nil {
 		log.Panic(err)
-	}
-
-	// is used for production or use migrations
-	// Will it delete the tables?
-	// for production environment use makefile
-	if appEnv == "dev" {
-		err = MakeMigration(db)
-		if err != nil {
-			log.Panic(err)
-		}
 	}
 
 	data = &Data{

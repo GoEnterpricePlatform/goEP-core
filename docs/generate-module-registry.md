@@ -10,9 +10,11 @@ El generador lee los módulos dentro de `addons/` y actualiza estos archivos Go:
 internal/modules/backend/factories_gen.go
 internal/modules/assets/static_assets_gen.go
 addons/<modulo>/static_assets_gen.go
+addons/<modulo>/database/postgresql/migrations/migrations_gen.go
+internal/migrations/addons_gen.go
 ```
 
-El registro de módulos, el registro compartido de assets y los archivos `static_assets_gen.go` de cada addon son código generado, quedan dentro del repositorio y Go los compila dentro de la aplicación. El generador no guarda registros en MongoDB.
+Los archivos de migraciones se generan para addons backend que declaran soporte PostgreSQL y tienen al menos una migración `.up.sql`. El registro central guarda sus sistemas de archivos y las dependencias del manifiesto. Todo el código generado queda en el repositorio y Go lo compila dentro de la aplicación. El generador no guarda registros en MongoDB.
 
 ## Quién lo usa y cuándo
 
@@ -21,6 +23,7 @@ Lo usa quien desarrolla o mantiene módulos backend:
 - Al crear un módulo nuevo.
 - Al eliminar un módulo.
 - Al cambiar qué paquetes de módulo deben compilarse en el backend.
+- Al agregar o quitar migraciones PostgreSQL de un addon.
 
 No hace falta ejecutarlo al iniciar la API ni después de cada cambio interno de un módulo. `make run`, `go build` y `go test` no invocan `go generate` automáticamente.
 
@@ -36,7 +39,7 @@ Si creas o eliminas el módulo manualmente, ejecútalo desde la raíz del reposi
 go generate ./internal/modules/backend
 ```
 
-Ese comando encuentra la directiva `//go:generate` de `internal/modules/backend/factories.go`. La directiva ejecuta el subcomando `generate-module-registry` del CLI con `addons/` como entrada. Genera `factories_gen.go`, un `static_assets_gen.go` dentro de cada addon con `static/`, y `internal/modules/assets/static_assets_gen.go`, que los agrupa para producción.
+Ese comando encuentra la directiva `//go:generate` de `internal/modules/backend/factories.go`. La directiva ejecuta el subcomando `generate-module-registry` del CLI con `addons/` como entrada. Genera `factories_gen.go`, los registros de assets y, cuando corresponde, los embeds y registro central de migraciones PostgreSQL. No ejecuta las migraciones contra una base de datos.
 
 También puedes ejecutar el programa directamente desde la raíz. Sus valores por defecto usan las mismas rutas:
 
@@ -88,6 +91,14 @@ var StaticDirectories = map[string]fs.FS{
     "invoices": assetModuleN.StaticAssets,
 }
 ```
+
+Para PostgreSQL, genera `migrations_gen.go` dentro de
+`addons/<modulo>/database/postgresql/migrations/`, donde embebe los SQL del
+módulo. `internal/migrations/addons_gen.go` importa solo los módulos backend
+que declaran PostgreSQL y tienen archivos `.up.sql`; incluye sus dependencias
+del manifiesto para que el runner los aplique en orden. Si se agrega una
+migración después de crear el módulo, vuelve a ejecutar `go generate` para
+actualizar estos archivos.
 
 El compilador de assets crea `static/dist/module-assets.json` incluso cuando el módulo no declara scripts, estilos o archivos públicos. Ese marcador permite que Go compile el `embed`; el servidor no lo publica como un asset.
 
