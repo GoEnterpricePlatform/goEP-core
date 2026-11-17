@@ -30,3 +30,12 @@ git-diff:
 
 docker-build:
 	@docker build -t goep-core:latest .
+
+migrate-up:
+	@go run ./cmd/migration/main.go up
+
+migrate-down:
+	@go run ./cmd/migration/main.go down
+
+schema:
+	@go run ./cmd/goep schema

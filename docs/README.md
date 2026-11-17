@@ -4,6 +4,15 @@ La guía general está en [Arquitectura modular de GoEP Core](modular-architectu
 
 Para agregar un módulo paso a paso, consulta [Agregar un módulo de backend](add-module.md).
 
+Para distinguir los esquemas fuente del ensamblado y las migraciones PostgreSQL,
+consulta [Esquemas y migraciones PostgreSQL](postgresql-migrations.md).
+
+Para ver el proceso completo con SQL de ejemplo, consulta
+[Ejemplo de módulo PostgreSQL](example-module-postgresql.md).
+
+Para entender el runner y el flujo de ejecución por módulo, consulta
+[Migraciones PostgreSQL](../internal/migrations/README.md).
+
 ## CLI del repositorio
 
 Desde la raíz del repositorio, ejecuta el CLI sin argumentos para abrir el menú
