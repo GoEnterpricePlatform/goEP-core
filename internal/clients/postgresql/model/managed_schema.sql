@@ -1,5 +1,6 @@
--- MANAGED FLAVOR ONLY. Not part of schema.sql or dev_reset.sql.
+-- MANAGED FLAVOR ONLY. Generated from managed up migrations.
 
+-- Source: internal/modules/backend/managed/migrations/000001_module_lifecycle.up.sql
 CREATE TABLE IF NOT EXISTS goep_core_modules (
     module       TEXT PRIMARY KEY,
     version      TEXT NOT NULL,

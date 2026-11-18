@@ -23,8 +23,9 @@ el esquema exclusivo del sabor Managed:
 - `dev_reset.sql`: primero elimina las tablas incluidas y luego agrega el
   esquema ensamblado. **Es destructivo; úsalo solo en una base descartable de
   desarrollo.**
-- `managed_schema.sql`: contiene `goep_core_modules`; no forma parte del esquema
-  Lite ni del reset predeterminado.
+- `managed_schema.sql`: se ensambla desde las migraciones `.up.sql` del flavor
+  Managed y contiene `goep_core_modules`; no forma parte del esquema Lite ni
+  del reset predeterminado.
 
 El comando no se conecta a PostgreSQL, no ejecuta SQL y no cambia el historial
 de migraciones. La aplicación tampoco ejecuta `schema.sql` al arrancar. Estos

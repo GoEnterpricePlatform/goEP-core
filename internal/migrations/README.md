@@ -18,7 +18,8 @@ El runner usa ese registro para decidir qué ejecutar y en qué orden. Por eso,
 `make migrate-up` no descubre archivos nuevos directamente del disco. Ahora
 ejecuta Managed, que crea `goep_core_modules`, para coincidir con el flavor
 configurado en la API. `make migrate-lite-up` ejecuta solo las migraciones de
-addons.
+addons. El store PostgreSQL valida que exista `goep_core_modules` al iniciar;
+la tabla no se crea desde el código de arranque.
 
 ## Al crear un módulo
 

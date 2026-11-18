@@ -4,9 +4,10 @@ The Lite schema is owned by its addons:
 
 - `addons/<module>/database/postgresql/schema.sql` contains that addon's tables.
 
-The module lifecycle table belongs to the Managed flavor. Its source and
-migration live under `internal/modules/backend/managed/`; `make schema` writes
-it separately to `managed_schema.sql`.
+The module lifecycle table belongs to the Managed flavor. Its canonical DDL is
+the versioned migration under `internal/modules/backend/managed/migrations/`;
+`make schema` assembles the `.up.sql` migrations into the reference artifact
+`managed_schema.sql`.
 
 Run `make schema` (or `go run ./cmd/goep schema`) from the repository root to
 regenerate the Lite `schema.sql` bundle here. The bundle is a reference and
