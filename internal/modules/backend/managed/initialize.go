@@ -1,55 +1,53 @@
-package backend
+// Package managed implements addon composition with persisted install/enable state.
+package managed
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/config"
+	appConfig "github.com/GoEnterpricePlatform/goEP-core/internal/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle/repository/mongo"
 	postgres "github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle/repository/postgresql"
 )
 
-func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifest, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
-	switch cfg.AppEnvs.DBProvider {
-	case config.DBMongo:
-		if cfg.AppClients == nil || cfg.AppClients.DB == nil {
+// Initialize discovers addons and prepares the database-backed lifecycle manager.
+func Initialize(appEnvs *appConfig.AppEnvs, appClients *appConfig.AppClients, addonsDir string, registry *modules.Registry) (*modules.Registry, []modules.Manifest, []modules.Manifest, map[string]bool, *lifecycle.Manager, error) {
+	if appEnvs == nil {
+		return nil, nil, nil, nil, nil, fmt.Errorf("application environments are required to initialize module lifecycle")
+	}
+	switch appEnvs.DBProvider {
+	case appConfig.DBMongo:
+		if appClients == nil || appClients.DB == nil {
 			return nil, nil, nil, nil, nil, fmt.Errorf("MongoDB database is required to initialize module lifecycle")
 		}
-	case config.DBPostgresql:
-		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
+	case appConfig.DBPostgresql:
+		if appClients == nil || appClients.PGConn == nil {
 			return nil, nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
 		}
 	}
-
-	addonsDir := cfg.AddonsDir
 	if addonsDir == "" {
 		addonsDir = "addons"
 	}
-
 	allManifests, err := modules.NewDiscovery(addonsDir).DiscoverAll()
 	if err != nil {
 		return nil, nil, nil, nil, nil, fmt.Errorf("discover modules: %w", err)
 	}
 	manifests, webManifests := splitModuleManifests(allManifests)
-	registry, err := NewCompiledRegistry()
-	if err != nil {
-		return nil, nil, nil, nil, nil, err
-	}
 	if err := registry.ValidateBackend(manifests); err != nil {
 		return nil, nil, nil, nil, nil, fmt.Errorf("validate backend module initializers: %w", err)
 	}
 	if err := registry.ValidateWeb(webManifests); err != nil {
 		return nil, nil, nil, nil, nil, fmt.Errorf("validate web module initializers: %w", err)
 	}
-	manifests = filterManifestsByDatabase(manifests, string(cfg.AppEnvs.DBProvider))
+	manifests = filterManifestsByDatabase(manifests, string(appEnvs.DBProvider))
 	if len(manifests) == 0 {
-		return nil, nil, nil, nil, nil, fmt.Errorf("no backend modules support database provider %q", cfg.AppEnvs.DBProvider)
+		return nil, nil, nil, nil, nil, fmt.Errorf("no backend modules support database provider %q", appEnvs.DBProvider)
 	}
 	registry, err = registry.Subset(manifests)
 	if err != nil {
-		return nil, nil, nil, nil, nil, fmt.Errorf("select backend modules for database provider %q: %w", cfg.AppEnvs.DBProvider, err)
+		return nil, nil, nil, nil, nil, fmt.Errorf("select backend modules for database provider %q: %w", appEnvs.DBProvider, err)
 	}
 	resolver, err := modules.NewDependencyResolver(manifests, registry)
 	if err != nil {
@@ -57,25 +55,23 @@ func initializeModuleLifecycle(cfg Config) (*modules.Registry, []modules.Manifes
 	}
 
 	var storeRepo lifecycle.StateStore
-	switch cfg.AppEnvs.DBProvider {
-	case config.DBMongo:
-		storeRepo = mongo.NewMongoStore(cfg.AppClients.DB)
+	switch appEnvs.DBProvider {
+	case appConfig.DBMongo:
+		storeRepo = mongo.NewMongoStore(appClients.DB)
 		if err := storeRepo.CreateIndexes(context.Background()); err != nil {
 			return nil, nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
 		}
-	case config.DBPostgresql:
-		if cfg.AppClients == nil || cfg.AppClients.PGConn == nil {
-			return nil, nil, nil, nil, nil, fmt.Errorf("PostgreSQL database is required to initialize module lifecycle")
+	case appConfig.DBPostgresql:
+		storeRepo = postgres.NewPostgresStore(appClients.PGConn.Pool)
+		if err := storeRepo.CreateIndexes(context.Background()); err != nil {
+			return nil, nil, nil, nil, nil, fmt.Errorf("initialize module lifecycle storage: %w", err)
 		}
-		storeRepo = postgres.NewPostgresStore(cfg.AppClients.PGConn.Pool)
 	}
-
 	manager, err := lifecycle.NewManager(resolver, storeRepo)
 	if err != nil {
 		return nil, nil, nil, nil, nil, err
 	}
-
-	enabled, err := initializeModuleStates(context.Background(), manager, storeRepo, resolver)
+	enabled, err := InitializeStates(context.Background(), manager, storeRepo, resolver)
 	if err != nil {
 		return nil, nil, nil, nil, nil, err
 	}
@@ -105,14 +101,13 @@ func filterManifestsByDatabase(manifests []modules.Manifest, provider string) []
 	return compatible
 }
 
-func initializeModuleStates(ctx context.Context, manager *lifecycle.Manager, store lifecycle.StateStore, resolver *modules.DependencyResolver) (map[string]bool, error) {
+// InitializeStates seeds a fresh managed installation and validates persisted state.
+func InitializeStates(ctx context.Context, manager *lifecycle.Manager, store lifecycle.StateStore, resolver *modules.DependencyResolver) (map[string]bool, error) {
 	states, err := store.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("read module lifecycle states: %w", err)
 	}
 	if len(states) == 0 {
-		// Seed a fresh installation with the currently shipped backend modules
-		// enabled so this migration preserves the existing server behavior.
 		for _, manifest := range resolver.Order() {
 			if err := manager.Install(ctx, manifest.Name); err != nil {
 				return nil, fmt.Errorf("initialize module %q: %w", manifest.Name, err)
@@ -124,7 +119,6 @@ func initializeModuleStates(ctx context.Context, manager *lifecycle.Manager, sto
 			}
 		}
 	}
-
 	statuses, err := manager.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("list backend module statuses: %w", err)

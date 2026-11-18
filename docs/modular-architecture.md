@@ -1,14 +1,27 @@
 # Arquitectura modular de GoEP Core
 
-Esta guía describe cómo agregar, compilar, instalar y habilitar módulos de backend. Los módulos oficiales se enlazan estáticamente: el manifiesto permite descubrir metadatos, pero no carga código Go desde disco. Agregar una implementación requiere regenerar el registro y compilar una nueva versión del ejecutable.
+Esta guía describe cómo agregar y compilar addons de backend. Los módulos oficiales se enlazan estáticamente: el manifiesto permite descubrir metadatos, pero no carga código Go desde disco. Agregar una implementación requiere regenerar el registro y compilar una nueva versión del ejecutable.
 
-## Estados de un módulo
+## Sabores de composición
+
+`backend.Config.Flavor` selecciona cómo se componen los addons. Si se omite, el valor vacío usa `backend.FlavorLite`. El servidor principal (`cmd/api/server/v1`) declara `FlavorManaged` explícitamente.
+
+- **Lite (`lite`, predeterminado):** descubre y valida los addons, resuelve sus dependencias y los inicializa en orden. Todos los módulos backend compatibles con el proveedor de base de datos quedan cargados y sus rutas API se registran. No consulta ni crea estado de ciclo de vida y no usa la colección `goep_core_modules`.
+- **Managed (`managed`):** conserva el ciclo de vida existente de instalación y habilitación persistidas. Es el sabor anterior, disponible para retomarlo cuando se implemente la administración de módulos desde la aplicación.
+
+El registro generado sigue enlazando los addons estáticamente en ambos sabores. "Lite" simplifica su carga en tiempo de arranque; no instala código Go desde el directorio de addons.
+
+La implementación está separada en `internal/modules/backend/lite/` y `internal/modules/backend/managed/`. El despacho, los tipos de configuración y la composición de servicios compartidos permanecen en `internal/modules/backend/`. Las migraciones y el esquema PostgreSQL de `goep_core_modules` también pertenecen a `managed/`; `make migrate-up` aplica Managed para coincidir con el servidor actual, mientras que `make migrate-lite-up` aplica solo las migraciones de addons.
+
+## Ciclo de vida del sabor managed
+
+Esta sección documenta el sabor `managed`; no describe el arranque predeterminado.
 
 - **Disponible:** su manifiesto fue descubierto y existe una fábrica compilada para el mismo nombre.
 - **Instalado:** el estado persistido indica `installed: true`.
 - **Habilitado:** el estado indica `enabled: true`; sus rutas API se registran en el mux público durante el arranque.
 
-El estado es global para la instalación de GoEP Core y se guarda en MongoDB, en `goep_core_modules`. Una instalación con esa colección vacía instala y habilita los módulos oficiales descubiertos para conservar el comportamiento actual. En arranques posteriores se utiliza el estado guardado. Si la colección no está vacía, los módulos sin documento quedan deshabilitados.
+El estado es global para la instalación de GoEP Core y se guarda en MongoDB, en `goep_core_modules`. Una instalación con esa colección vacía instala y habilita los módulos oficiales descubiertos. En arranques posteriores se utiliza el estado guardado. Si la colección no está vacía, los módulos sin documento quedan deshabilitados.
 
 El cambio de estado se aplica en el siguiente arranque. Web App todavía no forma parte del ciclo de vida: los servicios backend se construyen para que sus páginas sigan funcionando, mientras que las rutas API de módulos deshabilitados quedan aisladas.
 

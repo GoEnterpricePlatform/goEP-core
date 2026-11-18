@@ -31,11 +31,15 @@ git-diff:
 docker-build:
 	@docker build -t goep-core:latest .
 
+# you can choose between lite and managed
 migrate-up:
-	@go run ./cmd/migration/main.go up
+	@go run ./cmd/migration/main.go up lite
 
 migrate-down:
-	@go run ./cmd/migration/main.go down
+	@go run ./cmd/migration/main.go down lite
 
 schema:
 	@go run ./cmd/goep schema
+
+cli:
+	@go run ./cmd/goep/main.go

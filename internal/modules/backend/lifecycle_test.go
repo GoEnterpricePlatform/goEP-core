@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/backend/managed"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/lifecycle"
 )
 
@@ -69,9 +70,9 @@ func TestInitializeModuleStatesEnablesModulesOnEmptyStore(t *testing.T) {
 	store := newTestLifecycleStore()
 	manager, resolver := testLifecycleManager(t, store)
 
-	enabled, err := initializeModuleStates(context.Background(), manager, store, resolver)
+	enabled, err := managed.InitializeStates(context.Background(), manager, store, resolver)
 	if err != nil {
-		t.Fatalf("initializeModuleStates() error = %v", err)
+		t.Fatalf("InitializeStates() error = %v", err)
 	}
 	if len(enabled) != 3 {
 		t.Fatalf("enabled modules = %#v, want all three modules", enabled)
@@ -96,10 +97,10 @@ func TestInitializeModuleStatesHonorsPersistedStateAndRejectsBrokenDependencies(
 	}
 	manager, resolver := testLifecycleManager(t, store)
 
-	if _, err := initializeModuleStates(context.Background(), manager, store, resolver); err == nil {
-		t.Fatal("initializeModuleStates() succeeded with posts enabled and its identity dependency disabled")
+	if _, err := managed.InitializeStates(context.Background(), manager, store, resolver); err == nil {
+		t.Fatal("InitializeStates() succeeded with posts enabled and its identity dependency disabled")
 	}
 	if _, exists := store.states["identity"]; exists {
-		t.Fatal("initializeModuleStates() seeded defaults despite existing persisted state")
+		t.Fatal("InitializeStates() seeded defaults despite existing persisted state")
 	}
 }

@@ -43,6 +43,7 @@ func New() http.Handler {
 	mux.Handle("/v1/", http.StripPrefix("/v1", templateV1))
 
 	_, err := backendModules.Initialize(backendModules.Config{
+		Flavor:     backendModules.FlavorLite,
 		AppEnvs:    appEnvs,
 		AppClients: appClients,
 		APIv1:      v1,

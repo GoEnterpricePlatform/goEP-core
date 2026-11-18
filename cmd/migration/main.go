@@ -19,17 +19,36 @@ func main() {
 		log.Fatalf("Environment variable %s is required but not set", "PG_DB_URI")
 	}
 
-	if len(os.Args) != 2 {
-		log.Fatal("usage: go run ./cmd/migration <up | down>")
+	if len(os.Args) < 2 || len(os.Args) > 3 {
+		log.Fatal("usage: go run ./cmd/migration <up | down> [lite | managed]")
+	}
+	flavor := "lite"
+	if len(os.Args) == 3 {
+		flavor = os.Args[2]
+	}
+	if flavor != "lite" && flavor != "managed" {
+		log.Fatalf("unknown migration flavor %q: supported flavors are lite and managed", flavor)
 	}
 
 	switch os.Args[1] {
 	case "up":
-		if err := migrations.Up(pgDbUri); err != nil {
+		var err error
+		if flavor == "managed" {
+			err = migrations.UpManaged(pgDbUri)
+		} else {
+			err = migrations.Up(pgDbUri)
+		}
+		if err != nil {
 			log.Fatal(err)
 		}
 	case "down":
-		if err := migrations.Down(pgDbUri); err != nil {
+		var err error
+		if flavor == "managed" {
+			err = migrations.DownManaged(pgDbUri)
+		} else {
+			err = migrations.Down(pgDbUri)
+		}
+		if err != nil {
 			log.Fatal(err)
 		}
 

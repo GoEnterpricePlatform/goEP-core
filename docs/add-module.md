@@ -207,7 +207,7 @@ La prueba Mongo de ciclo de vida requiere `GOEP_TEST_MONGODB_URI`; consulta [la 
 
 ## 8. Instalar y habilitar
 
-Después de agregar Reports, compila un nuevo ejecutable y despliega el manifiesto junto con el código. Si la colección de lifecycle ya contiene estados, Reports se descubre pero queda deshabilitado hasta instalarlo y habilitarlo con el manager:
+Después de agregar Reports, compila un nuevo ejecutable y despliega el manifiesto junto con el código. En `FlavorManaged`, si la colección de ciclo de vida ya contiene estados, Reports se descubre pero queda deshabilitado hasta instalarlo y habilitarlo con el manager. En el sabor predeterminado Lite, los addons compatibles se cargan automáticamente en orden:
 
 ```go
 if err := backend.Lifecycle.Install(ctx, "reports"); err != nil {

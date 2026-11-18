@@ -25,19 +25,8 @@ DROP TABLE IF EXISTS tb_identity_role CASCADE;
 DROP TABLE IF EXISTS tb_identity_permission CASCADE;
 DROP TABLE IF EXISTS tb_identity_pass_auth CASCADE;
 DROP TABLE IF EXISTS tb_identity_user CASCADE;
-DROP TABLE IF EXISTS goep_core_modules CASCADE;
 
 -- GENERATED FILE. Do not edit; update the source schema files and run go run ./cmd/goep schema.
-
--- Source: internal/clients/postgresql/model/core.sql
-CREATE TABLE IF NOT EXISTS goep_core_modules (
-    module       TEXT PRIMARY KEY,
-    version      TEXT NOT NULL,
-    installed    BOOLEAN NOT NULL DEFAULT FALSE,
-    enabled      BOOLEAN NOT NULL DEFAULT FALSE,
-    installed_at TIMESTAMPTZ,
-    updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
 
 -- Source: addons/identity/database/postgresql/schema.sql
 -- Identity
