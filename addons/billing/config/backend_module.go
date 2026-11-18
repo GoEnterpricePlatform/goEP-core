@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/billing/initializer/permissions"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 	middlewarePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/middlewares/port"
 )
@@ -12,6 +13,9 @@ func RegisterBackendModule(registry *modules.Registry) error {
 		Name: "billing",
 		New:  NewBillingModule,
 	}); err != nil {
+		return err
+	}
+	if err := modules.RegisterPermissionInitializer(registry, "billing", permissions.Register); err != nil {
 		return err
 	}
 	return modules.RegisterBackendInitializer(registry, "billing", func(runtime modules.BackendRuntime) (any, error) {

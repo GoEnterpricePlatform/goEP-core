@@ -3,6 +3,7 @@ package config
 import (
 	adminPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/admin/port"
 	authPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
+	permissionPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/port"
 	rolePort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
 	tokenPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
@@ -11,7 +12,7 @@ import (
 )
 
 // RegisterBackendModule connects Identity's typed constructor to the generic
-// backend lifecycle and publishes the authentication contract it provides.
+// backend lifecycle and publishes its authentication and permission contracts.
 func RegisterBackendModule(registry *modules.Registry) error {
 	if err := modules.RegisterFactory(registry, modules.Factory[ModuleConfig, *Module]{
 		Name: "identity",
@@ -46,6 +47,9 @@ func RegisterBackendModule(registry *modules.Registry) error {
 			return nil, err
 		}
 		if err := modules.ProvideService[rolePort.RoleSrv](runtime.Services, module.RoleSrv); err != nil {
+			return nil, err
+		}
+		if err := modules.ProvideService[permissionPort.PermissionSrv](runtime.Services, module.PermissionSrv); err != nil {
 			return nil, err
 		}
 		return module, nil

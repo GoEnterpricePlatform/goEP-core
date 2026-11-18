@@ -17,6 +17,7 @@ import (
 	permissionInitializer "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/initializer"
 	permissionRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/repository/mongo"
 	permissionPostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/repository/postgresql"
+	permissionService "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/service"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/domain"
 	roleInitializer "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/initializer"
 	roleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/repository/mongo"
@@ -61,13 +62,14 @@ type ModuleConfig struct {
 }
 
 type Module struct {
-	AuthSrv    authP.AuthSrv
-	UserSrv    userP.UserSrv
-	AdminSrv   adminP.AdminSrv
-	TokenSrv   tokenP.TokenSrv
-	CookieSrv  cookieP.CookieSrv
-	AuthApiMdw *middlewares.AuthMiddleware
-	RoleSrv    roleP.RoleSrv
+	AuthSrv       authP.AuthSrv
+	UserSrv       userP.UserSrv
+	AdminSrv      adminP.AdminSrv
+	TokenSrv      tokenP.TokenSrv
+	CookieSrv     cookieP.CookieSrv
+	AuthApiMdw    *middlewares.AuthMiddleware
+	RoleSrv       roleP.RoleSrv
+	PermissionSrv permissionP.PermissionSrv
 }
 
 func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
@@ -171,6 +173,7 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	authSrv := authService.NewAuthSrv(userRepo, roleRepo, permissionRepo, userFileStg, sessionSrv, otpCodeSrv, mailerSrv)
 	userSrv := userService.NewUserSrv(userRepo, userFileStg, mdlName)
 	roleSrv := roleService.NewRoleSrv(roleRepo)
+	permissionSrv := permissionService.NewPermissionSrv(permissionRepo, roleRepo)
 
 	// service - admin
 	adminSrv := adminService.NewAdminSrv(userRepo, roleRepo, permissionRepo, sessionSrv)
@@ -179,12 +182,13 @@ func NewIdentityModule(cfg ModuleConfig) (*Module, error) {
 	authHandler.NewAuthHandler(cfg.APIv1, authSrv, tokenSrv, cfg.AppEnvs.AppEnv, authApiMdw)
 	userHandler.NewUserHandler(cfg.APIv1, userSrv, authApiMdw)
 	return &Module{
-		AuthSrv:    authSrv,
-		UserSrv:    userSrv,
-		AdminSrv:   adminSrv,
-		TokenSrv:   tokenSrv,
-		CookieSrv:  cookieSrv,
-		AuthApiMdw: authApiMdw,
-		RoleSrv:    roleSrv,
+		AuthSrv:       authSrv,
+		UserSrv:       userSrv,
+		AdminSrv:      adminSrv,
+		TokenSrv:      tokenSrv,
+		CookieSrv:     cookieSrv,
+		AuthApiMdw:    authApiMdw,
+		RoleSrv:       roleSrv,
+		PermissionSrv: permissionSrv,
 	}, nil
 }

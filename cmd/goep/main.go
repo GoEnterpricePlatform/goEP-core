@@ -44,12 +44,12 @@ func run(args []string) error {
 func interactive() error {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("goEP Core")
-	fmt.Println("¿Qué quieres hacer?")
-	fmt.Println("  1) Crear un módulo")
-	fmt.Println("  2) Ensamblar el esquema PostgreSQL")
-	fmt.Println("  3) Regenerar los registros de módulos")
-	fmt.Println("  q) Salir")
-	fmt.Print("Selecciona una opción: ")
+	fmt.Println("What would you like to do?")
+	fmt.Println("  1) Create a module")
+	fmt.Println("  2) Assemble the PostgreSQL schema")
+	fmt.Println("  3) Regenerate the module registries")
+	fmt.Println("  q) Quit")
+	fmt.Print("Select an option: ")
 
 	choice, err := readLine(reader)
 	if err != nil {
@@ -57,15 +57,15 @@ func interactive() error {
 	}
 	switch choice {
 	case "1":
-		fmt.Print("Nombre del módulo (ej. sales-reports): ")
+		fmt.Print("Module name (e.g. sales-reports): ")
 		name, err := readLine(reader)
 		if err != nil {
 			return err
 		}
 		if name == "" {
-			return errors.New("el nombre del módulo no puede estar vacío")
+			return errors.New("module name cannot be empty")
 		}
-		fmt.Print("Descripción (opcional): ")
+		fmt.Print("Description (optional): ")
 		summary, err := readLine(reader)
 		if err != nil {
 			return err
@@ -82,7 +82,7 @@ func interactive() error {
 	case "q", "Q":
 		return nil
 	default:
-		return fmt.Errorf("opción no válida: %q", choice)
+		return fmt.Errorf("invalid option: %q", choice)
 	}
 }
 
@@ -95,11 +95,11 @@ func readLine(reader *bufio.Reader) (string, error) {
 }
 
 func usage() {
-	fmt.Println(`Uso:
-  go run ./cmd/goep                         Abrir el menú interactivo
-  go run ./cmd/goep create-module <nombre>  Crear un módulo
-  go run ./cmd/goep schema                  Ensamblar schema.sql
-  go run ./cmd/goep generate-module-registry [opciones]
+	fmt.Println(`Usage:
+  go run ./cmd/goep                         Open the interactive menu
+  go run ./cmd/goep create-module <name>    Create a module
+  go run ./cmd/goep schema                  Assemble schema.sql
+  go run ./cmd/goep generate-module-registry [options]
 
-Sin argumentos, el CLI pregunta qué acción quieres realizar.`)
+With no arguments, the CLI asks which action to perform.`)
 }

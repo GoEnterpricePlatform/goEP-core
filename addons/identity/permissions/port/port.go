@@ -17,3 +17,9 @@ type PermissionRepo interface {
 	FindByNames(ctx context.Context, names []domain.PermissionName) ([]*domain.Permission, error)
 	FindByIDs(ctx context.Context, permissionsIDs []string) ([]*domain.Permission, error)
 }
+
+// PermissionSrv registers module-defined permissions and assigns them to the
+// system administrator role.
+type PermissionSrv interface {
+	RegisterPermission(ctx context.Context, name domain.PermissionName, permissionType domain.PermissionType) error
+}
