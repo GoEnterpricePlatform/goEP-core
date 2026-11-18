@@ -9,19 +9,22 @@ Desde la raíz del repositorio, el comando lee estos archivos fuente:
 
 | Propietario | Archivo fuente |
 | --- | --- |
-| GoEP core | `internal/clients/postgresql/model/core.sql` |
 | identity | `addons/identity/database/postgresql/schema.sql` |
 | posts | `addons/posts/database/postgresql/schema.sql` |
 | catalog | `addons/catalog/database/postgresql/schema.sql` |
 | billing | `addons/billing/database/postgresql/schema.sql` |
 
-Con ellos genera dos archivos bajo `internal/clients/postgresql/model/`:
+Con ellos genera `schema.sql` y `dev_reset.sql` bajo
+`internal/clients/postgresql/model/`. También genera `managed_schema.sql` para
+el esquema exclusivo del sabor Managed:
 
 - `schema.sql`: una copia ensamblada de los esquemas fuente, con `IF NOT EXISTS`
   en tablas e índices.
 - `dev_reset.sql`: primero elimina las tablas incluidas y luego agrega el
   esquema ensamblado. **Es destructivo; úsalo solo en una base descartable de
   desarrollo.**
+- `managed_schema.sql`: contiene `goep_core_modules`; no forma parte del esquema
+  Lite ni del reset predeterminado.
 
 El comando no se conecta a PostgreSQL, no ejecuta SQL y no cambia el historial
 de migraciones. La aplicación tampoco ejecuta `schema.sql` al arrancar. Estos
@@ -57,7 +60,10 @@ addons/<nombre>/database/postgresql/migrations/
 └── 000001_create_example.down.sql
 ```
 
-GoEP core mantiene las suyas en `internal/migrations/core/`. Usa números
+El sabor Managed mantiene la migración del ciclo de vida en
+`internal/modules/backend/managed/migrations/` y su esquema de referencia en
+`internal/modules/backend/managed/postgresql/schema.sql`. El conjunto Lite no
+incluye esos archivos en `schema.sql` ni en `dev_reset.sql`. Usa números
 crecientes por módulo. Cada `up` describe el cambio hacia adelante y cada
 `down` su reversión. Una migración que ya se desplegó se considera inmutable:
 para modificar el esquema después, agrega otra migración.
@@ -104,15 +110,26 @@ ejecuta durante `create-module`.
 
 ## Aplicar y revertir en bases de datos
 
-`make migrate-up` aplica primero las migraciones de core y luego las de los
-addons, en orden de dependencias. Cada propietario mantiene su propia tabla de
-versiones: `schema_migrations_core` y `schema_migrations_<módulo>`.
+`make migrate-up` aplica la migración de ciclo de vida Managed y luego las
+migraciones de addons en orden de dependencias, como la API configurada con
+`FlavorManaged`. Usa `make migrate-lite-up` para aplicar solo las migraciones de
+addons.
+Cada propietario mantiene su propia tabla de versiones:
+`schema_migrations_managed` y `schema_migrations_<módulo>`.
 
-`make migrate-down` baja una migración por addon en orden inverso y después
-intenta bajar una de core. Revisa el SQL `down` antes de usarlo: puede eliminar
-tablas o datos. En producción, el flujo normal es respaldar la base, aplicar
-`migrate-up` antes de iniciar la nueva versión y observar el resultado; no
-ejecutar `down` automáticamente como procedimiento de despliegue.
+`make migrate-down` revierte el conjunto Managed; `make migrate-lite-down`
+revierte el conjunto Lite. Revisa el SQL `down` antes de usarlo: puede eliminar
+tablas o datos. En producción, respalda la base y aplica `migrate-up` antes de
+iniciar la nueva versión.
 
 La API no aplica migraciones al arrancar. En desarrollo y producción, ejecuta
 el comando de migraciones explícitamente contra la base que corresponda.
+
+para mas adelante
+```
+migrate-managed-up:
+	@go run ./cmd/migration/main.go up managed
+
+migrate-managed-down:
+	@go run ./cmd/migration/main.go down managed
+```

@@ -1,5 +1,5 @@
-// Package migrations applies PostgreSQL migrations embedded by GoEP core and
-// the addon registry generated from module manifests.
+// Package migrations applies PostgreSQL migrations embedded by addons and the
+// optional lifecycle migration owned by the managed flavor.
 package migrations
 
 import (
@@ -9,7 +9,7 @@ import (
 	"io/fs"
 	"sort"
 
-	coremigrations "github.com/GoEnterpricePlatform/goEP-core/internal/migrations/core"
+	managedmigrations "github.com/GoEnterpricePlatform/goEP-core/internal/modules/backend/managed/migrations"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -36,14 +36,10 @@ func PostgreSQLModules() ([]string, error) {
 	return names, nil
 }
 
-// Up applies core migrations first, followed by addon migrations in
-// dependency order.
+// Up applies addon migrations in dependency order. It is the Lite migration set.
 func Up(databaseURL string) error {
 	addons, err := orderedAddonMigrations()
 	if err != nil {
-		return err
-	}
-	if err := runModule(databaseURL, moduleMigrations{name: "core", fs: coremigrations.FS}, false); err != nil {
 		return err
 	}
 	for _, addon := range addons {
@@ -54,9 +50,34 @@ func Up(databaseURL string) error {
 	return nil
 }
 
-// Down rolls back one migration per addon in reverse dependency order, then
-// rolls back one core migration.
+// UpManaged also applies core migrations used by the managed module lifecycle.
+func UpManaged(databaseURL string) error {
+	addons, err := orderedAddonMigrations()
+	if err != nil {
+		return err
+	}
+	if err := runModule(databaseURL, moduleMigrations{name: "managed", fs: managedmigrations.FS}, false); err != nil {
+		return err
+	}
+	for _, addon := range addons {
+		if err := runModule(databaseURL, addon, false); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Down rolls back one migration per addon in reverse dependency order.
 func Down(databaseURL string) error {
+	return down(databaseURL, false)
+}
+
+// DownManaged also rolls back one core migration used by managed lifecycle.
+func DownManaged(databaseURL string) error {
+	return down(databaseURL, true)
+}
+
+func down(databaseURL string, managed bool) error {
 	addons, err := orderedAddonMigrations()
 	if err != nil {
 		return err
@@ -66,7 +87,10 @@ func Down(databaseURL string) error {
 			return err
 		}
 	}
-	return runModule(databaseURL, moduleMigrations{name: "core", fs: coremigrations.FS}, true)
+	if managed {
+		return runModule(databaseURL, moduleMigrations{name: "managed", fs: managedmigrations.FS}, true)
+	}
+	return nil
 }
 
 func orderedAddonMigrations() ([]moduleMigrations, error) {

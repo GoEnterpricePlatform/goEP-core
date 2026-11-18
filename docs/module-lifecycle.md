@@ -1,4 +1,6 @@
-# Module lifecycle persistence
+# Module lifecycle persistence (managed flavor)
+
+This document describes `backend.FlavorManaged`. The default `backend.FlavorLite` does not read or write this state and does not create the `goep_core_modules` collection.
 
 The installation status corresponds to the entire GoEP Core installation. There is no tenant/organization model or tenant identifier in the routes or repositories reviewed; The modules share a single Mongo database configured by the application.
 
@@ -8,4 +10,4 @@ The lifecycle code is in `internal/modules/lifecycle/`, separated into state and
 
 The uninstall has no operation in this phase. The defined policy is to allow it only after disabling the module and deleting only its state document; never automatically delete module data collections.
 
-The backend bootstrap creates the unique index before querying the states. In an empty base, install and enable the included modules to preserve the initial behavior. On subsequent boots it uses the persisted state to expose or isolate its API routes. As long as Web App is still out of the lifecycle, bootstrap builds backend services even when their API routes are disabled, because Web App still consumes them directly.
+The managed backend bootstrap creates the unique index before querying the states. In an empty base, install and enable the included modules. On subsequent boots it uses the persisted state to expose or isolate its API routes. As long as Web App is still out of the lifecycle, bootstrap builds backend services even when their API routes are disabled, because Web App still consumes them directly.

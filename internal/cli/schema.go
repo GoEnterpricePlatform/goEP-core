@@ -20,7 +20,6 @@ var createIndex = regexp.MustCompile(`(?im)^CREATE\s+(UNIQUE\s+)?INDEX\s+([a-zA-
 
 func AssembleSchema() error {
 	files := []schemaFile{
-		{name: "core", path: filepath.Join("internal", "clients", "postgresql", "model", "core.sql")},
 		{name: "identity", path: filepath.Join("addons", "identity", "database", "postgresql", "schema.sql")},
 		{name: "posts", path: filepath.Join("addons", "posts", "database", "postgresql", "schema.sql")},
 		{name: "catalog", path: filepath.Join("addons", "catalog", "database", "postgresql", "schema.sql")},
@@ -67,6 +66,17 @@ func AssembleSchema() error {
 	reset.Write(schema.Bytes())
 	if err := os.WriteFile(filepath.Join(outputDir, "dev_reset.sql"), reset.Bytes(), 0o644); err != nil {
 		return fmt.Errorf("write dev_reset.sql: %w", err)
+	}
+
+	managedSchemaPath := filepath.Join("internal", "modules", "backend", "managed", "postgresql", "schema.sql")
+	managedSchema, err := os.ReadFile(managedSchemaPath)
+	if err != nil {
+		return fmt.Errorf("read managed lifecycle schema: %w", err)
+	}
+	managedSchema = createTable.ReplaceAll(managedSchema, []byte("CREATE TABLE IF NOT EXISTS $1 ("))
+	managedBundle := append([]byte("-- MANAGED FLAVOR ONLY. Not part of schema.sql or dev_reset.sql.\n\n"), managedSchema...)
+	if err := os.WriteFile(filepath.Join(outputDir, "managed_schema.sql"), managedBundle, 0o644); err != nil {
+		return fmt.Errorf("write managed_schema.sql: %w", err)
 	}
 	return nil
 }

@@ -4,17 +4,21 @@
 
 `runner.go` coordina `golang-migrate`; no contiene SQL ni concatena los archivos.
 
-- `Up` aplica primero las migraciones de core y después las de los addons, en
-  orden de dependencia.
-- `Down` revierte una migración por addon en orden inverso y después intenta
-  revertir una de core. El SQL `down` puede borrar datos.
+- `Up` aplica las migraciones de los addons en orden de dependencia (sabor Lite).
+- `UpManaged` aplica primero la migración de ciclo de vida Managed y luego las
+  migraciones de addons.
+- `Down` y `DownManaged` revierten sus conjuntos correspondientes. El SQL `down`
+  puede borrar datos.
 - Cada propietario mantiene su historial en una tabla propia, por ejemplo
   `schema_migrations_identity`.
 
 `addons_gen.go` es generado por `go generate ./internal/modules/backend`. Enumera
 los addons con migraciones PostgreSQL, embebidas por módulo, y sus dependencias.
 El runner usa ese registro para decidir qué ejecutar y en qué orden. Por eso,
-`make migrate-up` no descubre archivos nuevos directamente del disco.
+`make migrate-up` no descubre archivos nuevos directamente del disco. Ahora
+ejecuta Managed, que crea `goep_core_modules`, para coincidir con el flavor
+configurado en la API. `make migrate-lite-up` ejecuta solo las migraciones de
+addons.
 
 ## Al crear un módulo
 
@@ -40,5 +44,5 @@ Cuando agregues migraciones PostgreSQL al módulo:
    make migrate-up
    ```
 
-`go run ./cmd/goep schema` es independiente: genera el bundle `schema.sql` y
-`dev_reset.sql`; no participa en este flujo ni aplica cambios a la base.
+`go run ./cmd/goep schema` es independiente: genera el bundle Lite `schema.sql`,
+`dev_reset.sql` y el `managed_schema.sql` opcional; no aplica cambios a la base.
