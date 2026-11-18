@@ -55,7 +55,7 @@ func (h *Handler) ModulesPage(w http.ResponseWriter, r *http.Request) {
 			Version: manifest.Version,
 			Summary: manifest.Summary,
 			IconURL: iconURL,
-			Href:    moduleAdminHref(manifest.Name),
+			Href:    moduleAdminHref(manifest),
 		})
 	}
 
@@ -64,11 +64,14 @@ func (h *Handler) ModulesPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func moduleAdminHref(name string) string {
-	if name == "identity" {
+func moduleAdminHref(manifest moduleRegistry.Manifest) string {
+	if manifest.Name == "identity" {
 		return "/v1/goep-admin/general"
 	}
-	return "/v1/goep-admin/modules/" + name
+	if manifest.UI != nil {
+		return "/v1/" + manifest.Name + "/"
+	}
+	return "/v1/goep-admin/modules/" + manifest.Name
 }
 
 func (h *Handler) ModulePage(w http.ResponseWriter, r *http.Request) {

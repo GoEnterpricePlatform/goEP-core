@@ -11,7 +11,7 @@ internal/modules/backend/factories_gen.go
 internal/modules/assets/static_assets_gen.go
 addons/<modulo>/static_assets_gen.go
 addons/<modulo>/database/postgresql/migrations/migrations_gen.go
-internal/migrations/addons_gen.go
+internal/modules/migrations/addons_gen.go
 ```
 
 Los archivos de migraciones se generan para addons backend que declaran soporte PostgreSQL y tienen al menos una migración `.up.sql`. El registro central guarda sus sistemas de archivos y las dependencias del manifiesto. Todo el código generado queda en el repositorio y Go lo compila dentro de la aplicación. El generador no guarda registros en MongoDB.
@@ -94,7 +94,7 @@ var StaticDirectories = map[string]fs.FS{
 
 Para PostgreSQL, genera `migrations_gen.go` dentro de
 `addons/<modulo>/database/postgresql/migrations/`, donde embebe los SQL del
-módulo. `internal/migrations/addons_gen.go` importa solo los módulos backend
+módulo. `internal/modules/migrations/addons_gen.go` importa solo los módulos backend
 que declaran PostgreSQL y tienen archivos `.up.sql`; incluye sus dependencias
 del manifiesto para que el runner los aplique en orden. Si se agrega una
 migración después de crear el módulo, vuelve a ejecutar `go generate` para

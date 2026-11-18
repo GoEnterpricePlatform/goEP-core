@@ -95,7 +95,7 @@ En la tabla, las rutas de salida son absolutas desde la raíz del repositorio. E
 - Formato `assets.json` versión 1 con listas `scripts` y `styles`.
 - Salida generada en `addons/<nombre>/static/dist/` y URLs bajo `modules/<nombre>/`.
 - Favicon, CSS base y librerías compartidas permanecen en `web-app/resources/static/`.
-- `go run ./cmd/goep create-module` genera las carpetas y un `assets.json` vacío para un módulo nuevo.
+- `go run ./cmd/goep create-module` genera las carpetas, un `assets.json` vacío y una UI inicial (simple o dashboard) para un módulo nuevo. El CLI permite mostrarla dentro del sidebar compartido de Identity o como reemplazo de la pantalla del módulo.
 
 **Resultado:** el contrato y el esqueleto ya están definidos. El compilador todavía no descubre ni procesa estos manifiestos.
 

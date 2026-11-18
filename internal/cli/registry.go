@@ -34,7 +34,7 @@ func GenerateModuleRegistry(args []string) error {
 	addonsDir := flags.String("addons", "addons", "directory containing module manifests")
 	output := flags.String("out", "internal/modules/backend/factories_gen.go", "generated Go source file")
 	assetsOutput := flags.String("assets-out", "internal/modules/assets/static_assets_gen.go", "generated module static asset registry")
-	migrationsOutput := flags.String("migrations-out", "internal/migrations/addons_gen.go", "generated addon PostgreSQL migration registry")
+	migrationsOutput := flags.String("migrations-out", "internal/modules/migrations/addons_gen.go", "generated addon PostgreSQL migration registry")
 	modulePath := flags.String("module", "github.com/GoEnterpricePlatform/goEP-core", "Go module import path")
 	if err := flags.Parse(args); err != nil {
 		return err

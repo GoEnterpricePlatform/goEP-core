@@ -86,6 +86,7 @@ func Initialize(cfg Config) (*Modules, error) {
 			AppEnvs:    cfg.AppEnvs,
 			AppClients: cfg.AppClients,
 			APIv1:      moduleRoutes(cfg.APIv1, enabled, manifest.Name),
+			TemplateV1: moduleRoutes(cfg.TemplateV1, enabled, manifest.Name),
 			DB:         mongoDB(cfg.AppClients),
 			PGConn:     postgresConnection(cfg.AppClients),
 			Services:   services,

@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/GoEnterpricePlatform/goEP-core/internal/migrations"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/migrations"
 	"github.com/joho/godotenv"
 )
 

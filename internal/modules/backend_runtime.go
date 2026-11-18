@@ -19,6 +19,7 @@ type BackendRuntime struct {
 	AppEnvs    *appConfig.AppEnvs
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
+	TemplateV1 *http.ServeMux
 	DB         *mongo.Database
 	PGConn     *pgx.Conn
 	Services   *Services

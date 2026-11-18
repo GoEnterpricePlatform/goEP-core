@@ -73,7 +73,7 @@ go generate ./internal/modules/backend
 ```
 
 Esto genera el embed del módulo en su carpeta `migrations/` y lo agrega a
-`internal/migrations/addons_gen.go`. El CLI de creación no puede hacerlo por
+`internal/modules/migrations/addons_gen.go`. El CLI de creación no puede hacerlo por
 adelantado porque todavía no existían las migraciones.
 
 ## 5. Aplicar la migración
