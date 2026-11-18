@@ -23,18 +23,60 @@ type namedFactory interface {
 
 // Registry contains the module implementations compiled into this executable.
 type Registry struct {
-	factories           map[string]namedFactory
-	backendInitializers map[string]func(BackendRuntime) (any, error)
-	webInitializers     map[string]func(WebRuntime) error
+	factories              map[string]namedFactory
+	backendInitializers    map[string]func(BackendRuntime) (any, error)
+	permissionInitializers map[string]func(*Services) error
+	webInitializers        map[string]func(WebRuntime) error
 }
 
 // NewRegistry creates an empty registry for statically compiled modules.
 func NewRegistry() *Registry {
 	return &Registry{
-		factories:           make(map[string]namedFactory),
-		backendInitializers: make(map[string]func(BackendRuntime) (any, error)),
-		webInitializers:     make(map[string]func(WebRuntime) error),
+		factories:              make(map[string]namedFactory),
+		backendInitializers:    make(map[string]func(BackendRuntime) (any, error)),
+		permissionInitializers: make(map[string]func(*Services) error),
+		webInitializers:        make(map[string]func(WebRuntime) error),
 	}
+}
+
+// RegisterPermissionInitializer adds a module's permission registration hook.
+// Permission hooks run after Identity is initialized, including for compiled
+// modules that are unavailable with the configured database provider.
+func RegisterPermissionInitializer(registry *Registry, name string, initializer func(*Services) error) error {
+	if registry == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return fmt.Errorf("permission initializer name is required")
+	}
+	if initializer == nil {
+		return fmt.Errorf("permission initializer %q has no initializer", name)
+	}
+	if _, exists := registry.permissionInitializers[name]; exists {
+		return fmt.Errorf("permission initializer %q is already registered", name)
+	}
+	registry.permissionInitializers[name] = initializer
+	return nil
+}
+
+// InitializePermissionInitializers invokes registered hooks after backend
+// modules have published their services.
+func (r *Registry) InitializePermissionInitializers(services *Services) error {
+	if r == nil {
+		return fmt.Errorf("module registry is nil")
+	}
+	names := make([]string, 0, len(r.permissionInitializers))
+	for name := range r.permissionInitializers {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		if err := r.permissionInitializers[name](services); err != nil {
+			return fmt.Errorf("initialize permissions for module %q: %w", name, err)
+		}
+	}
+	return nil
 }
 
 // RegisterWebInitializer adds the module-local bootstrap adapter used by the
@@ -179,6 +221,9 @@ func (r *Registry) Subset(manifests []Manifest) (*Registry, error) {
 	for name, initializer := range r.webInitializers {
 		subset.webInitializers[name] = initializer
 	}
+	for name, initializer := range r.permissionInitializers {
+		subset.permissionInitializers[name] = initializer
+	}
 	return subset, nil
 }
 
@@ -229,6 +274,11 @@ func (r *Registry) ValidateBackend(manifests []Manifest) error {
 	for name := range r.backendInitializers {
 		if _, exists := known[name]; !exists {
 			return fmt.Errorf("backend module initializer %q has no matching manifest", name)
+		}
+	}
+	for name := range r.permissionInitializers {
+		if _, exists := known[name]; !exists {
+			return fmt.Errorf("permission initializer %q has no matching manifest", name)
 		}
 	}
 	return nil

@@ -15,6 +15,9 @@ addons/reports/
 ├── config/
 │   ├── module_config.go          # Obligatorio: configuración y constructor
 │   └── backend_module.go         # Obligatorio: adaptador de registro e inicio
+├── initializer/
+│   └── permissions/
+│       └── permissions.go        # Obligatorio: registra view.<nombre> en Identity
 ├── static/                       # Lo crea el CLI; assets opcionales de Web App
 │   ├── assets.json               # Puntos de entrada TS/CSS
 │   ├── src/ts/
@@ -55,9 +58,9 @@ Reglas para este archivo:
 - `name` y `version` son obligatorios.
 - `icon` es opcional; cuando existe, apunta a un archivo dentro de `static/public/`. La Web App lo publica bajo `/static/modules/<nombre>/public/`.
 - `name` debe coincidir con el nombre registrado en la fábrica.
-- `depends` contiene nombres de módulos requeridos, no nombres de servicios o paquetes Go.
+- `depends` contiene nombres de módulos requeridos, no nombres de servicios o paquetes Go. El CLI agrega `identity` porque cada módulo registra sus permisos al inicializarse.
 - `database_providers` declara los proveedores para los que el módulo tiene implementada su persistencia (`mongo` o `postgresql`). Si el módulo no persiste datos propios, omite el campo: se considera compatible con cualquier proveedor y no se excluye del backend. La base de datos global sigue siendo necesaria para guardar el estado del ciclo de vida de los módulos.
-- Declara `identity` si el módulo necesita autenticación o depende funcionalmente de Identity. Si solo necesita infraestructura compartida, no agregues esa dependencia por costumbre.
+- Los módulos creados con el CLI dependen de `identity`: el inicializador generado requiere el servicio de permisos que publica Identity.
 - Un directorio directo de `addons/` sin `manifest.json` hace fallar el descubrimiento.
 
 Los nombres actuales son `identity`, `posts`, `billing`, `catalog` y `ai-tool-calling`. El directorio de AI también se llama `addons/ai-tool-calling/`.
@@ -101,9 +104,17 @@ func NewReportsModule(cfg ModuleConfig) (*Module, error) {
 }
 ```
 
-Este esqueleto no implementa almacenamiento ni rutas. Si Reports no usa Mongo, elimina `DB`; si no requiere autenticación, elimina `Deps` y no agregues `identity` al manifiesto por ese motivo. Compara la implementación completa de [Posts](../addons/posts/config/module_config.go) antes de copiar patrones de Mongo o handlers.
+Este esqueleto no implementa almacenamiento ni rutas. Si Reports no usa Mongo, elimina `DB`; la dependencia `identity` se mantiene para registrar `view.reports`, aunque sus otros handlers no necesiten autenticación. Compara la implementación completa de [Posts](../addons/posts/config/module_config.go) antes de copiar patrones de Mongo o handlers.
 
 Las rutas se registran durante la construcción usando `cfg.APIv1`. Si el módulo necesita autenticación, sus handlers deben recibir `cfg.Deps.AuthApiMdw`, igual que [el handler de Posts](../addons/posts/handler/handler.go). El runtime entrega el mux público cuando el módulo está habilitado y un mux aislado cuando está deshabilitado.
+
+## Registro del permiso de vista
+
+El CLI genera `initializer/permissions/permissions.go` y registra su función como inicializador de permisos. Después de iniciar los módulos backend, el runtime ejecuta esos inicializadores mediante el servicio publicado por Identity. El archivo registra `view.<nombre-del-módulo>` con tipo `VIEW`; por ejemplo, `sales-reports` registra `view.sales-reports`. Identity crea el permiso si aún no existe y lo asigna al rol `ROLE_SYSTEM_ADMIN`, así que el alta es idempotente. El permiso se registra aunque el módulo no se cargue por incompatibilidad con el proveedor de base de datos. Las rutas de UI que genera el CLI requieren autenticación y ese permiso.
+
+El módulo existente Billing aplica el mismo patrón y registra `view.billing` en `addons/billing/initializer/permissions/`.
+
+Si agregas otras rutas de vista, protégelas con `MdwSrvTmpl.RequirePermission` y el permiso `view.<nombre-del-módulo>`.
 
 ## 4. Agregar contratos si otro módulo consume Reports
 

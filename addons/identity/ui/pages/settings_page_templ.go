@@ -24,9 +24,9 @@ func SettingsContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var1 == nil {
+			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section><div class=\"mb-6\"><h1 class=\"text-2xl font-bold tracking-tight text-black\">Settings</h1><p class=\"mt-1 text-sm text-zinc-500\">Welcome to your dashboard.</p></div><div class=\"grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4\"><div class=\"rounded-xl border border-zinc-200 bg-white p-5\"><p class=\"text-sm text-zinc-500\">Users</p><p class=\"mt-2 text-2xl font-bold\">120</p></div><div class=\"rounded-xl border border-zinc-200 bg-white p-5\"><p class=\"text-sm text-zinc-500\">Posts</p><p class=\"mt-2 text-2xl font-bold\">48</p></div></div></section>")

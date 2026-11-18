@@ -95,6 +95,9 @@ func Initialize(cfg Config) (*Modules, error) {
 			return nil, fmt.Errorf("initialize backend module %q: %w", manifest.Name, err)
 		}
 	}
+	if err := registry.InitializePermissionInitializers(services); err != nil {
+		return nil, err
+	}
 	if len(webManifests) > 0 {
 		if cfg.WebMux == nil || cfg.TemplateV1 == nil {
 			return nil, fmt.Errorf("web muxes are required to initialize web modules")

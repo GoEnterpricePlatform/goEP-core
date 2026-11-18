@@ -25,9 +25,9 @@ func CreateModule(args []string) error {
 		flags.PrintDefaults()
 	}
 	summary := flags.String("summary", "", "short description written to the module manifest")
-	database := flags.String("database", "", "proveedor de base de datos: postgresql, mongo, both o none (predeterminado: preguntar)")
-	ui := flags.String("ui", "", "tipo de interfaz: simple o dashboard (predeterminado: preguntar)")
-	uiLayout := flags.String("ui-layout", "", "presentación: sidebar o replace (predeterminado: preguntar)")
+	database := flags.String("database", "", "database provider: postgresql, mongo, both, or none (default: prompt)")
+	ui := flags.String("ui", "", "UI type: simple or dashboard (default: prompt)")
+	uiLayout := flags.String("ui-layout", "", "UI layout: sidebar or replace (default: prompt)")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -100,13 +100,13 @@ func chooseUIType(value string, input io.Reader, output *os.File) (string, error
 		}
 	}
 
-	fmt.Fprintln(output, "¿Qué tipo de interfaz tendrá el módulo?")
-	fmt.Fprintln(output, "  1) Simple: una página")
-	fmt.Fprintln(output, "  2) Dashboard (layout de Identity)")
-	fmt.Fprint(output, "Selecciona [1]: ")
+	fmt.Fprintln(output, "What type of UI will the module have?")
+	fmt.Fprintln(output, "  1) Simple: one page")
+	fmt.Fprintln(output, "  2) Dashboard (Identity layout)")
+	fmt.Fprint(output, "Select [1]: ")
 	line, err := bufio.NewReader(input).ReadString('\n')
 	if err != nil && len(line) == 0 {
-		return "", fmt.Errorf("leer tipo de interfaz: %w", err)
+		return "", fmt.Errorf("read UI type: %w", err)
 	}
 	switch strings.TrimSpace(line) {
 	case "", "1":
@@ -114,7 +114,7 @@ func chooseUIType(value string, input io.Reader, output *os.File) (string, error
 	case "2":
 		return "dashboard", nil
 	default:
-		return "", fmt.Errorf("selección de interfaz no válida %q: elige 1 o 2", strings.TrimSpace(line))
+		return "", fmt.Errorf("invalid UI selection %q: choose 1 or 2", strings.TrimSpace(line))
 	}
 }
 
@@ -133,13 +133,13 @@ func chooseUILayout(value, uiType string, input io.Reader, output *os.File) (str
 	if uiType == "dashboard" {
 		defaultLayout = "sidebar"
 	}
-	fmt.Fprintln(output, "¿Cómo se mostrará la pantalla del módulo?")
-	fmt.Fprintln(output, "  1) Dentro del dashboard con sidebar de Identity")
-	fmt.Fprintln(output, "  2) Reemplazar la pantalla del módulo")
-	fmt.Fprintf(output, "Selecciona [%s]: ", map[string]string{"sidebar": "1", "replace": "2"}[defaultLayout])
+	fmt.Fprintln(output, "How should the module page be displayed?")
+	fmt.Fprintln(output, "  1) Inside the Identity dashboard sidebar")
+	fmt.Fprintln(output, "  2) As a standalone page")
+	fmt.Fprintf(output, "Select [%s]: ", map[string]string{"sidebar": "1", "replace": "2"}[defaultLayout])
 	line, err := bufio.NewReader(input).ReadString('\n')
 	if err != nil && len(line) == 0 {
-		return "", fmt.Errorf("leer presentación de la interfaz: %w", err)
+		return "", fmt.Errorf("read UI layout: %w", err)
 	}
 	switch strings.TrimSpace(line) {
 	case "":
@@ -149,7 +149,7 @@ func chooseUILayout(value, uiType string, input io.Reader, output *os.File) (str
 	case "2", "replace":
 		return "replace", nil
 	default:
-		return "", fmt.Errorf("selección de presentación no válida %q: elige 1 o 2", strings.TrimSpace(line))
+		return "", fmt.Errorf("invalid UI layout selection %q: choose 1 or 2", strings.TrimSpace(line))
 	}
 }
 
@@ -164,11 +164,11 @@ func chooseDatabaseProvider(value string, input io.Reader, output *os.File) (str
 		}
 	}
 
-	fmt.Fprintln(output, "¿Qué base de datos usará el módulo?")
-	fmt.Fprintln(output, "  1) PostgreSQL (default)")
+	fmt.Fprintln(output, "Which database provider will the module use?")
+	fmt.Fprintln(output, "  1) PostgreSQL")
 	fmt.Fprintln(output, "  2) MongoDB")
 	fmt.Fprintln(output, "  3) Both")
-	fmt.Fprintln(output, "  4) none")
+	fmt.Fprintln(output, "  4) None")
 	fmt.Fprint(output, "Select [1]: ")
 	line, err := bufio.NewReader(input).ReadString('\n')
 	if err != nil && len(line) == 0 {
@@ -205,15 +205,16 @@ func createModule(root, name, summary, provider, uiType, uiLayout string) (strin
 
 	files := map[string]string{
 		"manifest.json": manifestTemplate(name, summary, provider, uiType, uiLayout),
-		filepath.Join("config", "module_config.go"):       moduleConfigTemplateWithUI(name),
-		filepath.Join("config", "backend_module.go"):      backendModuleTemplate(name),
-		filepath.Join("domain", "domain.go"):              domainTemplate(name),
-		filepath.Join("static", "assets.json"):            assetsManifestTemplate(),
-		filepath.Join("static", "src", "ts", ".gitkeep"):  "",
-		filepath.Join("static", "src", "css", ".gitkeep"): "",
-		filepath.Join("static", "public", ".gitkeep"):     "",
-		filepath.Join("ui", "handler", "handler.go"):      uiHandlerTemplate(name, uiLayout),
-		filepath.Join("ui", "pages", "page.templ"):        uiPageTemplate(name, uiType),
+		filepath.Join("config", "module_config.go"):                   moduleConfigTemplateWithUI(name),
+		filepath.Join("config", "backend_module.go"):                  backendModuleTemplate(name),
+		filepath.Join("initializer", "permissions", "permissions.go"): permissionInitializerTemplate(name),
+		filepath.Join("domain", "domain.go"):                          domainTemplate(name),
+		filepath.Join("static", "assets.json"):                        assetsManifestTemplate(),
+		filepath.Join("static", "src", "ts", ".gitkeep"):              "",
+		filepath.Join("static", "src", "css", ".gitkeep"):             "",
+		filepath.Join("static", "public", ".gitkeep"):                 "",
+		filepath.Join("ui", "handler", "handler.go"):                  uiHandlerTemplate(name, uiLayout),
+		filepath.Join("ui", "pages", "page.templ"):                    uiPageTemplate(name, uiType),
 	}
 	if provider == "postgresql" || provider == "both" {
 		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.up.sql")] = initialUpMigrationTemplate(name)
@@ -237,9 +238,64 @@ func createModule(root, name, summary, provider, uiType, uiLayout string) (strin
 	}
 
 	if err := os.Rename(tempDir, moduleDir); err != nil {
-		return "", fmt.Errorf("install module directory: %w", err)
+		if copyErr := copyModuleTree(tempDir, moduleDir); copyErr != nil {
+			return "", fmt.Errorf("install module directory: rename failed: %v; copy fallback failed: %w", err, copyErr)
+		}
 	}
 	return moduleDir, nil
+}
+
+func copyModuleTree(source, destination string) error {
+	if err := os.Mkdir(destination, 0o755); err != nil {
+		return fmt.Errorf("create destination directory: %w", err)
+	}
+	if err := filepath.WalkDir(source, func(sourcePath string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relativePath, err := filepath.Rel(source, sourcePath)
+		if err != nil {
+			return err
+		}
+		if relativePath == "." {
+			return nil
+		}
+		destinationPath := filepath.Join(destination, relativePath)
+		if entry.IsDir() {
+			return os.MkdirAll(destinationPath, 0o755)
+		}
+		if !entry.Type().IsRegular() {
+			return fmt.Errorf("unsupported file type at %s", sourcePath)
+		}
+		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
+			return err
+		}
+		input, err := os.Open(sourcePath)
+		if err != nil {
+			return err
+		}
+		output, err := os.OpenFile(destinationPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o644)
+		if err != nil {
+			input.Close()
+			return err
+		}
+		_, copyErr := io.Copy(output, input)
+		inputCloseErr := input.Close()
+		outputCloseErr := output.Close()
+		if copyErr != nil {
+			return copyErr
+		}
+		if inputCloseErr != nil {
+			return inputCloseErr
+		}
+		return outputCloseErr
+	}); err != nil {
+		if cleanupErr := os.RemoveAll(destination); cleanupErr != nil {
+			return fmt.Errorf("copy module files: %w (remove incomplete destination: %v)", err, cleanupErr)
+		}
+		return fmt.Errorf("copy module files: %w", err)
+	}
+	return nil
 }
 
 func findRepositoryRoot() (string, error) {
@@ -287,7 +343,7 @@ func manifestTemplate(name, summary, provider, uiType, uiLayout string) string {
   "version": "1.0.0",
   "summary": %q,
   "ui": {"style": %q, "layout": %q},
-  "depends": []%s
+  "depends": ["identity"]%s
 }
 `, name, summary, uiType, uiLayout, providers)
 }
@@ -301,6 +357,7 @@ import (
 
 	appConfig %q
 	uiHandler %q
+	frontMiddleware "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -312,6 +369,7 @@ type ModuleConfig struct {
 	TemplateV1 *http.ServeMux
 	DB         *mongo.Database
 	PGConn     *pgx.Conn
+	MdwSrvTmpl *frontMiddleware.MdwSrvTmpl
 }
 
 type Module struct {
@@ -319,7 +377,7 @@ type Module struct {
 }
 
 func New%sModule(cfg ModuleConfig) (*Module, error) {
-	ui := uiHandler.NewHandler()
+	ui := uiHandler.NewHandler(cfg.MdwSrvTmpl)
 	ui.RegisterRoutes(cfg.TemplateV1)
 	return &Module{UI: ui}, nil
 }
@@ -330,7 +388,14 @@ func backendModuleTemplate(name string) string {
 	identifier := goIdentifier(name)
 	return fmt.Sprintf(`package config
 
-import "github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+import (
+	authPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/auth/port"
+	cookiePort "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
+	tokenPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/%s/initializer/permissions"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
+)
 
 func RegisterBackendModule(registry *modules.Registry) error {
 	if err := modules.RegisterFactory(registry, modules.Factory[ModuleConfig, *Module]{
@@ -339,8 +404,23 @@ func RegisterBackendModule(registry *modules.Registry) error {
 	}); err != nil {
 		return err
 	}
+	if err := modules.RegisterPermissionInitializer(registry, %q, permissions.Register); err != nil {
+		return err
+	}
 
 	return modules.RegisterBackendInitializer(registry, %q, func(runtime modules.BackendRuntime) (any, error) {
+		tokenSrv, err := modules.RequireService[tokenPort.TokenSrv](runtime.Services)
+		if err != nil {
+			return nil, err
+		}
+		authSrv, err := modules.RequireService[authPort.AuthSrv](runtime.Services)
+		if err != nil {
+			return nil, err
+		}
+		cookieSrv, err := modules.RequireService[cookiePort.CookieSrv](runtime.Services)
+		if err != nil {
+			return nil, err
+		}
 		return New%sModule(ModuleConfig{
 			AppEnvs:    runtime.AppEnvs,
 			AppClients: runtime.AppClients,
@@ -348,10 +428,32 @@ func RegisterBackendModule(registry *modules.Registry) error {
 			TemplateV1: runtime.TemplateV1,
 			DB:         runtime.DB,
 			PGConn:     runtime.PGConn,
+			MdwSrvTmpl: middlewareServiceTmpl.NewMdwSrvTmpl(tokenSrv, authSrv, cookieSrv),
 		})
 	})
 }
-`, name, identifier, name, identifier)
+`, name, name, identifier, name, name, identifier)
+}
+
+func permissionInitializerTemplate(name string) string {
+	return fmt.Sprintf(`package permissions
+
+import (
+	"context"
+
+	permissionDomain "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/domain"
+	permissionPort "github.com/GoEnterpricePlatform/goEP-core/addons/identity/permissions/port"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
+)
+
+func Register(services *modules.Services) error {
+	permissionService, err := modules.RequireService[permissionPort.PermissionSrv](services)
+	if err != nil {
+		return err
+	}
+	return permissionService.RegisterPermission(context.Background(), permissionDomain.PermissionName(%q), permissionDomain.PermissionTypeView)
+}
+`, "view."+name)
 }
 
 func uiHandlerTemplate(name, uiLayout string) string {
@@ -364,23 +466,26 @@ import (
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/layouts"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/%s/ui/pages"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
+	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
-type Handler struct{}
+type Handler struct {
+	MdwSrvTmpl *middlewares.MdwSrvTmpl
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(mdwSrvTmpl *middlewares.MdwSrvTmpl) *Handler {
+	return &Handler{MdwSrvTmpl: mdwSrvTmpl}
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	if mux == nil {
 		return
 	}
-	mux.HandleFunc("GET /goep-admin/modules/%s", h.render)
+	mux.Handle("GET /goep-admin/modules/%s", h.MdwSrvTmpl.Authenticate(h.MdwSrvTmpl.RequirePermission(%q, http.HandlerFunc(h.render))))
 	mux.HandleFunc("GET /%s", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/v1/%s/", http.StatusPermanentRedirect)
 	})
-	mux.HandleFunc("GET /%s/", h.render)
+	mux.Handle("GET /%s/", h.MdwSrvTmpl.Authenticate(h.MdwSrvTmpl.RequirePermission(%q, http.HandlerFunc(h.render))))
 }
 
 func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
@@ -394,7 +499,7 @@ func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
-`, name, name, name, name, name, identifier, uiLayout, name, identifier)
+`, name, name, "view."+name, name, name, name, "view."+name, identifier, uiLayout, name, identifier)
 }
 
 func uiPageTemplate(name, uiType string) string {
