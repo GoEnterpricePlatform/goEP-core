@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"go/format"
@@ -18,11 +19,12 @@ var validModuleName = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
 func CreateModule(args []string) error {
 	flags := flag.NewFlagSet("create-module", flag.ContinueOnError)
 	flags.Usage = func() {
-		fmt.Fprintln(flags.Output(), "Usage: go run ./cmd/goep create-module [--summary \"description\"] <module-name>")
+		fmt.Fprintln(flags.Output(), "Usage: go run ./cmd/goep create-module [--summary \"description\"] [--database postgresql|mongo|both|none] <module-name>")
 		fmt.Fprintln(flags.Output(), "Example: go run ./cmd/goep create-module --summary \"Sales reports\" sales-reports")
 		flags.PrintDefaults()
 	}
 	summary := flags.String("summary", "", "short description written to the module manifest")
+	database := flags.String("database", "", "proveedor de base de datos: postgresql, mongo, both o none (predeterminado: preguntar)")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -34,6 +36,10 @@ func CreateModule(args []string) error {
 	if !validModuleName.MatchString(name) {
 		return fmt.Errorf("invalid module name %q: use lowercase letters and numbers separated by single hyphens", name)
 	}
+	provider, err := chooseDatabaseProvider(*database, os.Stdin, os.Stdout)
+	if err != nil {
+		return err
+	}
 
 	root, err := findRepositoryRoot()
 	if err != nil {
@@ -43,7 +49,7 @@ func CreateModule(args []string) error {
 		*summary = strings.ReplaceAll(name, "-", " ") + " module"
 	}
 
-	moduleDir, err := createModule(root, name, *summary)
+	moduleDir, err := createModule(root, name, *summary, provider)
 	if err != nil {
 		return fmt.Errorf("create module: %w", err)
 	}
@@ -61,7 +67,42 @@ func CreateModule(args []string) error {
 	return nil
 }
 
-func createModule(root, name, summary string) (string, error) {
+func chooseDatabaseProvider(value string, input *os.File, output *os.File) (string, error) {
+	value = strings.ToLower(strings.TrimSpace(value))
+	if value != "" {
+		switch value {
+		case "postgresql", "mongo", "both", "none":
+			return value, nil
+		default:
+			return "", fmt.Errorf("unsupported database provider %q: choose postgresql, mongo, both, or none", value)
+		}
+	}
+
+	fmt.Fprintln(output, "¿Qué base de datos usará el módulo?")
+	fmt.Fprintln(output, "  1) PostgreSQL (default)")
+	fmt.Fprintln(output, "  2) MongoDB")
+	fmt.Fprintln(output, "  3) Both")
+	fmt.Fprintln(output, "  4) none")
+	fmt.Fprint(output, "Select [1]: ")
+	line, err := bufio.NewReader(input).ReadString('\n')
+	if err != nil && len(line) == 0 {
+		return "", fmt.Errorf("read database provider: %w", err)
+	}
+	switch strings.TrimSpace(line) {
+	case "", "1":
+		return "postgresql", nil
+	case "2":
+		return "mongo", nil
+	case "3":
+		return "both", nil
+	case "4":
+		return "none", nil
+	default:
+		return "", fmt.Errorf("invalid database selection %q: choose 1, 2, 3, or 4", strings.TrimSpace(line))
+	}
+}
+
+func createModule(root, name, summary, provider string) (string, error) {
 	addonsDir := filepath.Join(root, "addons")
 	moduleDir := filepath.Join(addonsDir, name)
 	if _, err := os.Stat(moduleDir); err == nil {
@@ -78,7 +119,7 @@ func createModule(root, name, summary string) (string, error) {
 
 	identifier := goIdentifier(name)
 	files := map[string]string{
-		"manifest.json": manifestTemplate(name, summary),
+		"manifest.json": manifestTemplate(name, summary, provider),
 		filepath.Join("config", "module_config.go"):       moduleConfigTemplate(identifier),
 		filepath.Join("config", "backend_module.go"):      backendModuleTemplate(name),
 		filepath.Join("domain", "domain.go"):              domainTemplate(name),
@@ -86,6 +127,10 @@ func createModule(root, name, summary string) (string, error) {
 		filepath.Join("static", "src", "ts", ".gitkeep"):  "",
 		filepath.Join("static", "src", "css", ".gitkeep"): "",
 		filepath.Join("static", "public", ".gitkeep"):     "",
+	}
+	if provider == "postgresql" || provider == "both" {
+		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.up.sql")] = initialUpMigrationTemplate(name)
+		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.down.sql")] = initialDownMigrationTemplate(name)
 	}
 	for relativePath, contents := range files {
 		path := filepath.Join(tempDir, relativePath)
@@ -137,14 +182,26 @@ func goIdentifier(name string) string {
 	return strings.Join(parts, "")
 }
 
-func manifestTemplate(name, summary string) string {
+func manifestTemplate(name, summary, provider string) string {
+	providers := ""
+	switch provider {
+	case "postgresql":
+		providers = `,
+  "database_providers": ["postgresql"]`
+	case "mongo":
+		providers = `,
+  "database_providers": ["mongo"]`
+	case "both":
+		providers = `,
+  "database_providers": ["postgresql", "mongo"]`
+	}
 	return fmt.Sprintf(`{
   "name": %q,
   "version": "1.0.0",
   "summary": %q,
-  "depends": []
+  "depends": []%s
 }
-`, name, summary)
+`, name, summary, providers)
 }
 
 func moduleConfigTemplate(identifier string) string {
@@ -154,6 +211,7 @@ import (
 	"net/http"
 
 	appConfig %q
+	"github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -162,6 +220,7 @@ type ModuleConfig struct {
 	AppClients *appConfig.AppClients
 	APIv1      *http.ServeMux
 	DB         *mongo.Database
+	PGConn     *pgx.Conn
 }
 
 type Module struct{}
@@ -192,6 +251,7 @@ func RegisterBackendModule(registry *modules.Registry) error {
 			AppClients: runtime.AppClients,
 			APIv1:      runtime.APIv1,
 			DB:         runtime.DB,
+			PGConn:     runtime.PGConn,
 		})
 	})
 }
@@ -211,4 +271,12 @@ func assetsManifestTemplate() string {
   "styles": []
 }
 `
+}
+
+func initialUpMigrationTemplate(name string) string {
+	return fmt.Sprintf("-- Initial PostgreSQL migration for the %s module.\n-- Add this module's initial tables and indexes below.\n", strings.ReplaceAll(name, "-", " "))
+}
+
+func initialDownMigrationTemplate(name string) string {
+	return fmt.Sprintf("-- Roll back the initial PostgreSQL migration for the %s module.\n-- Add DROP statements for objects created by 000001_initial.up.sql below.\n", strings.ReplaceAll(name, "-", " "))
 }
