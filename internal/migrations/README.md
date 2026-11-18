@@ -23,16 +23,18 @@ la tabla no se crea desde el código de arranque.
 
 ## Al crear un módulo
 
-`go run ./cmd/goep create-module <nombre>` crea el esqueleto y ejecuta
-`go generate ./internal/modules/backend`. Si el módulo todavía no tiene
-migraciones, no se agrega al registro de migraciones y no hace falta hacer nada
-más.
+`go run ./cmd/goep create-module <nombre>` pregunta qué base de datos usará el
+módulo (PostgreSQL es la opción predeterminada), crea el esqueleto y ejecuta
+`go generate ./internal/modules/backend`. Al elegir PostgreSQL, también crea
+`database/postgresql/migrations/000001_initial.up.sql` y su archivo `.down.sql`
+de base, y el addon se agrega al registro de migraciones.
 
 Cuando agregues migraciones PostgreSQL al módulo:
 
 1. Declara `postgresql` en `database_providers` del manifiesto.
-2. Agrega los archivos numerados `.up.sql` y `.down.sql` en
-   `addons/<nombre>/database/postgresql/migrations/`.
+2. Completa `000001_initial.up.sql` y `000001_initial.down.sql` en
+   `addons/<nombre>/database/postgresql/migrations/`. Para cambios posteriores,
+   agrega nuevos archivos numerados `.up.sql` y `.down.sql`.
 3. Regenera los embeds y el registro:
 
    ```sh

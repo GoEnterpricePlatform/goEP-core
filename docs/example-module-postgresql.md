@@ -10,12 +10,25 @@ Desde la raíz del repositorio:
 go run ./cmd/goep create-module inventario
 ```
 
-El CLI crea `addons/inventario/` y regenera los registros Go. Todavía no hay
-migraciones para este módulo.
+El CLI pregunta qué base de datos usará el módulo. PostgreSQL es la primera
+opción y la predeterminada si presionas Enter. También puedes elegir MongoDB,
+ambas bases o ninguna. Para evitar la pregunta, indica `--database`, por
+ejemplo `--database postgresql`.
+
+Al elegir PostgreSQL (o ambas bases), el CLI crea esta base de migración:
+
+```text
+addons/inventario/database/postgresql/migrations/
+├── 000001_initial.up.sql
+└── 000001_initial.down.sql
+```
+
+Los archivos incluyen comentarios para completar con las tablas iniciales y
+su reversión. El CLI regenera los embeds y registros Go al terminar.
 
 ## 2. Declarar PostgreSQL
 
-En `addons/inventario/manifest.json`, agrega el proveedor PostgreSQL:
+El manifiesto ya declara PostgreSQL cuando se selecciona esa opción:
 
 ```json
 {
@@ -29,10 +42,9 @@ En `addons/inventario/manifest.json`, agrega el proveedor PostgreSQL:
 
 Si el módulo también usa MongoDB, incluye ambos proveedores en la lista.
 
-## 3. Crear la migración inicial
+## 3. Completar la migración inicial
 
-Crea el directorio `addons/inventario/database/postgresql/migrations/` y el
-archivo `000001_create_products.up.sql`:
+Edita `000001_initial.up.sql` y agrega la tabla de productos:
 
 ```sql
 CREATE TABLE tb_inventory_product (
@@ -43,8 +55,7 @@ CREATE TABLE tb_inventory_product (
 );
 ```
 
-En el archivo correspondiente `000001_create_products.down.sql`, escribe la
-reversión:
+En `000001_initial.down.sql`, escribe la reversión:
 
 ```sql
 DROP TABLE IF EXISTS tb_inventory_product;
