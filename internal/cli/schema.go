@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 )
 
 type schemaFile struct {
@@ -68,14 +69,28 @@ func AssembleSchema() error {
 		return fmt.Errorf("write dev_reset.sql: %w", err)
 	}
 
-	managedSchemaPath := filepath.Join("internal", "modules", "backend", "managed", "postgresql", "schema.sql")
-	managedSchema, err := os.ReadFile(managedSchemaPath)
+	managedMigrationsDir := filepath.Join("internal", "modules", "backend", "managed", "migrations")
+	managedMigrations, err := filepath.Glob(filepath.Join(managedMigrationsDir, "*.up.sql"))
 	if err != nil {
-		return fmt.Errorf("read managed lifecycle schema: %w", err)
+		return fmt.Errorf("list managed lifecycle migrations: %w", err)
 	}
-	managedSchema = createTable.ReplaceAll(managedSchema, []byte("CREATE TABLE IF NOT EXISTS $1 ("))
-	managedBundle := append([]byte("-- MANAGED FLAVOR ONLY. Not part of schema.sql or dev_reset.sql.\n\n"), managedSchema...)
-	if err := os.WriteFile(filepath.Join(outputDir, "managed_schema.sql"), managedBundle, 0o644); err != nil {
+	if len(managedMigrations) == 0 {
+		return fmt.Errorf("no managed lifecycle up migrations found in %s", managedMigrationsDir)
+	}
+	sort.Strings(managedMigrations)
+	var managedBundle bytes.Buffer
+	managedBundle.WriteString("-- MANAGED FLAVOR ONLY. Generated from managed up migrations.\n\n")
+	for _, migrationPath := range managedMigrations {
+		contents, err := os.ReadFile(migrationPath)
+		if err != nil {
+			return fmt.Errorf("read managed lifecycle migration %s: %w", migrationPath, err)
+		}
+		fmt.Fprintf(&managedBundle, "-- Source: %s\n", filepath.ToSlash(migrationPath))
+		managedBundle.Write(bytes.TrimSpace(contents))
+		managedBundle.WriteString("\n\n")
+	}
+	managedBundleBytes := append(bytes.TrimRight(managedBundle.Bytes(), "\n"), '\n')
+	if err := os.WriteFile(filepath.Join(outputDir, "managed_schema.sql"), managedBundleBytes, 0o644); err != nil {
 		return fmt.Errorf("write managed_schema.sql: %w", err)
 	}
 	return nil

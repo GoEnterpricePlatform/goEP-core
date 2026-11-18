@@ -23,20 +23,14 @@ func NewPostgresStore(pool *pgxpool.Pool) *PostgresStore {
 	return &PostgresStore{pool: pool}
 }
 
-// CreateIndexes creates lifecycle storage when the managed flavor is selected.
+// CreateIndexes verifies lifecycle storage was created by the managed migration.
 func (s *PostgresStore) CreateIndexes(ctx context.Context) error {
-	const query = `
-		CREATE TABLE IF NOT EXISTS goep_core_modules (
-			module       TEXT PRIMARY KEY,
-			version      TEXT NOT NULL,
-			installed    BOOLEAN NOT NULL DEFAULT FALSE,
-			enabled      BOOLEAN NOT NULL DEFAULT FALSE,
-			installed_at TIMESTAMPTZ,
-			updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-		)
-	`
-	if _, err := s.pool.Exec(ctx, query); err != nil {
-		return fmt.Errorf("create module lifecycle storage: %w", err)
+	var exists bool
+	if err := s.pool.QueryRow(ctx, `SELECT to_regclass($1) IS NOT NULL`, TableName).Scan(&exists); err != nil {
+		return fmt.Errorf("check module lifecycle storage: %w", err)
+	}
+	if !exists {
+		return fmt.Errorf("module lifecycle table %q does not exist; run make migrate-up", TableName)
 	}
 	return nil
 }
