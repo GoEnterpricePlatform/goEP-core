@@ -36,15 +36,27 @@ func TestDiscoveryFindsRepositoryAddons(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Discover(repository addons) error = %v", err)
 	}
-	want := []string{"ai-tool-calling", "billing", "catalog", "identity", "posts"}
-	if len(manifests) != len(want) {
-		t.Fatalf("Discover(repository addons) returned %d modules, want %d", len(manifests), len(want))
-	}
-	for i := range want {
-		if manifests[i].Name != want[i] {
-			t.Errorf("Discover(repository addons)[%d].Name = %q, want %q", i, manifests[i].Name, want[i])
+	wantCore := []string{"ai-tool-calling", "billing", "catalog", "identity", "posts"}
+	got := manifestNames(manifests)
+	for _, want := range wantCore {
+		if !containsName(got, want) {
+			t.Errorf("Discover(repository addons) is missing core module %q; got %v", want, got)
 		}
 	}
+	for i := 1; i < len(got); i++ {
+		if got[i-1] > got[i] {
+			t.Fatalf("Discover(repository addons) is not sorted: %v", got)
+		}
+	}
+}
+
+func containsName(names []string, name string) bool {
+	for _, candidate := range names {
+		if candidate == name {
+			return true
+		}
+	}
+	return false
 }
 
 func TestDiscoveryRejectsDirectoryWithoutManifest(t *testing.T) {

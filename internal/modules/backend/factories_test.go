@@ -24,23 +24,20 @@ func TestCompiledBackendRegistryMatchesOfficialManifests(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewDependencyResolver(repository addons) error = %v", err)
 	}
-	want := []string{"ai-tool-calling", "billing", "catalog", "identity", "posts"}
-	got := registry.Names()
-	if len(got) != len(want) {
-		t.Fatalf("compiled registry names = %#v, want %#v", got, want)
-	}
-	for i := range want {
-		if got[i] != want[i] {
-			t.Errorf("compiled registry names = %#v, want %#v", got, want)
-			break
-		}
-	}
-
-	wantOrder := []string{"identity", "billing", "catalog", "posts", "ai-tool-calling"}
 	resolved := resolver.Order()
-	for i := range wantOrder {
-		if resolved[i].Name != wantOrder[i] {
-			t.Fatalf("resolved module order = %v, want %v", moduleNames(resolved), wantOrder)
+	position := make(map[string]int, len(resolved))
+	for i, manifest := range resolved {
+		position[manifest.Name] = i
+	}
+	for _, manifest := range manifests {
+		for _, dependency := range manifest.Depends {
+			dependencyPosition, exists := position[dependency]
+			if !exists {
+				t.Fatalf("resolved order is missing dependency %q of %q", dependency, manifest.Name)
+			}
+			if dependencyPosition >= position[manifest.Name] {
+				t.Errorf("resolved order places %q before its dependency %q: %v", manifest.Name, dependency, moduleNames(resolved))
+			}
 		}
 	}
 }

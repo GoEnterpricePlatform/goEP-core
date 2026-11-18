@@ -24,7 +24,9 @@ la tabla no se crea desde el código de arranque.
 ## Al crear un módulo
 
 `go run ./cmd/goep create-module <nombre>` pregunta qué base de datos usará el
-módulo (PostgreSQL es la opción predeterminada), crea el esqueleto y ejecuta
+módulo (PostgreSQL es la opción predeterminada), si la UI será simple o un
+dashboard, y si se mostrará dentro del sidebar de Identity o reemplazará la
+página del módulo. Crea el esqueleto, genera las plantillas Templ y ejecuta
 `go generate ./internal/modules/backend`. Al elegir PostgreSQL, también crea
 `database/postgresql/migrations/000001_initial.up.sql` y su archivo `.down.sql`
 de base, y el addon se agrega al registro de migraciones.

@@ -83,7 +83,7 @@ Para un addon:
    migraciones después, vuelve a ejecutarlo.
 
 4. Revisa `addons/<nombre>/database/postgresql/migrations/migrations_gen.go` y
-   `internal/migrations/addons_gen.go`; son archivos generados y no se editan
+   `internal/modules/migrations/addons_gen.go`; son archivos generados y no se editan
    manualmente.
 5. Aplica las migraciones a la base deseada:
 

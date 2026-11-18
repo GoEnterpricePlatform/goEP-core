@@ -12,13 +12,20 @@ import (
 // Manifest describes a GoEP module independently from its Go implementation.
 // An omitted Type is treated as "backend" for existing addon manifests.
 type Manifest struct {
-	Type              string   `json:"type,omitempty"`
-	Name              string   `json:"name"`
-	Version           string   `json:"version"`
-	Summary           string   `json:"summary"`
-	Icon              string   `json:"icon,omitempty"`
-	Depends           []string `json:"depends"`
-	DatabaseProviders []string `json:"database_providers,omitempty"`
+	Type              string      `json:"type,omitempty"`
+	Name              string      `json:"name"`
+	Version           string      `json:"version"`
+	Summary           string      `json:"summary"`
+	Icon              string      `json:"icon,omitempty"`
+	UI                *UIMetadata `json:"ui,omitempty"`
+	Depends           []string    `json:"depends"`
+	DatabaseProviders []string    `json:"database_providers,omitempty"`
+}
+
+// UIMetadata describes the generated UI scaffold and the shell used to render it.
+type UIMetadata struct {
+	Style  string `json:"style"`
+	Layout string `json:"layout"`
 }
 
 // SupportsDatabase reports whether the module declares support for a database
@@ -74,6 +81,14 @@ func (m Manifest) Validate() error {
 		cleanIcon := path.Clean(m.Icon)
 		if strings.Contains(m.Icon, `\`) || cleanIcon != m.Icon || !strings.HasPrefix(cleanIcon, "static/public/") {
 			return fmt.Errorf("module manifest %q: icon must be a clean path inside static/public/", m.Name)
+		}
+	}
+	if m.UI != nil {
+		if m.UI.Style != "simple" && m.UI.Style != "dashboard" {
+			return fmt.Errorf("module manifest %q: ui.style must be \"simple\" or \"dashboard\"", m.Name)
+		}
+		if m.UI.Layout != "sidebar" && m.UI.Layout != "replace" {
+			return fmt.Errorf("module manifest %q: ui.layout must be \"sidebar\" or \"replace\"", m.Name)
 		}
 	}
 
