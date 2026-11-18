@@ -2,13 +2,9 @@
 package backend
 
 import (
-	module0 "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/config"
-	module1 "github.com/GoEnterpricePlatform/goEP-core/addons/billing/config"
-	module2 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
-	module3 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
-	module4 "github.com/GoEnterpricePlatform/goEP-core/addons/invoices/config"
-	module5 "github.com/GoEnterpricePlatform/goEP-core/addons/posts/config"
-	module6 "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/config"
+	module0 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
+	module1 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
+	module2 "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 )
 
@@ -21,19 +17,7 @@ func NewCompiledRegistry() (*modules.Registry, error) {
 	if err := module1.RegisterBackendModule(registry); err != nil {
 		return nil, err
 	}
-	if err := module2.RegisterBackendModule(registry); err != nil {
-		return nil, err
-	}
-	if err := module3.RegisterBackendModule(registry); err != nil {
-		return nil, err
-	}
-	if err := module4.RegisterBackendModule(registry); err != nil {
-		return nil, err
-	}
-	if err := module5.RegisterBackendModule(registry); err != nil {
-		return nil, err
-	}
-	if err := module6.RegisterWebModule(registry); err != nil {
+	if err := module2.RegisterWebModule(registry); err != nil {
 		return nil, err
 	}
 	return registry, nil

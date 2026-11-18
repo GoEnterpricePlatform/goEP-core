@@ -5,7 +5,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/pages"
 	moduleRegistry "github.com/GoEnterpricePlatform/goEP-core/internal/modules"
@@ -13,14 +12,12 @@ import (
 )
 
 type Handler struct {
-	PostSrv          port.PostSrv
 	MdwSrvTmpl       *middlewares.MdwSrvTmpl
 	AvailableModules []moduleRegistry.Manifest
 }
 
-func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, postSrv port.PostSrv, mdwSrvtmpl *middlewares.MdwSrvTmpl, availableModules []moduleRegistry.Manifest) *Handler {
+func NewSrcHandler(mux *http.ServeMux, templateV1 *http.ServeMux, mdwSrvtmpl *middlewares.MdwSrvTmpl, availableModules []moduleRegistry.Manifest) *Handler {
 	h := &Handler{
-		PostSrv:          postSrv,
 		MdwSrvTmpl:       mdwSrvtmpl,
 		AvailableModules: availableModules,
 	}

@@ -20,14 +20,14 @@ var validModuleName = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
 func CreateModule(args []string) error {
 	flags := flag.NewFlagSet("create-module", flag.ContinueOnError)
 	flags.Usage = func() {
-		fmt.Fprintln(flags.Output(), "Usage: go run ./cmd/goep create-module [--summary \"description\"] [--database postgresql|mongo|both|none] [--ui simple|dashboard] [--ui-layout sidebar|replace] <module-name>")
+		fmt.Fprintln(flags.Output(), "Usage: go run ./cmd/goep create-module [--summary \"description\"] [--database postgresql|mongo|both|none] [--ui simple|dashboard] [--ui-layout topbar|replace] <module-name>")
 		fmt.Fprintln(flags.Output(), "Example: go run ./cmd/goep create-module --summary \"Sales reports\" sales-reports")
 		flags.PrintDefaults()
 	}
 	summary := flags.String("summary", "", "short description written to the module manifest")
 	database := flags.String("database", "", "database provider: postgresql, mongo, both, or none (default: prompt)")
 	ui := flags.String("ui", "", "UI type: simple or dashboard (default: prompt)")
-	uiLayout := flags.String("ui-layout", "", "UI layout: sidebar or replace (default: prompt)")
+	uiLayout := flags.String("ui-layout", "", "Show the GOEP CORE top bar: topbar or replace (default: prompt)")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func CreateModule(args []string) error {
 	if err != nil {
 		return err
 	}
-	uiPresentation, err := chooseUILayout(*uiLayout, uiType, input, os.Stdout)
+	uiPresentation, err := chooseUILayout(*uiLayout, input, os.Stdout)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func chooseUIType(value string, input io.Reader, output *os.File) (string, error
 
 	fmt.Fprintln(output, "What type of UI will the module have?")
 	fmt.Fprintln(output, "  1) Simple: one page")
-	fmt.Fprintln(output, "  2) Dashboard (Identity layout)")
+	fmt.Fprintln(output, "  2) Dashboard (GoEP sidebar layout)")
 	fmt.Fprint(output, "Select [1]: ")
 	line, err := bufio.NewReader(input).ReadString('\n')
 	if err != nil && len(line) == 0 {
@@ -118,25 +118,24 @@ func chooseUIType(value string, input io.Reader, output *os.File) (string, error
 	}
 }
 
-func chooseUILayout(value, uiType string, input io.Reader, output *os.File) (string, error) {
+func chooseUILayout(value string, input io.Reader, output *os.File) (string, error) {
 	value = strings.ToLower(strings.TrimSpace(value))
 	if value != "" {
 		switch value {
-		case "sidebar", "replace":
+		case "sidebar": // Keep accepting values from the previous CLI prompt.
+			return "replace", nil
+		case "topbar", "replace":
 			return value, nil
 		default:
-			return "", fmt.Errorf("unsupported UI layout %q: choose sidebar or replace", value)
+			return "", fmt.Errorf("unsupported UI layout %q: choose topbar or replace", value)
 		}
 	}
 
 	defaultLayout := "replace"
-	if uiType == "dashboard" {
-		defaultLayout = "sidebar"
-	}
-	fmt.Fprintln(output, "How should the module page be displayed?")
-	fmt.Fprintln(output, "  1) Inside the Identity dashboard sidebar")
-	fmt.Fprintln(output, "  2) As a standalone page")
-	fmt.Fprintf(output, "Select [%s]: ", map[string]string{"sidebar": "1", "replace": "2"}[defaultLayout])
+	fmt.Fprintln(output, "Show the GOEP CORE top bar?")
+	fmt.Fprintln(output, "  1) Yes, include the top bar")
+	fmt.Fprintln(output, "  2) No, hide the top bar")
+	fmt.Fprint(output, "Select [2]: ")
 	line, err := bufio.NewReader(input).ReadString('\n')
 	if err != nil && len(line) == 0 {
 		return "", fmt.Errorf("read UI layout: %w", err)
@@ -144,8 +143,8 @@ func chooseUILayout(value, uiType string, input io.Reader, output *os.File) (str
 	switch strings.TrimSpace(line) {
 	case "":
 		return defaultLayout, nil
-	case "1", "sidebar":
-		return "sidebar", nil
+	case "1", "topbar":
+		return "topbar", nil
 	case "2", "replace":
 		return "replace", nil
 	default:
@@ -213,7 +212,7 @@ func createModule(root, name, summary, provider, uiType, uiLayout string) (strin
 		filepath.Join("static", "src", "ts", ".gitkeep"):              "",
 		filepath.Join("static", "src", "css", ".gitkeep"):             "",
 		filepath.Join("static", "public", ".gitkeep"):                 "",
-		filepath.Join("ui", "handler", "handler.go"):                  uiHandlerTemplate(name, uiLayout),
+		filepath.Join("ui", "handler", "handler.go"):                  uiHandlerTemplate(name, uiType, uiLayout),
 		filepath.Join("ui", "pages", "page.templ"):                    uiPageTemplate(name, uiType),
 	}
 	if provider == "postgresql" || provider == "both" {
@@ -456,7 +455,7 @@ func Register(services *modules.Services) error {
 `, "view."+name)
 }
 
-func uiHandlerTemplate(name, uiLayout string) string {
+func uiHandlerTemplate(name, uiType, uiLayout string) string {
 	identifier := goIdentifier(name)
 	return fmt.Sprintf(`package handler
 
@@ -489,17 +488,36 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 }
 
 func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
-	var page = pages.%sPage()
-	if %q == "sidebar" {
-		page = layouts.DashboardLayout("overview", []string{"ROLE_SYSTEM_ADMIN"}, nil, []navigation.Item{{
+	if %q == "dashboard" {
+		if %q == "topbar" {
+			page := layouts.GoEPDashboardLayout("overview", []navigation.Item{{
+			Title: "Overview", Href: "/v1/%s/", ActivePage: "overview",
+			}}, pages.%sContent())
+			if err := page.Render(r.Context(), w); err != nil {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+			return
+		}
+		page := layouts.DashboardLayout("overview", []string{"ROLE_SYSTEM_ADMIN"}, nil, []navigation.Item{{
 			Title: "Overview", Href: "/v1/%s/", ActivePage: "overview",
 		}}, pages.%sContent())
+		if err := page.Render(r.Context(), w); err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+		return
 	}
-	if err := page.Render(r.Context(), w); err != nil {
+	if %q == "topbar" {
+		page := layouts.GoEPModuleLayout(pages.%sContent())
+		if err := page.Render(r.Context(), w); err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+		return
+	}
+	if err := pages.%sPage().Render(r.Context(), w); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
-`, name, name, "view."+name, name, name, name, "view."+name, identifier, uiLayout, name, identifier)
+`, name, name, "view."+name, name, name, name, "view."+name, uiType, uiLayout, name, identifier, name, identifier, uiLayout, identifier, identifier)
 }
 
 func uiPageTemplate(name, uiType string) string {
