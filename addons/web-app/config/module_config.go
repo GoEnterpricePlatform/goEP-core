@@ -11,21 +11,13 @@ import (
 	tokenP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/tokens/port"
 	cookieP "github.com/GoEnterpricePlatform/goEP-core/internal/shared/back/api/handler/cookie/port"
 
-	tcP "github.com/GoEnterpricePlatform/goEP-core/addons/ai-tool-calling/port"
-	postP "github.com/GoEnterpricePlatform/goEP-core/addons/posts/port"
-
-	adminHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/admin/api/handler"
-	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
-
-	/* postHandlerWeb "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/admin/api/posts/handler"
-	chatToolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/handler"
-	toolCallingHandler "github.com/GoEnterpricePlatform/goEP-core/web/standard-web/ai-tool-calling/api/posts/handler"
-	*/
 	roleP "github.com/GoEnterpricePlatform/goEP-core/addons/identity/roles/port"
 	identityUIHandler "github.com/GoEnterpricePlatform/goEP-core/addons/identity/ui/handler"
+	adminHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/modules/identity/admin/api/handler"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	srcHandler "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/api/handler"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/layouts"
+	middlewareServiceTmpl "github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
 type ModuleConfig struct {
@@ -39,13 +31,11 @@ type ModuleConfig struct {
 // ModuleDeps groups the external dependencies (from other modules/services)
 // that this module needs to function.
 type ModuleDeps struct {
-	TokenSrv    tokenP.TokenSrv
-	AuthSrv     authP.AuthSrv
-	CookieSrv   cookieP.CookieSrv
-	AdminSrv    adminP.AdminSrv
-	TCService   tcP.ToolCallingSrv
-	PostService postP.PostSrv
-	RolesSrv    roleP.RoleSrv
+	TokenSrv  tokenP.TokenSrv
+	AuthSrv   authP.AuthSrv
+	CookieSrv cookieP.CookieSrv
+	AdminSrv  adminP.AdminSrv
+	RolesSrv  roleP.RoleSrv
 }
 
 func NewWebAppModule(cfg ModuleConfig) {
@@ -58,7 +48,7 @@ func NewWebAppModule(cfg ModuleConfig) {
 	adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, mdwSrvTmpl)
 	adminH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
 
-	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, cfg.Deps.PostService, mdwSrvTmpl, cfg.AvailableModules)
+	srcHandler.NewSrcHandler(cfg.Mux, cfg.TemplateV1, mdwSrvTmpl, cfg.AvailableModules)
 
 	identityUI := identityUIHandler.NewHandler(
 		cfg.Deps.RolesSrv,
@@ -67,36 +57,5 @@ func NewWebAppModule(cfg ModuleConfig) {
 		layouts.DashboardLayout,
 	)
 	identityUI.RegisterRoutes(cfg.TemplateV1)
-
-	// Templates - admin
-	// adminH := adminHandler.NewAdminHandler(cfg.Deps.AdminSrv, cfg.Deps.CookieSrv, cfg.AppEnvs.ApiBaseUrl, adminR, mdwSrvTmpl)
-	// adminH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
-
-	// Templates - chat tool calling
-	// toolCalllingR := toolCallingRenderer.NewToolCallingRenderer()
-	// toolCallingH := chatToolCallingHandler.NewChatToolCallingHandler(
-	// 	cfg.Deps.TCService,
-	// 	cfg.AppEnvs.ApiBaseUrl,
-	// 	toolCalllingR,
-	// 	mdwSrvTmpl,
-	// 	cfg.Deps.PostService,
-	// )
-	// toolCallingH.RegisterRoutes(cfg.Mux, cfg.TemplateV1)
-
-	// tool Calling posts
-	// toolCallingPostsH := toolCallingHandler.NewPostWebAiHandler(
-	// 	cfg.Deps.PostService,
-	// 	cfg.AppEnvs.ApiBaseUrl,
-	// 	toolCalllingR,
-	// 	mdwSrvTmpl,
-	// )
-	// toolCallingPostsH.RegisterRoutes(cfg.TemplateV1)
-
-	// Templates - post
-	// postH := postHandlerWeb.NewPostWebHandler(cfg.Deps.PostService, adminH.ApiBaseUrl, adminR)
-	// postH.RegisterRoutes(cfg.TemplateV1)
-
-	// Templates - public
-	//publicHandler.NewPublicHandler(cfg.Mux, cfg.AppEnvs.ApiBaseUrl, cfg.Deps.PostService)
 
 }

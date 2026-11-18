@@ -36,10 +36,10 @@ go run ./cmd/goep create-module invoices
 También puedes definir el resumen que quedará en el manifiesto:
 
 ```powershell
-go run ./cmd/goep create-module --summary "Sales reports" --ui dashboard --ui-layout sidebar sales-reports
+go run ./cmd/goep create-module --summary "Sales reports" --ui dashboard --ui-layout replace sales-reports
 ```
 
-El comando pregunta qué base de datos, qué tipo de interfaz y cómo presentarla. `--ui` acepta `simple` o `dashboard`; `--ui-layout` acepta `sidebar` (usa el layout compartido de Identity) o `replace` (abre la pantalla del módulo sin el navbar de Modules). Si omites las opciones, simple usa `replace` como opción predeterminada y dashboard usa `sidebar`. Las tarjetas abren la UI generada en `/v1/<nombre>/`.
+El comando pregunta qué base de datos, qué tipo de interfaz y si se debe mostrar la barra `GOEP CORE`. `--ui` acepta `simple` o `dashboard`; dashboard siempre usa el sidebar de GoEP. `--ui-layout` acepta `topbar` (incluye la barra `GOEP CORE`) o `replace` (la oculta). Si omites `--ui-layout`, el CLI selecciona `replace`. Las tarjetas abren la UI generada en `/v1/<nombre>/`.
 
 El comando crea `manifest.json`, los paquetes base `config/` y `domain/`, `ui/handler/` y `ui/pages/`, y `static/` con `assets.json`, `src/ts/`, `src/css/` y `public/` bajo `addons/<nombre>/`. Después genera las plantillas Templ y ejecuta `go generate ./internal/modules/backend` para agregar el módulo al registro compilado. Si ya existe una carpeta con ese nombre, el CLI se detiene sin sobrescribirla. Completa el constructor con los servicios, rutas y assets que necesite el módulo; el esqueleto no agrega lógica de negocio ni compila assets todavía.
 

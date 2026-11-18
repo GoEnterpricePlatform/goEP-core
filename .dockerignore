@@ -1,0 +1,76 @@
+# Git metadata
+.git/
+.gitignore
+
+# Local environment files and secrets (including the example file)
+.env
+.env.*
+
+# Local build output and runtime data
+bin/
+dist/
+build/
+tmp/
+temp/
+*_data/
+data/
+volumes/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+coverage/
+coverage.txt
+coverage.out
+.task/
+
+# Logs and editor/OS files
+*.log
+logs/
+*.tmp
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Development-only files
+docker-compose*.yml
+docker-compose*.yaml
+compose*.yml
+compose*.yaml
+Taskfile.yml
+Makefile
+testdata/
+fixtures/
+
+# Documentation, including Bruno API collections
+docs/
+README*
+**/README*
+CONTRIBUTING*
+CHANGELOG*
+LICENSE*
+
+# Community addons are mounted/managed separately from the core image
+community-addons/
+
+# Build-time sources with generated runtime/build outputs already present.
+# Keep *_templ.go and the compiled static assets; the Go build needs them.
+**/*.templ
+**/*.ts
+**/*.tsx
+
+# Frontend package/build caches
+**/node_modules/
+**/.next/
+**/out/
+
+goep_core_data/

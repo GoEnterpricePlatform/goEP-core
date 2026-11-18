@@ -87,8 +87,8 @@ func (m Manifest) Validate() error {
 		if m.UI.Style != "simple" && m.UI.Style != "dashboard" {
 			return fmt.Errorf("module manifest %q: ui.style must be \"simple\" or \"dashboard\"", m.Name)
 		}
-		if m.UI.Layout != "sidebar" && m.UI.Layout != "replace" {
-			return fmt.Errorf("module manifest %q: ui.layout must be \"sidebar\" or \"replace\"", m.Name)
+		if m.UI.Layout != "sidebar" && m.UI.Layout != "topbar" && m.UI.Layout != "replace" {
+			return fmt.Errorf("module manifest %q: ui.layout must be \"sidebar\", \"topbar\", or \"replace\"", m.Name)
 		}
 	}
 

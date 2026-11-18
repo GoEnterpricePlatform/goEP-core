@@ -2,12 +2,12 @@
 package migrations
 
 import (
-	addonMigration2 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/database/postgresql/migrations"
-	addonMigration3 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/database/postgresql/migrations"
+	addonMigration0 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/database/postgresql/migrations"
+	addonMigration1 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/database/postgresql/migrations"
 )
 
 // addonMigrations contains PostgreSQL migration files discovered from addon manifests.
 var addonMigrations = []moduleMigrations{
-	{name: "catalog", fs: addonMigration2.Files, depends: []string{"identity"}},
-	{name: "identity", fs: addonMigration3.Files, depends: []string{}},
+	{name: "catalog", fs: addonMigration0.Files, depends: []string{"identity"}},
+	{name: "identity", fs: addonMigration1.Files, depends: []string{}},
 }
