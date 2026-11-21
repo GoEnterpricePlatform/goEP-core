@@ -215,6 +215,9 @@ func createModule(root, name, summary, provider, uiType, uiLayout string) (strin
 		filepath.Join("ui", "handler", "handler.go"):                  uiHandlerTemplate(name, uiType, uiLayout),
 		filepath.Join("ui", "pages", "page.templ"):                    uiPageTemplate(name, uiType),
 	}
+	if uiType == "dashboard" {
+		files[filepath.Join("ui", "navigation", "menu.go")] = uiNavigationTemplate(name)
+	}
 	if provider == "postgresql" || provider == "both" {
 		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.up.sql")] = initialUpMigrationTemplate(name)
 		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.down.sql")] = initialDownMigrationTemplate(name)
@@ -457,14 +460,15 @@ func Register(services *modules.Services) error {
 
 func uiHandlerTemplate(name, uiType, uiLayout string) string {
 	identifier := goIdentifier(name)
-	return fmt.Sprintf(`package handler
+	generated := fmt.Sprintf(`package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/src/ui/layouts"
 	"github.com/GoEnterpricePlatform/goEP-core/addons/%s/ui/pages"
-	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
+	__MODULE_NAVIGATION_IMPORT__
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
 
@@ -488,26 +492,23 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 }
 
 func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
+	activePage, pageTitle := modulePage(r.URL.Path)
 	if %q == "dashboard" {
 		if %q == "topbar" {
-			page := layouts.GoEPDashboardLayout("overview", []navigation.Item{{
-			Title: "Overview", Href: "/v1/%s/", ActivePage: "overview",
-			}}, pages.%sContent())
+			page := layouts.GoEPDashboardLayout(activePage, __MODULE_MENU__, pages.%sContent(pageTitle))
 			if err := page.Render(r.Context(), w); err != nil {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 			return
 		}
-		page := layouts.DashboardLayout("overview", []string{"ROLE_SYSTEM_ADMIN"}, nil, []navigation.Item{{
-			Title: "Overview", Href: "/v1/%s/", ActivePage: "overview",
-		}}, pages.%sContent())
+		page := layouts.DashboardLayout(activePage, []string{"ROLE_SYSTEM_ADMIN"}, nil, __MODULE_MENU__, pages.%sContent(pageTitle))
 		if err := page.Render(r.Context(), w); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 		return
 	}
 	if %q == "topbar" {
-		page := layouts.GoEPModuleLayout(pages.%sContent())
+		page := layouts.GoEPModuleLayout(pages.%sContent(pageTitle))
 		if err := page.Render(r.Context(), w); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
@@ -517,7 +518,56 @@ func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
-`, name, name, "view."+name, name, name, name, "view."+name, uiType, uiLayout, name, identifier, name, identifier, uiLayout, identifier, identifier)
+
+func modulePage(path string) (string, string) {
+	page := strings.Trim(path, "/")
+	page = strings.TrimPrefix(page, "v1/")
+	if page == %q {
+		return "overview", %q
+	}
+	prefix := %q + "/"
+	if !strings.HasPrefix(page, prefix) {
+		return "overview", %q
+	}
+	page = strings.TrimPrefix(page, prefix)
+	if page == "" {
+		return "overview", %q
+	}
+	title := strings.ReplaceAll(strings.ReplaceAll(page, "-", " "), "/", " / ")
+	return page, strings.Title(title)
+}
+`, name, name, "view."+name, name, name, name, "view."+name, uiType, uiLayout, identifier, identifier, uiLayout, identifier, identifier, name, strings.Title(strings.ReplaceAll(name, "-", " ")), name, strings.Title(strings.ReplaceAll(name, "-", " ")), strings.Title(strings.ReplaceAll(name, "-", " ")))
+	if uiType == "dashboard" {
+		generated = strings.ReplaceAll(generated, "__MODULE_NAVIGATION_IMPORT__", fmt.Sprintf("moduleNavigation %q", modulePath+"/addons/"+name+"/ui/navigation"))
+		generated = strings.ReplaceAll(generated, "__MODULE_MENU__", "moduleNavigation.AdminMenu")
+	} else {
+		generated = strings.ReplaceAll(generated, "__MODULE_NAVIGATION_IMPORT__", "")
+		generated = strings.ReplaceAll(generated, "__MODULE_MENU__", "nil")
+	}
+	return generated
+}
+
+func uiNavigationTemplate(name string) string {
+	return fmt.Sprintf(`package navigation
+
+import sharedNavigation %q
+
+// AdminMenu contains the pages owned by the %s module.
+// Add section entries with Children and register a route and page for each child.
+var AdminMenu = []sharedNavigation.Item{
+	{
+		Title:      "Overview",
+		Href:       "/v1/%s/",
+		ActivePage: "overview",
+	},
+	{
+		Title: "Example group",
+		Children: []sharedNavigation.Item{
+			{Title: "Example child", Href: "/v1/%s/example", ActivePage: "example"},
+		},
+	},
+}
+`, modulePath+"/internal/modules/navigation", name, name, name)
 }
 
 func uiPageTemplate(name, uiType string) string {
@@ -531,10 +581,10 @@ func uiPageTemplate(name, uiType string) string {
 
 import "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 
-templ %sContent() {
+templ %sContent(pageTitle string) {
 	<section>
 		<div class="mb-6">
-			<h1 class="text-2xl font-bold tracking-tight text-black">%s</h1>
+			<h1 class="text-2xl font-bold tracking-tight text-black">{ pageTitle }</h1>
 			<p class="mt-1 text-sm text-zinc-500">Your %s module is ready.</p>
 		</div>
 		if %q == "dashboard" {
@@ -557,12 +607,12 @@ templ %sPage() {
 		</head>
 		<body class="min-h-screen bg-white text-zinc-900 antialiased">
 			<main class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-				@%sContent()
+				@%sContent("%s")
 			</main>
 		</body>
 	</html>
 }
-`, identifier, title, style, style, title, identifier, title, identifier)
+`, identifier, style, style, title, identifier, title, identifier, title)
 }
 
 func domainTemplate(name string) string {

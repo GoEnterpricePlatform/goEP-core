@@ -1310,3 +1310,19 @@
     }
   }
 }
+/* Native disclosure groups used by the shared admin sidebar. */
+.sidebar-section > summary {
+	list-style: none;
+}
+
+.sidebar-section > summary::-webkit-details-marker {
+	display: none;
+}
+
+.sidebar-section .sidebar-chevron {
+	transition: transform 150ms ease;
+}
+
+.sidebar-section[open] .sidebar-chevron {
+	transform: rotate(180deg);
+}

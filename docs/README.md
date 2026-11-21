@@ -43,6 +43,8 @@ El comando pregunta qué base de datos, qué tipo de interfaz y si se debe mostr
 
 El comando crea `manifest.json`, los paquetes base `config/` y `domain/`, `ui/handler/` y `ui/pages/`, y `static/` con `assets.json`, `src/ts/`, `src/css/` y `public/` bajo `addons/<nombre>/`. Después genera las plantillas Templ y ejecuta `go generate ./internal/modules/backend` para agregar el módulo al registro compilado. Si ya existe una carpeta con ese nombre, el CLI se detiene sin sobrescribirla. Completa el constructor con los servicios, rutas y assets que necesite el módulo; el esqueleto no agrega lógica de negocio ni compila assets todavía.
 
+Para `--ui dashboard`, el CLI también crea `ui/navigation/menu.go` con un enlace plano y un grupo expandible de ejemplo. Edita `AdminMenu` allí para agregar enlaces o grupos con `Children`. El handler generado resuelve la ruta hija y actualiza el título/estado activo; para agregar contenido específico, registra su ruta en `ui/handler/` y crea la vista Templ dentro de `ui/pages/`. El ejemplo `addons/billing` organiza una vista por proveedor en `ui/pages/payments/` y `ui/pages/subs/`.
+
 ## Documentos de referencia
 
 - [Composición e inyección de servicios](backend-module-composition.md)
