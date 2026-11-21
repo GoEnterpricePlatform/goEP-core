@@ -3,6 +3,7 @@
 package components
 
 import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules/navigation"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/shared/front/api/middlewares"
 )
@@ -27,7 +28,32 @@ templ Sidebar(
 		<nav class="p-4">
 
 			for _, item := range menu {
-				if middlewares.HasRole(roles, "ROLE_SYSTEM_ADMIN") ||
+				if len(item.Children) > 0 {
+					<details class="sidebar-section mb-2" open?={ hasActiveChild(activePage, item.Children) }>
+						<summary class="flex cursor-pointer list-none items-center rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900">
+							<span>{ item.Title }</span>
+							<img
+								src={ resources.StaticPath("assets/chevron-down.svg") }
+								alt=""
+								aria-hidden="true"
+								class="sidebar-chevron ml-auto h-4 w-4"
+							/>
+						</summary>
+						<div class="mt-1 pl-3">
+						for _, child := range item.Children {
+							if middlewares.HasRole(roles, "ROLE_SYSTEM_ADMIN") ||
+								middlewares.HasPermission(permissions, child.Permission) {
+								<a
+									href={ templ.SafeURL(child.Href) }
+									class={ "mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors " + activeClass(activePage, child.ActivePage) }
+								>
+									{ child.Title }
+								</a>
+							}
+						}
+						</div>
+					</details>
+				} else if middlewares.HasRole(roles, "ROLE_SYSTEM_ADMIN") ||
 					middlewares.HasPermission(permissions, item.Permission) {
 					<a
 						href={ templ.SafeURL(item.Href) }

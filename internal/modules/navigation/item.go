@@ -6,4 +6,5 @@ type Item struct {
 	Href       string
 	ActivePage string
 	Permission string
+	Children   []Item
 }
