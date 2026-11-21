@@ -17,7 +17,7 @@ func (r *Repository) Find(ctx context.Context, rawID string) (*domain.Plan, erro
 		return nil, err
 	}
 	p := &domain.Plan{}
-	err = r.Pool.QueryRow(ctx, `SELECT id::text,name,description,img_path,created_at,updated_at FROM tb_plan WHERE id=$1`, id).Scan(&p.ID, &p.Name, &p.Description, &p.ImgPath, &p.CreatedAt, &p.UpdatedAt)
+	err = r.Pool.QueryRow(ctx, `SELECT id::text,name,description,img_path,created_at,updated_at FROM tb_catalog_plan WHERE id=$1`, id).Scan(&p.ID, &p.Name, &p.Description, &p.ImgPath, &p.CreatedAt, &p.UpdatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, sharedD.ErrNotFound
 	}

@@ -46,7 +46,7 @@ func repoError(op string, err error) error {
 }
 
 func (r *Repository) planItems(ctx context.Context, planID uuid.UUID) ([]*domain.PlanItem, error) {
-	rows, err := r.Pool.Query(ctx, `SELECT id::text,img_path,features,status,created_at,updated_at FROM tb_plan_item WHERE plan_id=$1 ORDER BY created_at,id`, planID)
+	rows, err := r.Pool.Query(ctx, `SELECT id::text,img_path,features,status,created_at,updated_at FROM tb_catalog_plan_item WHERE plan_id=$1 ORDER BY created_at,id`, planID)
 	if err != nil {
 		return nil, fmt.Errorf("find plan items: %w", err)
 	}
@@ -68,7 +68,7 @@ func (r *Repository) planItems(ctx context.Context, planID uuid.UUID) ([]*domain
 		itemID, _ := uuid.Parse(item.ID)
 		item.Options = make([]*domain.Option, 0)
 		item.VarOptionIDs = make([]string, 0)
-		orows, e := r.Pool.Query(ctx, `SELECT vo.id::text,v.name,vo.label,COALESCE(vo.value,'') FROM tb_plan_item_var_option piv JOIN tb_var_option vo ON vo.id=piv.var_option_id JOIN tb_variation v ON v.id=vo.variation_id WHERE piv.plan_item_id=$1 ORDER BY v.name,vo.label`, itemID)
+		orows, e := r.Pool.Query(ctx, `SELECT vo.id::text,v.name,vo.label,COALESCE(vo.value,'') FROM tb_catalog_plan_item_var_option piv JOIN tb_catalog_var_option vo ON vo.id=piv.var_option_id JOIN tb_catalog_variation v ON v.id=vo.variation_id WHERE piv.plan_item_id=$1 ORDER BY v.name,vo.label`, itemID)
 		if e != nil {
 			return nil, fmt.Errorf("find plan item options: %w", e)
 		}

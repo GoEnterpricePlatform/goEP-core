@@ -12,7 +12,7 @@ func (r *Repository) Delete(ctx context.Context, rawID string) error {
 	if err != nil {
 		return err
 	}
-	res, err := r.Pool.Exec(ctx, `DELETE FROM tb_plan WHERE id=$1`, id)
+	res, err := r.Pool.Exec(ctx, `DELETE FROM tb_catalog_plan WHERE id=$1`, id)
 	if err != nil {
 		return repoError("delete plan", err)
 	}

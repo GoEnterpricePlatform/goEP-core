@@ -29,7 +29,7 @@ func (r *Repository) Insert(ctx context.Context, paddlePlan *domain.PaddlePlan) 
 		return fmt.Errorf("begin Paddle plan insert: %w", err)
 	}
 	defer tx.Rollback(ctx)
-	_, err = tx.Exec(ctx, `INSERT INTO tb_paddle_plan(id,plan_id,paddle_product_id,"order",created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, id, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.CreatedAt, paddlePlan.UpdatedAt)
+	_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan(id,plan_id,paddle_product_id,"order",created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, id, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.CreatedAt, paddlePlan.UpdatedAt)
 	if err != nil {
 		return dbError("insert Paddle plan", err)
 	}
@@ -49,7 +49,7 @@ func (r *Repository) Insert(ctx context.Context, paddlePlan *domain.PaddlePlan) 
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(ctx, `INSERT INTO tb_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, id, planItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
+		_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, id, planItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
 		if err != nil {
 			return dbError("insert Paddle plan item", err)
 		}

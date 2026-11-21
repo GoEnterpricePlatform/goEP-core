@@ -30,7 +30,7 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 		return fmt.Errorf("begin catalog Paddle update: %w", err)
 	}
 	defer tx.Rollback(ctx)
-	res, err := tx.Exec(ctx, `UPDATE tb_plan SET name=$2,description=$3,img_path=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1`, planID, plan.Name, plan.Description, plan.ImgPath, plan.UpdatedAt)
+	res, err := tx.Exec(ctx, `UPDATE tb_catalog_plan SET name=$2,description=$3,img_path=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1`, planID, plan.Name, plan.Description, plan.ImgPath, plan.UpdatedAt)
 	if err != nil {
 		return catalogError("update plan", err)
 	}
@@ -48,7 +48,7 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 		}
 		keep[id] = struct{}{}
 	}
-	rows, err := tx.Query(ctx, `SELECT id FROM tb_plan_item WHERE plan_id=$1`, planID)
+	rows, err := tx.Query(ctx, `SELECT id FROM tb_catalog_plan_item WHERE plan_id=$1`, planID)
 	if err != nil {
 		return fmt.Errorf("list plan items for Paddle update: %w", err)
 	}
@@ -69,7 +69,7 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 	}
 	rows.Close()
 	for _, id := range deleteIDs {
-		if _, err := tx.Exec(ctx, `DELETE FROM tb_plan_item WHERE id=$1 AND plan_id=$2`, id, planID); err != nil {
+		if _, err := tx.Exec(ctx, `DELETE FROM tb_catalog_plan_item WHERE id=$1 AND plan_id=$2`, id, planID); err != nil {
 			return catalogError("delete plan item", err)
 		}
 	}
@@ -79,14 +79,14 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 		if features == nil {
 			features = []string{}
 		}
-		res, err := tx.Exec(ctx, `UPDATE tb_plan_item SET img_path=$3,features=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, item.ImgPath, features, item.UpdatedAt)
+		res, err := tx.Exec(ctx, `UPDATE tb_catalog_plan_item SET img_path=$3,features=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, item.ImgPath, features, item.UpdatedAt)
 		if err != nil {
 			return catalogError("update plan item", err)
 		}
 		if res.RowsAffected() == 0 {
 			return shared.ErrNotFound
 		}
-		if _, err = tx.Exec(ctx, `DELETE FROM tb_plan_item_var_option WHERE plan_item_id=$1`, id); err != nil {
+		if _, err = tx.Exec(ctx, `DELETE FROM tb_catalog_plan_item_var_option WHERE plan_item_id=$1`, id); err != nil {
 			return err
 		}
 		for _, raw := range item.VarOptionIDs {
@@ -94,19 +94,19 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 			if e != nil {
 				return e
 			}
-			if _, e = tx.Exec(ctx, `INSERT INTO tb_plan_item_var_option(plan_item_id,var_option_id) VALUES($1,$2)`, id, optionID); e != nil {
+			if _, e = tx.Exec(ctx, `INSERT INTO tb_catalog_plan_item_var_option(plan_item_id,var_option_id) VALUES($1,$2)`, id, optionID); e != nil {
 				return catalogError("assign plan item option", e)
 			}
 		}
 	}
-	res, err = tx.Exec(ctx, `UPDATE tb_paddle_plan SET paddle_product_id=$2,"order"=$3,updated_at=COALESCE($4,NOW()) WHERE id=$1 AND plan_id=$5`, paddlePlanID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.UpdatedAt, planID)
+	res, err = tx.Exec(ctx, `UPDATE tb_catalog_paddle_plan SET paddle_product_id=$2,"order"=$3,updated_at=COALESCE($4,NOW()) WHERE id=$1 AND plan_id=$5`, paddlePlanID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.UpdatedAt, planID)
 	if err != nil {
 		return catalogError("update Paddle plan", err)
 	}
 	if res.RowsAffected() == 0 {
 		return shared.ErrNotFound
 	}
-	if _, err = tx.Exec(ctx, `DELETE FROM tb_paddle_plan_item WHERE paddle_plan_id=$1`, paddlePlanID); err != nil {
+	if _, err = tx.Exec(ctx, `DELETE FROM tb_catalog_paddle_plan_item WHERE paddle_plan_id=$1`, paddlePlanID); err != nil {
 		return err
 	}
 	for i, item := range paddlePlan.Items {
@@ -128,7 +128,7 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 			return e
 		}
 		item.PlanItemID = linkedID.String()
-		_, e = tx.Exec(ctx, `INSERT INTO tb_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, paddlePlanID, linkedID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
+		_, e = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, paddlePlanID, linkedID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
 		if e != nil {
 			return catalogError("replace Paddle plan item", e)
 		}

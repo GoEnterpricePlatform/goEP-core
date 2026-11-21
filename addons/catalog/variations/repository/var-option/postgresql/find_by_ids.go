@@ -18,7 +18,7 @@ func (r *Repository) FindByIDs(ctx context.Context, rawIDs []string) ([]*domain.
 			return nil, err
 		}
 		o := &domain.VarOption{}
-		err = r.Pool.QueryRow(ctx, `SELECT id::text,variation_id::text,label,value,created_at,updated_at FROM tb_var_option WHERE id=$1`, id).Scan(&o.ID, &o.VariationID, &o.Label, &o.Value, &o.CreatedAt, &o.UpdatedAt)
+		err = r.Pool.QueryRow(ctx, `SELECT id::text,variation_id::text,label,value,created_at,updated_at FROM tb_catalog_var_option WHERE id=$1`, id).Scan(&o.ID, &o.VariationID, &o.Label, &o.Value, &o.CreatedAt, &o.UpdatedAt)
 		if errors.Is(err, pgx.ErrNoRows) {
 			continue
 		}

@@ -24,7 +24,7 @@ func (r *Repository) Upsert(ctx context.Context, customer *domain.PaddleCustomer
 			return fmt.Errorf("%w: invalid Paddle customer ID: %w", shared.ErrIncorrectID, err)
 		}
 	}
-	err = r.Pool.QueryRow(ctx, `INSERT INTO tb_paddle_customer(id,user_id,paddle_customer_id) VALUES($1,$2,$3) ON CONFLICT(user_id) DO UPDATE SET paddle_customer_id=EXCLUDED.paddle_customer_id RETURNING id::text`, id, userID, customer.PaddleCustomerID).Scan(&customer.ID)
+	err = r.Pool.QueryRow(ctx, `INSERT INTO tb_catalog_paddle_customer(id,user_id,paddle_customer_id) VALUES($1,$2,$3) ON CONFLICT(user_id) DO UPDATE SET paddle_customer_id=EXCLUDED.paddle_customer_id RETURNING id::text`, id, userID, customer.PaddleCustomerID).Scan(&customer.ID)
 	if err != nil {
 		return fmt.Errorf("upsert Paddle customer: %w", err)
 	}

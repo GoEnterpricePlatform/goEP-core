@@ -17,7 +17,7 @@ func (r *Repository) Update(ctx context.Context, o *domain.VarOption) error {
 	if err != nil {
 		return err
 	}
-	result, err := r.Pool.Exec(ctx, `UPDATE tb_var_option SET label=$3,value=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND variation_id=$2`, id, variationID, o.Label, o.Value, o.UpdatedAt)
+	result, err := r.Pool.Exec(ctx, `UPDATE tb_catalog_var_option SET label=$3,value=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND variation_id=$2`, id, variationID, o.Label, o.Value, o.UpdatedAt)
 	if err != nil {
 		return dbError("update variation option", err)
 	}

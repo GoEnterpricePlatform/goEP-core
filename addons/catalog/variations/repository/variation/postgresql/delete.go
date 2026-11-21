@@ -11,7 +11,7 @@ func (r *Repository) Delete(ctx context.Context, rawID string) error {
 	if err != nil {
 		return err
 	}
-	result, err := r.Pool.Exec(ctx, `DELETE FROM tb_variation WHERE id=$1`, id)
+	result, err := r.Pool.Exec(ctx, `DELETE FROM tb_catalog_variation WHERE id=$1`, id)
 	if err != nil {
 		return dbError("delete variation", err)
 	}

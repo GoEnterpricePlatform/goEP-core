@@ -12,7 +12,7 @@ func (r *Repository) Update(ctx context.Context, v *domain.Variation) error {
 	if err != nil {
 		return err
 	}
-	result, err := r.Pool.Exec(ctx, `UPDATE tb_variation SET name=$2,updated_at=COALESCE($3,NOW()) WHERE id=$1`, id, v.Name, v.UpdatedAt)
+	result, err := r.Pool.Exec(ctx, `UPDATE tb_catalog_variation SET name=$2,updated_at=COALESCE($3,NOW()) WHERE id=$1`, id, v.Name, v.UpdatedAt)
 	if err != nil {
 		return dbError("update variation", err)
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Repository) FindAllWithOptions(ctx context.Context) ([]*domain.Variation, error) {
-	rows, err := r.Pool.Query(ctx, `SELECT id::text,name,created_at,updated_at FROM tb_variation ORDER BY name,id`)
+	rows, err := r.Pool.Query(ctx, `SELECT id::text,name,created_at,updated_at FROM tb_catalog_variation ORDER BY name,id`)
 	if err != nil {
 		return nil, fmt.Errorf("find variations: %w", err)
 	}
@@ -29,7 +29,7 @@ func (r *Repository) FindAllWithOptions(ctx context.Context) ([]*domain.Variatio
 	rows.Close()
 	for _, v := range variations {
 		id, _ := uuid.Parse(v.ID)
-		optionRows, err := r.Pool.Query(ctx, `SELECT id::text,variation_id::text,label,value,created_at,updated_at FROM tb_var_option WHERE variation_id=$1 ORDER BY label,id`, id)
+		optionRows, err := r.Pool.Query(ctx, `SELECT id::text,variation_id::text,label,value,created_at,updated_at FROM tb_catalog_var_option WHERE variation_id=$1 ORDER BY label,id`, id)
 		if err != nil {
 			return nil, fmt.Errorf("find variation options: %w", err)
 		}

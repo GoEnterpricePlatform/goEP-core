@@ -24,7 +24,7 @@ func (r *Repository) Insert(ctx context.Context, o *domain.VarOption) error {
 	if err != nil {
 		return err
 	}
-	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_var_option(id,variation_id,label,value,created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, id, variationID, o.Label, o.Value, o.CreatedAt, o.UpdatedAt)
+	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_catalog_var_option(id,variation_id,label,value,created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, id, variationID, o.Label, o.Value, o.CreatedAt, o.UpdatedAt)
 	if err != nil {
 		return dbError("insert variation option", err)
 	}
