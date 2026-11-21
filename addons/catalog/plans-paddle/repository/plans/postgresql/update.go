@@ -23,14 +23,14 @@ func (r *Repository) Update(ctx context.Context, rawID string, paddlePlan *domai
 		return fmt.Errorf("begin Paddle plan update: %w", err)
 	}
 	defer tx.Rollback(ctx)
-	res, err := tx.Exec(ctx, `UPDATE tb_paddle_plan SET paddle_product_id=$3,"order"=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.UpdatedAt)
+	res, err := tx.Exec(ctx, `UPDATE tb_catalog_paddle_plan SET paddle_product_id=$3,"order"=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.UpdatedAt)
 	if err != nil {
 		return dbError("update Paddle plan", err)
 	}
 	if res.RowsAffected() == 0 {
 		return sharedD.ErrNotFound
 	}
-	if _, err := tx.Exec(ctx, `DELETE FROM tb_paddle_plan_item WHERE paddle_plan_id=$1`, id); err != nil {
+	if _, err := tx.Exec(ctx, `DELETE FROM tb_catalog_paddle_plan_item WHERE paddle_plan_id=$1`, id); err != nil {
 		return fmt.Errorf("replace Paddle plan items: %w", err)
 	}
 	for _, item := range paddlePlan.Items {
@@ -48,7 +48,7 @@ func (r *Repository) Update(ctx context.Context, rawID string, paddlePlan *domai
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(ctx, `INSERT INTO tb_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, id, linkedPlanItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
+		_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, id, linkedPlanItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
 		if err != nil {
 			return dbError("replace Paddle plan item", err)
 		}

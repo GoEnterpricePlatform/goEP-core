@@ -14,5 +14,5 @@ func (r *Repository) FindByUserID(ctx context.Context, rawID string) (*domain.Pa
 	if err != nil {
 		return nil, fmt.Errorf("%w: invalid user ID: %w", sharedD.ErrIncorrectID, err)
 	}
-	return r.find(ctx, `SELECT id::text,user_id::text,paddle_customer_id FROM tb_paddle_customer WHERE user_id=$1`, id)
+	return r.find(ctx, `SELECT id::text,user_id::text,paddle_customer_id FROM tb_catalog_paddle_customer WHERE user_id=$1`, id)
 }

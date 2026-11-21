@@ -34,6 +34,7 @@ func (s *Service) Create(ctx context.Context, paddlePlan *paddlePlanD.PaddlePlan
 			CreatedAt:    &now,
 			UpdatedAt:    &now,
 		})
+		paddleItem.Status = planD.PlanStatusActive
 
 		paddleItem.CreatedAt = &now
 		paddleItem.UpdatedAt = &now

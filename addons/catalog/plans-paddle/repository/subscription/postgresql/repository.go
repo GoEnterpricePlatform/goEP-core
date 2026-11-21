@@ -90,7 +90,7 @@ func scanSubscription(row rowScanner) (*domain.PaddleSubscription, error) {
 	return &s, nil
 }
 
-const subscriptionSelect = `SELECT id::text,paddle_subscription_id,user_id::text,customer_id::text,plan_id::text,plan_item_id::text,status,current_period_starts_at,current_period_ends_at,next_billed_at,canceled_at,scheduled_change_action,scheduled_change_effective_at,updated_at FROM tb_paddle_subscription`
+const subscriptionSelect = `SELECT id::text,paddle_subscription_id,user_id::text,customer_id::text,plan_id::text,plan_item_id::text,status,current_period_starts_at,current_period_ends_at,next_billed_at,canceled_at,scheduled_change_action,scheduled_change_effective_at,updated_at FROM tb_catalog_paddle_subscription`
 
 func (r *Repository) Upsert(ctx context.Context, s *domain.PaddleSubscription, lastEventAt time.Time) error {
 	if s == nil || s.PaddleSubscriptionID == "" {
@@ -155,12 +155,12 @@ func (r *Repository) Upsert(ctx context.Context, s *domain.PaddleSubscription, l
 		lastEventAt = updatedAt
 	}
 	if s.ID == "" { // Preserve the stable local identity when replaying an existing Paddle subscription.
-		_ = r.Pool.QueryRow(ctx, `SELECT id FROM tb_paddle_subscription WHERE paddle_subscription_id=$1`, s.PaddleSubscriptionID).Scan(&id)
+		_ = r.Pool.QueryRow(ctx, `SELECT id FROM tb_catalog_paddle_subscription WHERE paddle_subscription_id=$1`, s.PaddleSubscriptionID).Scan(&id)
 	}
-	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_paddle_subscription(id,paddle_subscription_id,user_id,customer_id,plan_id,plan_item_id,status,current_period_starts_at,current_period_ends_at,next_billed_at,canceled_at,scheduled_change_action,scheduled_change_effective_at,updated_at,last_event_at)
+	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_catalog_paddle_subscription(id,paddle_subscription_id,user_id,customer_id,plan_id,plan_item_id,status,current_period_starts_at,current_period_ends_at,next_billed_at,canceled_at,scheduled_change_action,scheduled_change_effective_at,updated_at,last_event_at)
 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
 ON CONFLICT(paddle_subscription_id) DO UPDATE SET user_id=EXCLUDED.user_id,customer_id=EXCLUDED.customer_id,plan_id=EXCLUDED.plan_id,plan_item_id=EXCLUDED.plan_item_id,status=EXCLUDED.status,current_period_starts_at=EXCLUDED.current_period_starts_at,current_period_ends_at=EXCLUDED.current_period_ends_at,next_billed_at=EXCLUDED.next_billed_at,canceled_at=EXCLUDED.canceled_at,scheduled_change_action=EXCLUDED.scheduled_change_action,scheduled_change_effective_at=EXCLUDED.scheduled_change_effective_at,updated_at=EXCLUDED.updated_at,last_event_at=EXCLUDED.last_event_at
-WHERE tb_paddle_subscription.last_event_at IS NULL OR tb_paddle_subscription.last_event_at <= EXCLUDED.last_event_at`, id, s.PaddleSubscriptionID, userID, customerID, planID, planItemID, s.Status, periodStart, periodEnd, nextBilled, canceledAt, changeAction, changeEffective, updatedAt, lastEventAt)
+WHERE tb_catalog_paddle_subscription.last_event_at IS NULL OR tb_catalog_paddle_subscription.last_event_at <= EXCLUDED.last_event_at`, id, s.PaddleSubscriptionID, userID, customerID, planID, planItemID, s.Status, periodStart, periodEnd, nextBilled, canceledAt, changeAction, changeEffective, updatedAt, lastEventAt)
 	if err != nil {
 		return fmt.Errorf("upsert Paddle subscription: %w", err)
 	}

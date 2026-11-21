@@ -158,7 +158,7 @@ func runModule(databaseURL string, module moduleMigrations, down bool) error {
 		return fmt.Errorf("open PostgreSQL migration connection: %w", err)
 	}
 	defer db.Close()
-	driver, err := postgres.WithInstance(db, &postgres.Config{MigrationsTable: "schema_migrations_" + module.name})
+	driver, err := postgres.WithInstance(db, &postgres.Config{MigrationsTable: "tb_" + module.name + "_schema_migrations"})
 	if err != nil {
 		return fmt.Errorf("initialize %s migration driver: %w", module.name, err)
 	}

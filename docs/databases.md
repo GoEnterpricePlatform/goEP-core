@@ -24,7 +24,7 @@ func (r *Repository) IsOptionInUse(ctx context.Context, rawID string) (bool, err
 		return false, err
 	}
 	var used bool
-	err = r.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM tb_plan_item_var_option WHERE var_option_id=$1)`, id).Scan(&used)
+	err = r.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM tb_catalog_plan_item_var_option WHERE var_option_id=$1)`, id).Scan(&used)
 	return used, err
 }
 ```

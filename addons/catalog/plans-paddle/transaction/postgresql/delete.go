@@ -19,10 +19,10 @@ func (t *Transaction) Delete(ctx context.Context, rawID string) error {
 	}
 	defer tx.Rollback(ctx)
 	var planID uuid.UUID
-	if err := tx.QueryRow(ctx, `SELECT plan_id FROM tb_paddle_plan WHERE id=$1`, id).Scan(&planID); err != nil {
+	if err := tx.QueryRow(ctx, `SELECT plan_id FROM tb_catalog_paddle_plan WHERE id=$1`, id).Scan(&planID); err != nil {
 		return catalogError("find linked Paddle plan", err)
 	}
-	res, err := tx.Exec(ctx, `DELETE FROM tb_plan WHERE id=$1`, planID)
+	res, err := tx.Exec(ctx, `DELETE FROM tb_catalog_plan WHERE id=$1`, planID)
 	if err != nil {
 		return catalogError("delete linked plan", err)
 	}

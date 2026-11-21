@@ -69,7 +69,7 @@ func scanTransaction(row rowScanner) (*domain.PaddleTransaction, error) {
 	return &t, nil
 }
 
-const transactionSelect = `SELECT id::text,paddle_transaction_id,user_id::text,subscription_id::text,customer_id::text,plan_id::text,plan_item_id::text,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided FROM tb_paddle_transaction`
+const transactionSelect = `SELECT id::text,paddle_transaction_id,user_id::text,subscription_id::text,customer_id::text,plan_id::text,plan_item_id::text,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided FROM tb_catalog_paddle_transaction`
 
 func (r *Repository) Insert(ctx context.Context, t *domain.PaddleTransaction) error {
 	if t == nil || t.PaddleTransactionID == "" {
@@ -111,7 +111,7 @@ func (r *Repository) Insert(ctx context.Context, t *domain.PaddleTransaction) er
 	if !t.LastEventAt.IsZero() {
 		lastEventAt = t.LastEventAt
 	}
-	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_paddle_transaction(id,paddle_transaction_id,user_id,subscription_id,customer_id,plan_id,plan_item_id,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided) VALUES($1,$2,$3,$4,$5,$6,$7,$8,NULLIF($9,''),$10,$11,$12,$13,$14,$15)`, id, t.PaddleTransactionID, userID, subscriptionID, customerID, planID, planItemID, t.Status, t.CurrencyCode, t.Subtotal, t.Tax, t.Total, updatedAt, lastEventAt, t.PaymentDetailsProvided)
+	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_catalog_paddle_transaction(id,paddle_transaction_id,user_id,subscription_id,customer_id,plan_id,plan_item_id,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided) VALUES($1,$2,$3,$4,$5,$6,$7,$8,NULLIF($9,''),$10,$11,$12,$13,$14,$15)`, id, t.PaddleTransactionID, userID, subscriptionID, customerID, planID, planItemID, t.Status, t.CurrencyCode, t.Subtotal, t.Tax, t.Total, updatedAt, lastEventAt, t.PaymentDetailsProvided)
 	if err != nil {
 		return fmt.Errorf("insert Paddle transaction: %w", err)
 	}
@@ -207,9 +207,9 @@ func (r *Repository) UpsertFromWebhook(ctx context.Context, t *domain.PaddleTran
 	if err != nil {
 		return fmt.Errorf("invalid Paddle transaction updated_at: %w", err)
 	}
-	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_paddle_transaction(id,paddle_transaction_id,user_id,subscription_id,customer_id,plan_id,plan_item_id,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided) VALUES($1,$2,$3,$4,$5,$6,$7,$8,NULLIF($9,''),$10,$11,$12,$13,$14,$15)
-ON CONFLICT(paddle_transaction_id) DO UPDATE SET user_id=COALESCE(EXCLUDED.user_id,tb_paddle_transaction.user_id),subscription_id=COALESCE(EXCLUDED.subscription_id,tb_paddle_transaction.subscription_id),customer_id=COALESCE(EXCLUDED.customer_id,tb_paddle_transaction.customer_id),plan_id=EXCLUDED.plan_id,plan_item_id=EXCLUDED.plan_item_id,status=EXCLUDED.status,updated_at=EXCLUDED.updated_at,last_event_at=EXCLUDED.last_event_at,currency_code=CASE WHEN tb_paddle_transaction.payment_details_provided THEN tb_paddle_transaction.currency_code ELSE EXCLUDED.currency_code END,subtotal=CASE WHEN tb_paddle_transaction.payment_details_provided THEN tb_paddle_transaction.subtotal ELSE EXCLUDED.subtotal END,tax=CASE WHEN tb_paddle_transaction.payment_details_provided THEN tb_paddle_transaction.tax ELSE EXCLUDED.tax END,total=CASE WHEN tb_paddle_transaction.payment_details_provided THEN tb_paddle_transaction.total ELSE EXCLUDED.total END,payment_details_provided=tb_paddle_transaction.payment_details_provided OR EXCLUDED.payment_details_provided
-WHERE tb_paddle_transaction.last_event_at IS NULL OR tb_paddle_transaction.last_event_at <= EXCLUDED.last_event_at`, id, t.PaddleTransactionID, userID, subscriptionID, customerID, planID, planItemID, t.Status, t.CurrencyCode, t.Subtotal, t.Tax, t.Total, updatedAt, eventAt, t.PaymentDetailsProvided)
+	_, err = r.Pool.Exec(ctx, `INSERT INTO tb_catalog_paddle_transaction(id,paddle_transaction_id,user_id,subscription_id,customer_id,plan_id,plan_item_id,status,currency_code,subtotal,tax,total,updated_at,last_event_at,payment_details_provided) VALUES($1,$2,$3,$4,$5,$6,$7,$8,NULLIF($9,''),$10,$11,$12,$13,$14,$15)
+ON CONFLICT(paddle_transaction_id) DO UPDATE SET user_id=COALESCE(EXCLUDED.user_id,tb_catalog_paddle_transaction.user_id),subscription_id=COALESCE(EXCLUDED.subscription_id,tb_catalog_paddle_transaction.subscription_id),customer_id=COALESCE(EXCLUDED.customer_id,tb_catalog_paddle_transaction.customer_id),plan_id=EXCLUDED.plan_id,plan_item_id=EXCLUDED.plan_item_id,status=EXCLUDED.status,updated_at=EXCLUDED.updated_at,last_event_at=EXCLUDED.last_event_at,currency_code=CASE WHEN tb_catalog_paddle_transaction.payment_details_provided THEN tb_catalog_paddle_transaction.currency_code ELSE EXCLUDED.currency_code END,subtotal=CASE WHEN tb_catalog_paddle_transaction.payment_details_provided THEN tb_catalog_paddle_transaction.subtotal ELSE EXCLUDED.subtotal END,tax=CASE WHEN tb_catalog_paddle_transaction.payment_details_provided THEN tb_catalog_paddle_transaction.tax ELSE EXCLUDED.tax END,total=CASE WHEN tb_catalog_paddle_transaction.payment_details_provided THEN tb_catalog_paddle_transaction.total ELSE EXCLUDED.total END,payment_details_provided=tb_catalog_paddle_transaction.payment_details_provided OR EXCLUDED.payment_details_provided
+WHERE tb_catalog_paddle_transaction.last_event_at IS NULL OR tb_catalog_paddle_transaction.last_event_at <= EXCLUDED.last_event_at`, id, t.PaddleTransactionID, userID, subscriptionID, customerID, planID, planItemID, t.Status, t.CurrencyCode, t.Subtotal, t.Tax, t.Total, updatedAt, eventAt, t.PaymentDetailsProvided)
 	if err != nil {
 		return fmt.Errorf("upsert Paddle transaction from webhook: %w", err)
 	}

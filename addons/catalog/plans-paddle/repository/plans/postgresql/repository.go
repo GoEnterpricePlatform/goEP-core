@@ -41,7 +41,7 @@ func dbError(op string, err error) error {
 }
 
 func (r *Repository) findItems(ctx context.Context, paddlePlanID uuid.UUID) ([]*domain.PaddlePlanItem, error) {
-	rows, err := r.Pool.Query(ctx, `SELECT id::text,plan_item_id::text,paddle_price_id,status,created_at,updated_at FROM tb_paddle_plan_item WHERE paddle_plan_id=$1 ORDER BY created_at,id`, paddlePlanID)
+	rows, err := r.Pool.Query(ctx, `SELECT id::text,plan_item_id::text,paddle_price_id,status,created_at,updated_at FROM tb_catalog_paddle_plan_item WHERE paddle_plan_id=$1 ORDER BY created_at,id`, paddlePlanID)
 	if err != nil {
 		return nil, fmt.Errorf("find Paddle plan items: %w", err)
 	}

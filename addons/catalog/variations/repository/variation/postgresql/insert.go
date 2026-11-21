@@ -20,7 +20,7 @@ func (r *Repository) Insert(ctx context.Context, v *domain.Variation) error {
 			return err
 		}
 	}
-	_, err := r.Pool.Exec(ctx, `INSERT INTO tb_variation(id,name,created_at,updated_at) VALUES($1,$2,COALESCE($3,NOW()),COALESCE($4,NOW()))`, id, v.Name, v.CreatedAt, v.UpdatedAt)
+	_, err := r.Pool.Exec(ctx, `INSERT INTO tb_catalog_variation(id,name,created_at,updated_at) VALUES($1,$2,COALESCE($3,NOW()),COALESCE($4,NOW()))`, id, v.Name, v.CreatedAt, v.UpdatedAt)
 	if err != nil {
 		return dbError("insert variation", err)
 	}

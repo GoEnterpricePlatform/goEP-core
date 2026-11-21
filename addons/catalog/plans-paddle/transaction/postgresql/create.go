@@ -28,7 +28,7 @@ func (t *Transaction) Create(ctx context.Context, plan *planDomain.Plan, paddleP
 			return err
 		}
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO tb_plan(id,name,description,img_path,created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, planID, plan.Name, plan.Description, plan.ImgPath, plan.CreatedAt, plan.UpdatedAt)
+	_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_plan(id,name,description,img_path,created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, planID, plan.Name, plan.Description, plan.ImgPath, plan.CreatedAt, plan.UpdatedAt)
 	if err != nil {
 		return catalogError("insert plan", err)
 	}
@@ -53,7 +53,7 @@ func (t *Transaction) Create(ctx context.Context, plan *planDomain.Plan, paddleP
 		if features == nil {
 			features = []string{}
 		}
-		_, err = tx.Exec(ctx, `INSERT INTO tb_plan_item(id,plan_id,img_path,features,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, planID, item.ImgPath, features, item.Status, item.CreatedAt, item.UpdatedAt)
+		_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_plan_item(id,plan_id,img_path,features,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, planID, item.ImgPath, features, item.Status, item.CreatedAt, item.UpdatedAt)
 		if err != nil {
 			return catalogError("insert plan item", err)
 		}
@@ -64,7 +64,7 @@ func (t *Transaction) Create(ctx context.Context, plan *planDomain.Plan, paddleP
 			if e != nil {
 				return e
 			}
-			if _, e = tx.Exec(ctx, `INSERT INTO tb_plan_item_var_option(plan_item_id,var_option_id) VALUES($1,$2)`, itemID, optionID); e != nil {
+			if _, e = tx.Exec(ctx, `INSERT INTO tb_catalog_plan_item_var_option(plan_item_id,var_option_id) VALUES($1,$2)`, itemID, optionID); e != nil {
 				return catalogError("assign plan item option", e)
 			}
 		}
@@ -76,7 +76,7 @@ func (t *Transaction) Create(ctx context.Context, plan *planDomain.Plan, paddleP
 			return err
 		}
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO tb_paddle_plan(id,plan_id,paddle_product_id,"order",created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, paddlePlanID, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.CreatedAt, paddlePlan.UpdatedAt)
+	_, err = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan(id,plan_id,paddle_product_id,"order",created_at,updated_at) VALUES($1,$2,$3,$4,COALESCE($5,NOW()),COALESCE($6,NOW()))`, paddlePlanID, planID, paddlePlan.PaddleProductID, paddlePlan.Order, paddlePlan.CreatedAt, paddlePlan.UpdatedAt)
 	if err != nil {
 		return catalogError("insert Paddle plan", err)
 	}
@@ -93,7 +93,7 @@ func (t *Transaction) Create(ctx context.Context, plan *planDomain.Plan, paddleP
 		if e != nil {
 			return e
 		}
-		_, e = tx.Exec(ctx, `INSERT INTO tb_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, paddlePlanID, planItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
+		_, e = tx.Exec(ctx, `INSERT INTO tb_catalog_paddle_plan_item(id,paddle_plan_id,plan_item_id,paddle_price_id,status,created_at,updated_at) VALUES($1,$2,$3,$4,$5,COALESCE($6,NOW()),COALESCE($7,NOW()))`, itemID, paddlePlanID, planItemID, item.PaddlePriceID, item.Status, item.CreatedAt, item.UpdatedAt)
 		if e != nil {
 			return catalogError("insert Paddle plan item", e)
 		}

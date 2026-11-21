@@ -15,7 +15,7 @@ func (r *Repository) FindAll(ctx context.Context, limit, page int64) ([]*domain.
 	if page <= 0 {
 		page = 1
 	}
-	rows, err := r.Pool.Query(ctx, `SELECT id::text,name,description,img_path,created_at,updated_at FROM tb_plan ORDER BY created_at DESC,id LIMIT $1 OFFSET $2`, limit, (page-1)*limit)
+	rows, err := r.Pool.Query(ctx, `SELECT id::text,name,description,img_path,created_at,updated_at FROM tb_catalog_plan ORDER BY created_at DESC,id LIMIT $1 OFFSET $2`, limit, (page-1)*limit)
 	if err != nil {
 		return nil, fmt.Errorf("find plans: %w", err)
 	}
