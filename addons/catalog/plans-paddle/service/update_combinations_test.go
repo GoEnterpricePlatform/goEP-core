@@ -15,6 +15,9 @@ func (r *combinationPaddleRepo) Insert(context.Context, *paddleD.PaddlePlan) err
 func (r *combinationPaddleRepo) Find(context.Context, string) (*paddleD.PaddlePlan, error) {
 	return r.current, nil
 }
+func (r *combinationPaddleRepo) FindByPaddleProductID(context.Context, string) (*paddleD.PaddlePlan, error) {
+	return nil, nil
+}
 func (r *combinationPaddleRepo) FindAll(context.Context, int64, int64) ([]*paddleD.PaddlePlan, error) {
 	return nil, nil
 }

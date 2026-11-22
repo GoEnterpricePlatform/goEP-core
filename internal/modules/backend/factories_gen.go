@@ -2,9 +2,10 @@
 package backend
 
 import (
-	module0 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
-	module1 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
-	module2 "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/config"
+	module0 "github.com/GoEnterpricePlatform/goEP-core/addons/billing/config"
+	module1 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/config"
+	module2 "github.com/GoEnterpricePlatform/goEP-core/addons/identity/config"
+	module3 "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/config"
 	"github.com/GoEnterpricePlatform/goEP-core/internal/modules"
 )
 
@@ -17,7 +18,10 @@ func NewCompiledRegistry() (*modules.Registry, error) {
 	if err := module1.RegisterBackendModule(registry); err != nil {
 		return nil, err
 	}
-	if err := module2.RegisterWebModule(registry); err != nil {
+	if err := module2.RegisterBackendModule(registry); err != nil {
+		return nil, err
+	}
+	if err := module3.RegisterWebModule(registry); err != nil {
 		return nil, err
 	}
 	return registry, nil

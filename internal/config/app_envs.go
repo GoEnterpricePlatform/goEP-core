@@ -12,7 +12,7 @@ type AppEnvs struct {
 	MongoInitDB string
 
 	// PostgreSQL
-	PostgreSQLUri string
+	PostgreSQLUri    string
 	PostgreSQLInitDB string
 
 	// File Storage provider
@@ -46,10 +46,11 @@ type AppEnvs struct {
 	OpenAiApiKey string
 
 	// payments MoR
-	IsEnableMorPaddle   bool
-	PaddleApiKey        string
-	PaddleEnvironment   string
-	PaddleWebhookSecret string
+	IsEnableMorPaddle          bool
+	PaddleApiKey               string
+	PaddleEnvironment          string
+	PaddleBillingWebhookSecret string
+	PaddleCatalogWebhookSecret string
 
 	// Jwt
 	JWTAccessSecret           string

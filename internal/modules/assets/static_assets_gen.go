@@ -4,12 +4,14 @@ package assets
 import (
 	"io/fs"
 
-	assetModule0 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog"
-	assetModule1 "github.com/GoEnterpricePlatform/goEP-core/addons/identity"
+	assetModule0 "github.com/GoEnterpricePlatform/goEP-core/addons/billing"
+	assetModule1 "github.com/GoEnterpricePlatform/goEP-core/addons/catalog"
+	assetModule2 "github.com/GoEnterpricePlatform/goEP-core/addons/identity"
 )
 
 // StaticDirectories maps addon names to their embedded static filesystems.
 var StaticDirectories = map[string]fs.FS{
-	"catalog":  assetModule0.StaticAssets,
-	"identity": assetModule1.StaticAssets,
+	"billing":  assetModule0.StaticAssets,
+	"catalog":  assetModule1.StaticAssets,
+	"identity": assetModule2.StaticAssets,
 }

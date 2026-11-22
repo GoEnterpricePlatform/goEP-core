@@ -61,3 +61,9 @@ type PaddleBillingCycle struct {
 	Interval  string `json:"interval"`
 	Frequency int    `json:"frequency"`
 }
+
+type PaddleCheckoutOffer struct {
+	PaddlePriceID string `json:"paddle_price_id"`
+	PlanID        string `json:"plan_id"`
+	PlanItemID    string `json:"plan_item_id"`
+}
