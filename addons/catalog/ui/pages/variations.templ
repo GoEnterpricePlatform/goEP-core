@@ -1,0 +1,42 @@
+package pages
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/ui/components"
+)
+
+templ CatalogVariationsContent(variations []*domain.Variation, loadError string) {
+	<div data-signals="{
+		variation_form: { id: '', name: '' },
+		option_form: { id: '', variation_id: '', variation_name: '', label: '', value: '' },
+		modal: { domain: '', action: '' },
+		error: '',
+		is_loading: false
+	}">
+		<section class="w-full">
+			<div class="mb-6 flex items-center justify-between gap-5">
+				<div>
+					<p class="mb-2 text-sm text-zinc-500"><a href="/v1/catalog/" class="hover:text-black">Catalog</a> / Variations</p>
+					<h1 class="text-2xl font-bold tracking-tight text-black">Variations</h1>
+					<p class="mt-1.5 text-sm text-zinc-500">Manage your product variations and options.</p>
+				</div>
+				<button
+					type="button"
+					class="rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+					data-attr:disabled="$is_loading"
+					data-on:click="$variation_form.id = ''; $variation_form.name = ''; $error = ''; $modal.domain = 'variation'; $modal.action = 'form';"
+				>
+					Add variation
+				</button>
+			</div>
+
+			if loadError != "" {
+				<div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{ loadError }</div>
+			}
+
+			@components.VariationList(variations)
+
+			@components.ModalManager()
+		</section>
+	</div>
+}

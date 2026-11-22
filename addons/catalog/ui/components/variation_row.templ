@@ -1,0 +1,120 @@
+
+package components
+
+import (
+	"strconv"
+	"time"
+
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
+)
+
+func dateLabel(value *time.Time) string {
+	if value == nil {
+		return "—"
+	}
+	return value.Local().Format("02/01/2006")
+}
+
+templ VariationRow(variation *domain.Variation) {
+	<tr id={ "variation-row-" + variation.ID } class="transition-colors hover:bg-zinc-50">
+		<td class="px-5 py-4 align-top">
+			<span class="font-medium text-black">{ variation.Name }</span>
+		</td>
+
+		<td class="px-5 py-4 align-top">
+			<div class="flex flex-wrap items-center gap-2">
+				for _, option := range variation.Options {
+					<div class="flex shrink-0 items-center rounded-lg border border-zinc-300 bg-white">
+						<button
+							type="button"
+							class="whitespace-nowrap px-3 py-2 text-sm font-medium text-zinc-700 hover:text-black"
+							data-on:click={
+								"$option_form.id = " + strconv.Quote(option.ID) + "; " +
+								"$option_form.variation_id = " + strconv.Quote(variation.ID) + "; " +
+								"$option_form.variation_name = " + strconv.Quote(variation.Name) + "; " +
+								"$option_form.label = " + strconv.Quote(option.Label) + "; " +
+								"$option_form.value = " + strconv.Quote(optionValue(option.Value)) + "; " +
+								"$error = ''; $modal.domain = 'option'; $modal.action = 'form';"
+							}
+						>
+							{ option.Label }
+						</button>
+
+						<button
+							type="button"
+							aria-label={ "Delete " + option.Label }
+							class="shrink-0 whitespace-nowrap border-l border-zinc-200 px-2.5 py-2 text-zinc-400 hover:text-red-600"
+							data-on:click={
+								"$option_form.id = " + strconv.Quote(option.ID) + "; " +
+								"$option_form.variation_id = " + strconv.Quote(variation.ID) + "; " +
+								"$option_form.variation_name = " + strconv.Quote(variation.Name) + "; " +
+								"$option_form.label = " + strconv.Quote(option.Label) + "; " +
+								"$option_form.value = " + strconv.Quote(optionValue(option.Value)) + "; " +
+								"$error = ''; $modal.domain = 'option'; $modal.action = 'delete';"
+							}
+						>
+							×
+						</button>
+					</div>
+				}
+
+				<button
+					type="button"
+					class="shrink-0 whitespace-nowrap rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-600 hover:border-zinc-500 hover:text-black"
+					data-on:click={
+						"$option_form.id = ''; " +
+						"$option_form.variation_id = " + strconv.Quote(variation.ID) + "; " +
+						"$option_form.variation_name = " + strconv.Quote(variation.Name) + "; " +
+						"$option_form.label = ''; $option_form.value = ''; " +
+						"$error = ''; $modal.domain = 'option'; $modal.action = 'form';"
+					}
+				>
+					+ Add option
+				</button>
+			</div>
+		</td>
+
+		<td class="px-5 py-4 align-top text-zinc-500">
+			{ dateLabel(variation.CreatedAt) }
+		</td>
+
+		<td class="px-5 py-4 align-top text-zinc-500">
+			{ dateLabel(variation.UpdatedAt) }
+		</td>
+
+		<td class="px-5 py-4 align-top">
+			<div class="flex justify-end gap-2">
+				<button
+					type="button"
+					class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black"
+					data-on:click={
+						"$variation_form.id = " + strconv.Quote(variation.ID) + "; " +
+						"$variation_form.name = " + strconv.Quote(variation.Name) + "; " +
+						"$error = ''; $modal.domain = 'variation'; $modal.action = 'form';"
+					}
+				>
+					Edit
+				</button>
+
+				<button
+					type="button"
+					class="rounded-lg bg-black px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+					data-on:click={
+						"$variation_form.id = " + strconv.Quote(variation.ID) + "; " +
+						"$variation_form.name = " + strconv.Quote(variation.Name) + "; " +
+						"$error = ''; $modal.domain = 'variation'; $modal.action = 'delete';"
+					}
+				>
+					Delete
+				</button>
+			</div>
+		</td>
+	</tr>
+}
+
+func optionValue(value *string) string {
+	if value == nil {
+		return ""
+	}
+	return *value
+}

@@ -1,0 +1,83 @@
+
+package components
+
+templ OptionFormModal() {
+	@Modal("catalog-option-form-modal", "$modal.domain == 'option' && $modal.action == 'form'") {
+		<div class="w-full max-w-md mx-auto rounded-xl bg-white p-7 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+
+			<h2 class="mb-2 text-[22px] font-semibold text-zinc-900">
+				<span data-show="$option_form.id == ''">Create option</span>
+				<span data-show="$option_form.id != ''" style="display:none">Edit option</span>
+			</h2>
+
+			<p class="mb-6 text-sm text-zinc-500">
+				Variation: <span data-text="$option_form.variation_name"></span>
+			</p>
+
+			<div class="mb-5">
+				<label class="mb-1.5 block text-sm font-medium text-zinc-700">
+					Label
+				</label>
+				<input
+					type="text"
+					class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-black focus:ring-1 focus:ring-black"
+					data-bind:option_form.label
+					placeholder="e.g. Yearly"
+					data-attr:disabled="$is_loading"
+				/>
+			</div>
+
+			<div class="mb-5">
+				<label class="mb-1.5 block text-sm font-medium text-zinc-700">
+					Value
+				</label>
+				<input
+					type="text"
+					class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-black focus:ring-1 focus:ring-black"
+					data-bind:option_form.value
+					placeholder="Optional"
+					data-attr:disabled="$is_loading"
+				/>
+			</div>
+
+			<div
+				data-show="$error != ''"
+				style="display:none"
+				class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+			>
+				<span data-text="$error"></span>
+			</div>
+
+			<div class="flex justify-end gap-2.5">
+				<button
+					type="button"
+					class="rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:border-black hover:bg-zinc-50"
+					data-attr:disabled="$is_loading"
+					data-on:click="$modal.domain = ''; $modal.action = ''; $option_form.id = ''; $option_form.label = ''; $option_form.value = ''; $error = '';"
+				>
+					Cancel
+				</button>
+
+				<button
+					type="button"
+					class="rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+					data-attr:disabled="$is_loading || $option_form.label.trim() == ''"
+					data-on:click="$error = ''; $is_loading = true; $option_form.id == '' ? @post('/v1/catalog/variations/' + $option_form.variation_id + '/options') : @put('/v1/catalog/variations/' + $option_form.variation_id + '/options/' + $option_form.id)"
+				>
+					<span data-show="$is_loading" style="display:none">
+						Saving...
+					</span>
+
+					<span data-show="!$is_loading && $option_form.id == ''">
+						Create
+					</span>
+
+					<span data-show="!$is_loading && $option_form.id != ''" style="display:none">
+						Update
+					</span>
+				</button>
+			</div>
+
+		</div>
+	}
+}
