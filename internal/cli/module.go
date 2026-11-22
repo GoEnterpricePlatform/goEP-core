@@ -213,10 +213,16 @@ func createModule(root, name, summary, provider, uiType, uiLayout string) (strin
 		filepath.Join("static", "src", "css", ".gitkeep"):             "",
 		filepath.Join("static", "public", ".gitkeep"):                 "",
 		filepath.Join("ui", "handler", "handler.go"):                  uiHandlerTemplate(name, uiType, uiLayout),
-		filepath.Join("ui", "pages", "page.templ"):                    uiPageTemplate(name, uiType),
 	}
 	if uiType == "dashboard" {
 		files[filepath.Join("ui", "navigation", "menu.go")] = uiNavigationTemplate(name)
+		files[filepath.Join("ui", "pages", "overview.templ")] = dashboardPageTemplate(name, "Overview", "Overview", "Your dashboard module is ready.")
+		files[filepath.Join("ui", "pages", "example_group.templ")] = dashboardPageTemplate(name, "ExampleGroup", "Example group", "Add the content for this dashboard section here.")
+		files[filepath.Join("ui", "pages", "example.templ")] = dashboardPageTemplate(name, "Example", "Example child", "Add the content for this dashboard page here.")
+		files[filepath.Join("ui", "pages", "page.templ")] = dashboardRootPageTemplate(name)
+		files[filepath.Join("ui", "pages", "content.go")] = dashboardContentTemplate(name)
+	} else {
+		files[filepath.Join("ui", "pages", "page.templ")] = uiPageTemplate(name, uiType)
 	}
 	if provider == "postgresql" || provider == "both" {
 		files[filepath.Join("database", "postgresql", "migrations", "000001_initial.up.sql")] = initialUpMigrationTemplate(name)
@@ -495,13 +501,13 @@ func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
 	activePage, pageTitle := modulePage(r.URL.Path)
 	if %q == "dashboard" {
 		if %q == "topbar" {
-			page := layouts.GoEPDashboardLayout(activePage, __MODULE_MENU__, pages.%sContent(pageTitle))
+			page := layouts.GoEPDashboardLayout(activePage, __MODULE_MENU__, pages.%sContent(activePage))
 			if err := page.Render(r.Context(), w); err != nil {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 			return
 		}
-		page := layouts.DashboardLayout(activePage, []string{"ROLE_SYSTEM_ADMIN"}, nil, __MODULE_MENU__, pages.%sContent(pageTitle))
+		page := layouts.DashboardLayout(activePage, []string{"ROLE_SYSTEM_ADMIN"}, nil, __MODULE_MENU__, pages.%sContent(activePage))
 		if err := page.Render(r.Context(), w); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
@@ -553,7 +559,7 @@ func uiNavigationTemplate(name string) string {
 import sharedNavigation %q
 
 // AdminMenu contains the pages owned by the %s module.
-// Add section entries with Children and register a route and page for each child.
+// Sections and their child links can each point to their own page.
 var AdminMenu = []sharedNavigation.Item{
 	{
 		Title:      "Overview",
@@ -561,13 +567,15 @@ var AdminMenu = []sharedNavigation.Item{
 		ActivePage: "overview",
 	},
 	{
-		Title: "Example group",
+		Title:      "Example group",
+		Href:       "/v1/%s/example-group",
+		ActivePage: "example-group",
 		Children: []sharedNavigation.Item{
 			{Title: "Example child", Href: "/v1/%s/example", ActivePage: "example"},
 		},
 	},
 }
-`, modulePath+"/internal/modules/navigation", name, name, name)
+`, modulePath+"/internal/modules/navigation", name, name, name, name)
 }
 
 func uiPageTemplate(name, uiType string) string {
@@ -613,6 +621,68 @@ templ %sPage() {
 	</html>
 }
 `, identifier, style, style, title, identifier, title, identifier, title)
+}
+
+func dashboardPageTemplate(name, page, title, description string) string {
+	identifier := goIdentifier(name)
+	return fmt.Sprintf(`package pages
+
+templ %s%sPage() {
+	<section>
+		<div class="mb-6">
+			<h1 class="text-2xl font-bold tracking-tight text-black">%s</h1>
+			<p class="mt-1 text-sm text-zinc-500">%s</p>
+		</div>
+	</section>
+}
+`, identifier, page, title, description)
+}
+
+func dashboardContentTemplate(name string) string {
+	identifier := goIdentifier(name)
+	return fmt.Sprintf(`package pages
+
+import "github.com/a-h/templ"
+
+// %sContent selects the page component associated with the active menu item.
+func %sContent(activePage string) templ.Component {
+	switch activePage {
+	case "example-group":
+		return %sExampleGroupPage()
+	case "example":
+		return %sExamplePage()
+	default:
+		return %sOverviewPage()
+	}
+}
+`, identifier, identifier, identifier, identifier, identifier)
+}
+
+func dashboardRootPageTemplate(name string) string {
+	identifier := goIdentifier(name)
+	title := strings.Title(strings.ReplaceAll(name, "-", " "))
+	return fmt.Sprintf(`package pages
+
+import "github.com/GoEnterpricePlatform/goEP-core/addons/web-app/resources"
+
+// %sPage is the standalone fallback page for the module's dashboard.
+templ %sPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>%s</title>
+			<link href={ resources.StaticPath("css/app.css") } rel="stylesheet" type="text/css"/>
+		</head>
+		<body class="min-h-screen bg-white text-zinc-900 antialiased">
+			<main class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+				@%sContent("overview")
+			</main>
+		</body>
+	</html>
+}
+`, identifier, identifier, title, identifier)
 }
 
 func domainTemplate(name string) string {
