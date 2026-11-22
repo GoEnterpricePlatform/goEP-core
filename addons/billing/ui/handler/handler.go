@@ -33,13 +33,13 @@ func (h *Handler) render(w http.ResponseWriter, r *http.Request) {
 	activePage, pageTitle := modulePage(r.URL.Path)
 	if "dashboard" == "dashboard" {
 		if "replace" == "topbar" {
-			page := layouts.GoEPDashboardLayout(activePage, moduleNavigation.AdminMenu, pages.BillingContent(pageTitle))
+			page := layouts.GoEPDashboardLayout(activePage, moduleNavigation.AdminMenu, pages.BillingDashboardContent(activePage))
 			if err := page.Render(r.Context(), w); err != nil {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 			return
 		}
-		page := layouts.DashboardLayout(activePage, []string{"ROLE_SYSTEM_ADMIN"}, nil, moduleNavigation.AdminMenu, pages.BillingContent(pageTitle))
+		page := layouts.DashboardLayout(activePage, []string{"ROLE_SYSTEM_ADMIN"}, nil, moduleNavigation.AdminMenu, pages.BillingDashboardContent(activePage))
 		if err := page.Render(r.Context(), w); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
