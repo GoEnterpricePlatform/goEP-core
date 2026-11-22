@@ -1,0 +1,30 @@
+package components
+
+import "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
+
+templ VariationList(variations []*domain.Variation) {
+	<div id="variation-list" class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+		<div class="overflow-x-auto">
+			<table class="w-full min-w-[820px] text-left text-sm">
+				<thead class="border-b border-zinc-200 bg-zinc-50">
+					<tr>
+						<th class="px-5 py-3 font-semibold text-zinc-600">Variation</th>
+						<th class="px-5 py-3 font-semibold text-zinc-600">Options</th>
+						<th class="px-5 py-3 font-semibold text-zinc-600">Created</th>
+						<th class="px-5 py-3 font-semibold text-zinc-600">Updated</th>
+						<th class="px-5 py-3 text-right font-semibold text-zinc-600">Actions</th>
+					</tr>
+				</thead>
+				<tbody id="variation-list-body" class="divide-y divide-zinc-200">
+					if len(variations) == 0 {
+						<tr><td colspan="5" class="px-5 py-10 text-center text-sm text-zinc-500">No variations found. Add your first variation to get started.</td></tr>
+					} else {
+						for _, variation := range variations {
+							@VariationRow(variation)
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}

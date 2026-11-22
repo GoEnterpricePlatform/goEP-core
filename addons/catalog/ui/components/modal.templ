@@ -1,0 +1,15 @@
+
+package components
+
+templ Modal(id string, showExpression string) {
+	<div
+		id={ id }
+		class="fixed inset-0 z-[99999] h-screen w-screen items-center justify-center bg-black/50 p-4"
+		style="display: none;"
+		data-attr:style={ showExpression + " ? 'display:flex' : 'display:none'" }
+	>
+		<div class="w-[420px] max-w-full max-h-[calc(100vh-32px)] overflow-y-auto">
+			{ children... }
+		</div>
+	</div>
+}
