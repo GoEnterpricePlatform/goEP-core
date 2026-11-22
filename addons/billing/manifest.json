@@ -1,0 +1,9 @@
+{
+  "name": "billing",
+  "version": "1.0.0",
+  "summary": "Billing customers, subscriptions, payments, and transactions",
+  "icon": "static/public/icon.svg",
+  "ui": {"style": "dashboard", "layout": "replace"},
+  "depends": ["identity", "catalog"],
+  "database_providers": ["postgresql", "mongo"]
+}

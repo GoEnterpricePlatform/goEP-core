@@ -1,7 +1,7 @@
 {
   "name": "catalog",
   "version": "1.0.0",
-  "summary": "Product plans, variations, and subscriptions",
+  "summary": "Product plans, variations, and Paddle product mappings",
   "icon": "static/public/icon.svg",
   "depends": ["identity"],
   "database_providers": ["mongo", "postgresql"]

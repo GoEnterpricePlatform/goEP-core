@@ -77,11 +77,21 @@ func (ae *AppEnvs) Load() {
 	// paddle
 	var paddleApiKey string
 	paddleEnvironment := cmp.Or(os.Getenv("PADDLE_ENVIRONMENT"), "sandbox")
-	var paddleWebhookSecret string
+	var paddleBillingWebhookSecret string
+	var paddleCatalogWebhookSecret string
 
 	if isEnableMorPaddle {
 		paddleApiKey = mustGetEnv("PADDLE_API_KEY")
-		paddleWebhookSecret = mustGetEnv("PADDLE_WEBHOOK_SECRET_KEY")
+		legacyWebhookSecret := os.Getenv("PADDLE_WEBHOOK_SECRET_KEY")
+		paddleBillingWebhookSecret = os.Getenv("PADDLE_BILLING_WEBHOOK_SECRET_KEY")
+		paddleCatalogWebhookSecret = os.Getenv("PADDLE_CATALOG_WEBHOOK_SECRET_KEY")
+		if paddleBillingWebhookSecret == "" {
+			paddleBillingWebhookSecret = legacyWebhookSecret
+			if paddleBillingWebhookSecret == "" {
+				paddleBillingWebhookSecret = mustGetEnv("PADDLE_BILLING_WEBHOOK_SECRET_KEY")
+			}
+		}
+		paddleCatalogWebhookSecret = cmp.Or(paddleCatalogWebhookSecret, legacyWebhookSecret)
 		if paddleEnvironment != "sandbox" && paddleEnvironment != "production" {
 			log.Fatalf("PADDLE_ENVIRONMENT must be either sandbox or production")
 		}
@@ -201,7 +211,8 @@ func (ae *AppEnvs) Load() {
 	ae.IsEnableMorPaddle = isEnableMorPaddle
 	ae.PaddleApiKey = paddleApiKey
 	ae.PaddleEnvironment = paddleEnvironment
-	ae.PaddleWebhookSecret = paddleWebhookSecret
+	ae.PaddleBillingWebhookSecret = paddleBillingWebhookSecret
+	ae.PaddleCatalogWebhookSecret = paddleCatalogWebhookSecret
 	ae.JWTAccessSecret = mustGetEnv("JWT_ACCESS_TOKEN")
 	ae.JWTRefreshSecret = mustGetEnv("JWT_REFRESH_TOKEN")
 	ae.JWTIssuer = mustGetEnv("JWT_ISS")

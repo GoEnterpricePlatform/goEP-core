@@ -7,27 +7,19 @@ import (
 )
 
 type Service struct {
-	PaddlePlanTx           paddlePlanP.PaddlePlanTx
-	PaddlePlanRepo         paddlePlanP.PaddlePlanRepo
-	PaddleTransactionRepo  paddlePlanP.PaddleTransactionRepo
-	PaddleSubscriptionRepo paddlePlanP.PaddleSubscriptionRepo
-	PaddleCustomerRepo     paddlePlanP.PaddleCustomerRepo
-	PaddleWebhookEventRepo paddlePlanP.PaddleWebhookEventRepo
-	PlanRepo               port.PlanRepo
-	PaddlePlanStg          paddlePlanP.PaddlePlanFileStg
-	PaddleClient           *paddleSDK.SDK
+	PaddlePlanTx   paddlePlanP.PaddlePlanTx
+	PaddlePlanRepo paddlePlanP.PaddlePlanRepo
+	PlanRepo       port.PlanRepo
+	PaddlePlanStg  paddlePlanP.PaddlePlanFileStg
+	PaddleClient   *paddleSDK.SDK
 }
 
-func NewPlanPaddleSrv(paddlePlanTx paddlePlanP.PaddlePlanTx, paddlePlanRepo paddlePlanP.PaddlePlanRepo, paddleTransactionRepo paddlePlanP.PaddleTransactionRepo, paddleSubscriptionRepo paddlePlanP.PaddleSubscriptionRepo, planRepo port.PlanRepo, paddlePlanStg paddlePlanP.PaddlePlanFileStg, paddleClient *paddleSDK.SDK, paddleCustomerRepo paddlePlanP.PaddleCustomerRepo, paddleWebhookEventRepo paddlePlanP.PaddleWebhookEventRepo) *Service {
+func NewPlanPaddleSrv(paddlePlanTx paddlePlanP.PaddlePlanTx, paddlePlanRepo paddlePlanP.PaddlePlanRepo, planRepo port.PlanRepo, paddlePlanStg paddlePlanP.PaddlePlanFileStg, paddleClient *paddleSDK.SDK) *Service {
 	return &Service{
-		PaddlePlanTx:           paddlePlanTx,
-		PaddlePlanRepo:         paddlePlanRepo,
-		PaddleTransactionRepo:  paddleTransactionRepo,
-		PaddleSubscriptionRepo: paddleSubscriptionRepo,
-		PlanRepo:               planRepo,
-		PaddlePlanStg:          paddlePlanStg,
-		PaddleClient:           paddleClient,
-		PaddleCustomerRepo:     paddleCustomerRepo,
-		PaddleWebhookEventRepo: paddleWebhookEventRepo,
+		PaddlePlanTx:   paddlePlanTx,
+		PaddlePlanRepo: paddlePlanRepo,
+		PlanRepo:       planRepo,
+		PaddlePlanStg:  paddlePlanStg,
+		PaddleClient:   paddleClient,
 	}
 }

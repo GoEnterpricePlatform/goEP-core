@@ -4,10 +4,10 @@
 DROP TABLE IF EXISTS tb_payment_provider_lemonsqueezy CASCADE;
 DROP TABLE IF EXISTS tb_payment_provider_stripe CASCADE;
 DROP TABLE IF EXISTS tb_payment_provider CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_webhook_event CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_transaction CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_subscription CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_customer CASCADE;
+DROP TABLE IF EXISTS tb_billing_paddle_webhook_event CASCADE;
+DROP TABLE IF EXISTS tb_billing_paddle_transaction CASCADE;
+DROP TABLE IF EXISTS tb_billing_paddle_subscription CASCADE;
+DROP TABLE IF EXISTS tb_billing_paddle_customer CASCADE;
 DROP TABLE IF EXISTS tb_catalog_paddle_plan_item CASCADE;
 DROP TABLE IF EXISTS tb_catalog_paddle_plan CASCADE;
 DROP TABLE IF EXISTS tb_catalog_plan_item_option CASCADE;
@@ -179,20 +179,20 @@ CREATE TABLE IF NOT EXISTS tb_catalog_paddle_plan_item (
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS tb_catalog_paddle_customer (
+CREATE TABLE IF NOT EXISTS tb_billing_paddle_customer (
     id                 UUID PRIMARY KEY,
     user_id            UUID NOT NULL UNIQUE REFERENCES tb_identity_user(id) ON DELETE CASCADE,
     paddle_customer_id TEXT NOT NULL UNIQUE
 );
 
 -- ! Here why the three do not use not null in the reference id and set null, of course check the subscription model why it is added as "omitempty", check that the omitempty is used correctly.
-CREATE TABLE IF NOT EXISTS tb_catalog_paddle_subscription (
+CREATE TABLE IF NOT EXISTS tb_billing_paddle_subscription (
     id                       UUID PRIMARY KEY,
     paddle_subscription_id   TEXT NOT NULL UNIQUE,
     user_id                  UUID NOT NULL REFERENCES tb_identity_user(id) ON DELETE CASCADE,
-    customer_id              UUID REFERENCES tb_catalog_paddle_customer(id) ON DELETE SET NULL,
-    plan_id                  UUID REFERENCES tb_catalog_plan(id) ON DELETE SET NULL,
-    plan_item_id             UUID REFERENCES tb_catalog_plan_item(id) ON DELETE SET NULL,
+    customer_id              UUID REFERENCES tb_billing_paddle_customer(id) ON DELETE SET NULL,
+    plan_id                  UUID,
+    plan_item_id             UUID,
     status                   TEXT NOT NULL,
     current_period_starts_at TIMESTAMPTZ,
     current_period_ends_at   TIMESTAMPTZ,
@@ -203,16 +203,16 @@ CREATE TABLE IF NOT EXISTS tb_catalog_paddle_subscription (
     updated_at               TIMESTAMPTZ NOT NULL,
     last_event_at            TIMESTAMPTZ
 );
-CREATE INDEX IF NOT EXISTS idx_paddle_subscription_user_id ON tb_catalog_paddle_subscription(user_id);
+CREATE INDEX IF NOT EXISTS idx_paddle_subscription_user_id ON tb_billing_paddle_subscription(user_id);
 
-CREATE TABLE IF NOT EXISTS tb_catalog_paddle_transaction (
+CREATE TABLE IF NOT EXISTS tb_billing_paddle_transaction (
     id                       UUID PRIMARY KEY,
     paddle_transaction_id    TEXT NOT NULL UNIQUE,
     user_id                  UUID REFERENCES tb_identity_user(id) ON DELETE SET NULL,
-    subscription_id          UUID REFERENCES tb_catalog_paddle_subscription(id) ON DELETE SET NULL,
-    customer_id              UUID REFERENCES tb_catalog_paddle_customer(id) ON DELETE SET NULL,
-    plan_id                  UUID NOT NULL REFERENCES tb_catalog_plan(id) ON DELETE RESTRICT,
-    plan_item_id             UUID NOT NULL REFERENCES tb_catalog_plan_item(id) ON DELETE RESTRICT,
+    subscription_id          UUID REFERENCES tb_billing_paddle_subscription(id) ON DELETE SET NULL,
+    customer_id              UUID REFERENCES tb_billing_paddle_customer(id) ON DELETE SET NULL,
+    plan_id                  UUID NOT NULL,
+    plan_item_id             UUID NOT NULL,
     status                   TEXT NOT NULL,
     currency_code            VARCHAR(3),
     subtotal                 BIGINT NOT NULL DEFAULT 0,
@@ -222,9 +222,9 @@ CREATE TABLE IF NOT EXISTS tb_catalog_paddle_transaction (
     last_event_at            TIMESTAMPTZ,
     payment_details_provided BOOLEAN NOT NULL DEFAULT FALSE
 );
-CREATE INDEX IF NOT EXISTS idx_paddle_transaction_user_id ON tb_catalog_paddle_transaction(user_id);
+CREATE INDEX IF NOT EXISTS idx_paddle_transaction_user_id ON tb_billing_paddle_transaction(user_id);
 
-CREATE TABLE IF NOT EXISTS tb_catalog_paddle_webhook_event (
+CREATE TABLE IF NOT EXISTS tb_billing_paddle_webhook_event (
     id                    UUID PRIMARY KEY,
     event_id              TEXT NOT NULL UNIQUE,
     event_type            TEXT NOT NULL,

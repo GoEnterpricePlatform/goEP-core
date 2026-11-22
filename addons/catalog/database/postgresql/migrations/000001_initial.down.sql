@@ -1,7 +1,3 @@
-DROP TABLE IF EXISTS tb_catalog_paddle_webhook_event CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_transaction CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_subscription CASCADE;
-DROP TABLE IF EXISTS tb_catalog_paddle_customer CASCADE;
 DROP TABLE IF EXISTS tb_catalog_paddle_plan_item CASCADE;
 DROP TABLE IF EXISTS tb_catalog_paddle_plan CASCADE;
 DROP TABLE IF EXISTS tb_catalog_plan_item_option CASCADE;

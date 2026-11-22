@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -9,16 +8,9 @@ import (
 	paddle "github.com/PaddleHQ/paddle-go-sdk/v5"
 
 	planPaddleH "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/handler"
-	customerPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/customer/mongo"
-	customerPaddlePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/customer/postgresql"
+	planPaddlePort "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/port"
 	planPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/plans/mongo"
 	planPaddlePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/plans/postgresql"
-	subscriptionPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/subscription/mongo"
-	subscriptionPaddlePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/subscription/postgresql"
-	transactionPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/transaction/mongo"
-	transactionPaddlePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/transaction/postgresql"
-	webhookEventPaddleRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/webhook-event/mongo"
-	webhookEventPaddlePostgresRepository "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/repository/webhook-event/postgresql"
 	planPaddleService "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/service"
 	planPaddleTransaction "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/transaction/mongo"
 	planPaddlePostgresTransaction "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/transaction/postgresql"
@@ -57,8 +49,9 @@ type ModuleDeps struct {
 }
 
 type Module struct {
-	VariationService varitionP.VariationSrv
-	PlanSrv          planP.PlanSrv
+	VariationService         varitionP.VariationSrv
+	PlanSrv                  planP.PlanSrv
+	PaddleCheckoutCatalogSrv planPaddlePort.PaddleCheckoutCatalogSrv
 }
 
 func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
@@ -82,6 +75,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	varOptionRepo := varitionP.VarOptionRepo(nil)
 	var optionUsage varitionP.OptionUsageChecker
 	var planRepo planP.PlanRepo
+	var paddleCheckoutCatalogSrv planPaddlePort.PaddleCheckoutCatalogSrv
 	switch cfg.AppEnvs.DBProvider {
 	case config.DBMongo:
 		if cfg.DB == nil || cfg.AppClients == nil || cfg.AppClients.MongoConn == nil {
@@ -119,63 +113,32 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
 	planH.NewPlanHandler(cfg.APIv1, planSrv, cfg.Deps.AuthApiMdw)
 	if cfg.AppEnvs.DBProvider == config.DBMongo {
-		// Paddle persistence remains Mongo-backed until its PostgreSQL repositories are available.
 		plansPaddleColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_plans", mdlName))
-		paddleTransactionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_transactions", mdlName))
-		paddleSubscriptionsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_subscriptions", mdlName))
-		paddleCustomersColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_customers", mdlName))
-		paddleWebhookEventsColl := cfg.DB.Collection(fmt.Sprintf("%s_paddle_webhook_events", mdlName))
 		planPaddleRepo := planPaddleRepository.NewPlanPaddleRepo(cfg.AppClients.MongoConn.DB, plansPaddleColl)
-		paddleTransactionRepo := transactionPaddleRepository.NewPaddleTransactionRepo(paddleTransactionsColl)
-		paddleSubscriptionRepo := subscriptionPaddleRepository.NewPaddleSubscriptionRepo(paddleSubscriptionsColl)
-		paddleCustomerRepo := customerPaddleRepository.NewPaddleCustomerRepo(paddleCustomersColl)
-		paddleWebhookEventRepo := webhookEventPaddleRepository.NewPaddleWebhookEventRepo(paddleWebhookEventsColl)
-		if err := paddleCustomerRepo.MigrateLegacyIDs(context.Background()); err != nil {
-			return nil, fmt.Errorf("migrate Paddle customer IDs: %w", err)
-		}
-		if err := paddleSubscriptionRepo.MigrateLegacyIDs(context.Background(), paddleCustomerRepo); err != nil {
-			return nil, fmt.Errorf("migrate Paddle subscription IDs: %w", err)
-		}
-		if err := paddleSubscriptionRepo.CreateIndexes(); err != nil {
-			return nil, err
-		}
-		if err := paddleTransactionRepo.CreateIndexes(); err != nil {
-			return nil, err
-		}
-		if err := paddleCustomerRepo.CreateIndexes(); err != nil {
-			return nil, err
-		}
-		if err := paddleWebhookEventRepo.CreateIndexes(); err != nil {
-			return nil, err
-		}
 		planPaddleTx := planPaddleTransaction.NewPlanPaddleTx(cfg.AppClients.MongoConn.DB, planRepo, planPaddleRepo)
 		var paddleSDKClient *paddle.SDK
 		if cfg.AppClients.PaddleCli != nil {
 			paddleSDKClient = cfg.AppClients.PaddleCli.Client
 		}
-		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, paddleTransactionRepo, paddleSubscriptionRepo, planRepo, planFileStg, paddleSDKClient, paddleCustomerRepo, paddleWebhookEventRepo)
-		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
+		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
+		paddleCheckoutCatalogSrv = planPaddleSrv
+		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
 	} else if cfg.AppEnvs.DBProvider == config.DBPostgresql {
 		pool := cfg.AppClients.PGConn.Pool
 		planPaddleRepo := planPaddlePostgresRepository.NewPlanPaddleRepo(pool)
-		paddleTransactionRepo := transactionPaddlePostgresRepository.NewPaddleTransactionRepo(pool)
-		paddleSubscriptionRepo := subscriptionPaddlePostgresRepository.NewPaddleSubscriptionRepo(pool)
-		paddleCustomerRepo := customerPaddlePostgresRepository.NewPaddleCustomerRepo(pool)
-		paddleWebhookEventRepo := webhookEventPaddlePostgresRepository.NewPaddleWebhookEventRepo(pool)
-		if err := paddleWebhookEventRepo.CreateIndexes(); err != nil {
-			return nil, err
-		}
 		planPaddleTx := planPaddlePostgresTransaction.NewPlanPaddleTx(pool)
 		var paddleSDKClient *paddle.SDK
 		if cfg.AppClients.PaddleCli != nil {
 			paddleSDKClient = cfg.AppClients.PaddleCli.Client
 		}
-		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, paddleTransactionRepo, paddleSubscriptionRepo, planRepo, planFileStg, paddleSDKClient, paddleCustomerRepo, paddleWebhookEventRepo)
-		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
+		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
+		paddleCheckoutCatalogSrv = planPaddleSrv
+		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
 	}
 
 	return &Module{
-		VariationService: variationSrv,
-		PlanSrv:          planSrv,
+		VariationService:         variationSrv,
+		PlanSrv:                  planSrv,
+		PaddleCheckoutCatalogSrv: paddleCheckoutCatalogSrv,
 	}, nil
 }
