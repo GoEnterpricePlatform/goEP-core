@@ -79,7 +79,7 @@ func (t *Transaction) Update(ctx context.Context, plan *planDomain.Plan, paddleP
 		if features == nil {
 			features = []string{}
 		}
-		res, err := tx.Exec(ctx, `UPDATE tb_catalog_plan_item SET img_path=$3,features=$4,updated_at=COALESCE($5,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, item.ImgPath, features, item.UpdatedAt)
+		res, err := tx.Exec(ctx, `UPDATE tb_catalog_plan_item SET img_path=$3,features=$4,status=$5,updated_at=COALESCE($6,NOW()) WHERE id=$1 AND plan_id=$2`, id, planID, item.ImgPath, features, item.Status, item.UpdatedAt)
 		if err != nil {
 			return catalogError("update plan item", err)
 		}

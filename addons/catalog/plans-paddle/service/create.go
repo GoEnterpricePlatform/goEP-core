@@ -27,14 +27,21 @@ func (s *Service) Create(ctx context.Context, paddlePlan *paddlePlanD.PaddlePlan
 		if paddleItem == nil {
 			continue
 		}
+		status := paddleItem.Status
+		if status == "" {
+			status = planD.PlanStatusActive
+		}
+		if !isSupportedPlanItemStatus(status) {
+			return sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "invalid Paddle plan item status")
+		}
 		plan.Items = append(plan.Items, &planD.PlanItem{
 			Features:     paddleItem.Features,
 			VarOptionIDs: paddleItem.VarOptionIDs,
-			Status:       planD.PlanStatusActive,
+			Status:       status,
 			CreatedAt:    &now,
 			UpdatedAt:    &now,
 		})
-		paddleItem.Status = planD.PlanStatusActive
+		paddleItem.Status = status
 
 		paddleItem.CreatedAt = &now
 		paddleItem.UpdatedAt = &now

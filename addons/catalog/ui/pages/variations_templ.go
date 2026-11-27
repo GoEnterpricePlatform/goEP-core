@@ -34,7 +34,7 @@ func CatalogVariationsContent(variations []*domain.Variation, loadError string) 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-signals=\"{\n\t\tvariation_form: { id: '', name: '' },\n\t\toption_form: { id: '', variation_id: '', variation_name: '', label: '', value: '' },\n\t\tmodal: { domain: '', action: '' },\n\t\terror: '',\n\t\tis_loading: false\n\t}\"><section class=\"w-full\"><div class=\"mb-6 flex items-center justify-between gap-5\"><div><p class=\"mb-2 text-sm text-zinc-500\"><a href=\"/v1/catalog/\" class=\"hover:text-black\">Catalog</a> / Variations</p><h1 class=\"text-2xl font-bold tracking-tight text-black\">Variations</h1><p class=\"mt-1.5 text-sm text-zinc-500\">Manage your product variations and options.</p></div><button type=\"button\" class=\"rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800\" data-attr:disabled=\"$is_loading\" data-on:click=\"$variation_form.id = ''; $variation_form.name = ''; $error = ''; $modal.domain = 'variation'; $modal.action = 'form';\">Add variation</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-signals=\"{\r\n\t\tvariation_form: { id: '', name: '' },\r\n\t\toption_form: { id: '', variation_id: '', variation_name: '', label: '', value: '' },\r\n\t\tmodal: { domain: '', action: '' },\r\n\t\terror: '',\r\n\t\tis_loading: false\r\n\t}\"><section class=\"w-full\"><div class=\"mb-6 flex items-center justify-between gap-5\"><div><p class=\"mb-2 text-sm text-zinc-500\"><a href=\"/v1/catalog/\" class=\"hover:text-black\">Catalog</a> / Variations</p><h1 class=\"text-2xl font-bold tracking-tight text-black\">Variations</h1><p class=\"mt-1.5 text-sm text-zinc-500\">Manage your product variations and options.</p></div><button type=\"button\" class=\"rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800\" data-attr:disabled=\"$is_loading\" data-on:click=\"$variation_form.id = ''; $variation_form.name = ''; $error = ''; $modal.domain = 'variation'; $modal.action = 'form';\">Add variation</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -46,7 +46,7 @@ func CatalogVariationsContent(variations []*domain.Variation, loadError string) 
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(loadError)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `addons/catalog/ui/pages/variations.templ`, Line: 34, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `variations.templ`, Line: 34, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {

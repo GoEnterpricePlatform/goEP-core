@@ -1,0 +1,59 @@
+package components
+
+import (
+	"strconv"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
+)
+
+templ PaddlePlanForm(variations []*domain.Variation, items []PlanItemForm) {
+	<div class="w-full rounded-xl border border-zinc-200 bg-white p-7">
+			<h2 class="mb-1 text-xl font-semibold"><span data-show="$plan_form.id == ''">Create Paddle plan</span><span data-show="$plan_form.id != ''" style="display:none">Edit Paddle plan</span></h2>
+			<p class="mb-6 text-sm text-zinc-500">Configure the product and the Paddle prices for each plan item.</p>
+			<div class="grid gap-5 md:grid-cols-2">
+				<label class="block text-sm font-medium">Name<input class="mt-1.5 block w-full rounded-lg border border-zinc-300 px-3 py-2.5" placeholder="Plan name" data-bind:plan_form.name data-attr:disabled="$is_loading"/></label>
+				<label class="block text-sm font-medium">Paddle Product ID<input class="mt-1.5 block w-full rounded-lg border border-zinc-300 px-3 py-2.5" placeholder="pro_..." data-bind:plan_form.paddle_product_id data-attr:disabled="$is_loading"/></label>
+				<label class="block text-sm font-medium md:col-span-2">Description<textarea class="mt-1.5 block w-full rounded-lg border border-zinc-300 px-3 py-2.5" rows="3" placeholder="Plan description" data-bind:plan_form.description data-attr:disabled="$is_loading"></textarea></label>
+				<label class="block text-sm font-medium">Display order<input type="number" min="0" class="mt-1.5 block w-full rounded-lg border border-zinc-300 px-3 py-2.5" data-bind:plan_form.order data-attr:disabled="$is_loading"/><span class="mt-1 block text-xs text-zinc-500">Lower numbers appear first.</span></label>
+			</div>
+			<div class="mt-6 rounded-lg border border-zinc-200">
+				<div class="border-b border-zinc-200 px-5 py-4"><h3 class="font-semibold">Product type</h3><p class="mt-1 text-sm text-zinc-500">Choose whether this product uses variations.</p></div>
+				<div class="flex flex-wrap p-5 text-sm" style="column-gap: 3rem; row-gap: 1rem;">
+					<label class="flex items-center gap-2"><input type="radio" name="paddle-plan-type" value="simple" data-attr:checked="$plan_form.product_type == 'simple'" data-on:change="$plan_form.product_type = evt.target.value; @post('/v1/catalog/paddle-plans/items')"/>Product without variants</label>
+					<label class="flex items-center gap-2"><input type="radio" name="paddle-plan-type" value="variants" data-attr:checked="$plan_form.product_type == 'variants'" data-on:change="$plan_form.product_type = evt.target.value; @post('/v1/catalog/paddle-plans/items')"/>Product with variants</label>
+				</div>
+			</div>
+			<div data-show="$plan_form.product_type == 'variants'" style="display:none" class="mt-6 rounded-lg border border-zinc-200">
+				<div class="border-b border-zinc-200 px-5 py-4"><h3 class="font-semibold">Variations</h3><p class="mt-1 text-sm text-zinc-500">Select options to create plan item combinations.</p></div>
+				<div class="grid gap-4 p-5 md:grid-cols-2">
+					for _, variation := range variations {
+						<div class="rounded-lg border border-zinc-200 p-4"><h4 class="mb-3 font-medium">{ variation.Name }</h4><div class="flex flex-wrap gap-3">
+							for _, option := range variation.Options {
+								<label class="flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm"><input type="checkbox" value={ option.ID } data-attr:checked={ paddleOptionCheckedExpression(option.ID) } data-attr:disabled="$is_loading" data-on:change={ paddleOptionChangeExpression(option.ID) }/><span>{ option.Label }</span></label>
+							}
+						</div></div>
+					}
+					if len(variations) == 0 {
+						<p class="text-sm text-zinc-500">Create variations and options first to configure a variant plan.</p>
+					}
+				</div>
+			</div>
+			<div class="mt-6 rounded-lg border border-zinc-200">
+				<div class="border-b border-zinc-200 px-5 py-4"><h3 class="font-semibold">Items</h3><p class="mt-1 text-sm text-zinc-500">Items are generated from the selected variations. Features are entered one per line.</p></div>
+				@PaddlePlanItems(items)
+			</div>
+			<div data-show="$error != ''" style="display:none" class="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span data-text="$error"></span></div>
+			<div class="mt-6 flex justify-end gap-2.5">
+				<a href="/v1/catalog/paddle-plans" class="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm">Cancel</a>
+				<button type="button" class="rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white" data-attr:disabled="$is_loading || $plan_form.name.trim() == '' || $plan_form.paddle_product_id.trim() == ''" data-on:click="$error = ''; $is_loading = true; $plan_form.id == '' ? @post('/v1/catalog/paddle-plans') : @put('/v1/catalog/paddle-plans/' + $plan_form.id)">
+					<span data-show="$is_loading">Saving...</span><span data-show="!$is_loading && $plan_form.id == ''" style="display:none">Create plan</span><span data-show="!$is_loading && $plan_form.id != ''" style="display:none">Update plan</span>
+				</button>
+			</div>
+	</div>
+}
+
+func paddleOptionCheckedExpression(optionID string) string { return "$plan_form.selected_option_ids.includes("+strconv.Quote(optionID)+")" }
+
+func paddleOptionChangeExpression(optionID string) string {
+	quoted := strconv.Quote(optionID)
+	return "$plan_form.selected_option_ids = evt.target.checked ? [...new Set([...$plan_form.selected_option_ids, "+quoted+"])] : $plan_form.selected_option_ids.filter(id => id !== "+quoted+"); @post('/v1/catalog/paddle-plans/items')"
+}

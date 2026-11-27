@@ -81,6 +81,7 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	var optionUsage varitionP.OptionUsageChecker
 	var planRepo planP.PlanRepo
 	var paddleCheckoutCatalogSrv planPaddlePort.PaddleCheckoutCatalogSrv
+	var paddlePlanSrv *planPaddleService.Service
 	switch cfg.AppEnvs.DBProvider {
 	case config.DBMongo:
 		if cfg.DB == nil || cfg.AppClients == nil || cfg.AppClients.MongoConn == nil {
@@ -113,8 +114,6 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 	// services
 	variationSrv := variationService.NewVariationSrv(variationRepo, varOptionRepo, optionUsage)
 	planSrv := planService.NewPlanSrv(planRepo, planFileStg, varOptionRepo)
-	ui := catalogUIHandler.NewHandler(variationSrv, cfg.MdwSrvTmpl)
-	ui.RegisterRoutes(cfg.TemplateV1)
 
 	// register handlers
 	variationH.NewVariationHandler(cfg.APIv1, variationSrv, cfg.Deps.AuthApiMdw)
@@ -127,9 +126,9 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 		if cfg.AppClients.PaddleCli != nil {
 			paddleSDKClient = cfg.AppClients.PaddleCli.Client
 		}
-		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
-		paddleCheckoutCatalogSrv = planPaddleSrv
-		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
+		paddlePlanSrv = planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
+		paddleCheckoutCatalogSrv = paddlePlanSrv
+		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, paddlePlanSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
 	} else if cfg.AppEnvs.DBProvider == config.DBPostgresql {
 		pool := cfg.AppClients.PGConn.Pool
 		planPaddleRepo := planPaddlePostgresRepository.NewPlanPaddleRepo(pool)
@@ -138,10 +137,12 @@ func NewCatalogModule(cfg ModuleConfig) (*Module, error) {
 		if cfg.AppClients.PaddleCli != nil {
 			paddleSDKClient = cfg.AppClients.PaddleCli.Client
 		}
-		planPaddleSrv := planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
-		paddleCheckoutCatalogSrv = planPaddleSrv
-		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, planPaddleSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
+		paddlePlanSrv = planPaddleService.NewPlanPaddleSrv(planPaddleTx, planPaddleRepo, planRepo, planFileStg, paddleSDKClient)
+		paddleCheckoutCatalogSrv = paddlePlanSrv
+		planPaddleH.NewPlanPaddleHandler(cfg.APIv1, paddlePlanSrv, cfg.Deps.AuthApiMdw, cfg.AppEnvs.PaddleCatalogWebhookSecret, cfg.AppEnvs.IsEnableMorPaddle)
 	}
+	ui := catalogUIHandler.NewHandler(variationSrv, paddlePlanSrv, cfg.MdwSrvTmpl)
+	ui.RegisterRoutes(cfg.TemplateV1)
 
 	return &Module{
 		VariationService:         variationSrv,

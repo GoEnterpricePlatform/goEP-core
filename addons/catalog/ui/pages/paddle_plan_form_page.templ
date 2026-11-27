@@ -1,0 +1,88 @@
+package pages
+
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/ui/components"
+	variationDomain "github.com/GoEnterpricePlatform/goEP-core/addons/catalog/variations/domain"
+)
+
+templ CatalogPaddlePlanFormPage(plan *domain.PaddlePlan, variations []*variationDomain.Variation, loadError string) {
+	<div data-signals={ paddlePlanInitialSignals(plan) }>
+		<section class="w-full">
+			<p class="mb-2 text-sm text-zinc-500"><a href="/v1/catalog/" class="hover:text-black">Catalog</a> / <a href="/v1/catalog/paddle-plans" class="hover:text-black">Paddle plans</a> / <span data-show="$plan_form.id == ''">New plan</span><span data-show="$plan_form.id != ''" style="display:none">Edit plan</span></p>
+			<div class="mb-6"><h1 class="text-2xl font-bold tracking-tight text-black"><span data-show="$plan_form.id == ''">Create Paddle plan</span><span data-show="$plan_form.id != ''" style="display:none">Edit Paddle plan</span></h1><p class="mt-1.5 text-sm text-zinc-500">Configure the Paddle product, variants and plan items.</p></div>
+			if loadError != "" {
+				<div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{ loadError }</div>
+			}
+			@components.PaddlePlanForm(variations, paddlePlanItemViews(plan, variations))
+		</section>
+	</div>
+}
+
+func paddlePlanInitialSignals(plan *domain.PaddlePlan) string {
+	form := map[string]any{"id": "", "name": "", "description": "", "paddle_product_id": "", "order": 0, "product_type": "simple", "selected_option_ids": []string{}, "items": []map[string]any{{"id": "", "var_option_ids": []string{}, "features": []string{""}, "paddle_price_id": "", "status": "active"}}}
+	if plan != nil {
+		description := ""
+		if plan.Description != nil {
+			description = *plan.Description
+		}
+		items := make([]map[string]any, 0, len(plan.Items))
+		selected := make([]string, 0)
+		seen := map[string]bool{}
+		for _, item := range plan.Items {
+			features := append([]string{}, item.Features...)
+			if len(features) == 0 {
+				features = []string{""}
+			}
+			ids := append([]string{}, item.VarOptionIDs...)
+			items = append(items, map[string]any{"id": item.ID, "var_option_ids": ids, "features": features, "paddle_price_id": item.PaddlePriceID, "status": string(item.Status)})
+			for _, id := range ids {
+				if !seen[id] {
+					seen[id] = true
+					selected = append(selected, id)
+				}
+			}
+		}
+		productType := "simple"
+		if len(selected) > 0 {
+			productType = "variants"
+		}
+		form = map[string]any{"id": plan.ID, "name": plan.Name, "description": description, "paddle_product_id": plan.PaddleProductID, "order": plan.Order, "product_type": productType, "selected_option_ids": selected, "items": items}
+	}
+	data, _ := json.Marshal(map[string]any{"plan_form": form, "error": "", "is_loading": false})
+	return string(data)
+}
+
+func paddlePlanItemViews(plan *domain.PaddlePlan, variations []*variationDomain.Variation) []components.PlanItemForm {
+	if plan == nil || len(plan.Items) == 0 {
+		return []components.PlanItemForm{{Combination: "Single plan", Features: []string{""}}}
+	}
+	labels := map[string]string{}
+	for _, variation := range variations {
+		for _, option := range variation.Options {
+			labels[option.ID] = variation.Name + ": " + option.Label
+		}
+	}
+	items := make([]components.PlanItemForm, 0, len(plan.Items))
+	for _, item := range plan.Items {
+		parts := make([]string, 0, len(item.VarOptionIDs))
+		for _, id := range item.VarOptionIDs {
+			if label, ok := labels[id]; ok {
+				parts = append(parts, label)
+			}
+		}
+		label := "Single plan"
+		if len(parts) > 0 {
+			label = strings.Join(parts, " / ")
+		}
+		features := append([]string{}, item.Features...)
+		if len(features) == 0 {
+			features = []string{""}
+		}
+		items = append(items, components.PlanItemForm{Combination: label, Features: features})
+	}
+	return items
+}
