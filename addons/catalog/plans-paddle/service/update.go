@@ -40,9 +40,17 @@ func (s *Service) Update(ctx context.Context, id string, paddlePlan *paddleD.Pad
 			return sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "duplicate or missing plan item")
 		}
 		if item.ID == "" {
+			status := item.Status
+			if status == "" {
+				status = planD.PlanStatusActive
+			}
+			if !isSupportedPlanItemStatus(status) {
+				return sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "invalid Paddle plan item status")
+			}
 			item.CreatedAt = &now
 			item.UpdatedAt = &now
-			plan.Items = append(plan.Items, &planD.PlanItem{Features: item.Features, VarOptionIDs: item.VarOptionIDs, Status: planD.PlanStatusActive, CreatedAt: &now, UpdatedAt: &now})
+			item.Status = status
+			plan.Items = append(plan.Items, &planD.PlanItem{Features: item.Features, VarOptionIDs: item.VarOptionIDs, Status: status, CreatedAt: &now, UpdatedAt: &now})
 			continue
 		}
 		seen[item.ID] = true
@@ -57,7 +65,31 @@ func (s *Service) Update(ctx context.Context, id string, paddlePlan *paddleD.Pad
 		item.PlanItemID = existing.PlanItemID
 		item.CreatedAt = existing.CreatedAt
 		item.UpdatedAt = &now
-		plan.Items = append(plan.Items, &planD.PlanItem{ID: base.ID, Features: item.Features, VarOptionIDs: item.VarOptionIDs, Status: base.Status, ImgPath: base.ImgPath, CreatedAt: base.CreatedAt, UpdatedAt: &now})
+		// Keep older API updates backward compatible when they omit either status.
+		paddleStatus := item.Status
+		if paddleStatus == "" {
+			paddleStatus = existing.Status
+		}
+		if !isSupportedPlanItemStatus(paddleStatus) {
+			return sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "invalid Paddle plan item status")
+		}
+		planItemStatus := item.Status
+		if planItemStatus == "" {
+			planItemStatus = base.Status
+		}
+		if !isSupportedPlanItemStatus(planItemStatus) {
+			return sharedD.NewAppError(sharedD.ErrCodeInvalidParams, "invalid linked plan item status")
+		}
+		item.Status = paddleStatus
+		plan.Items = append(plan.Items, &planD.PlanItem{
+			ID:           base.ID,
+			Features:     item.Features,
+			VarOptionIDs: item.VarOptionIDs,
+			Status:       planItemStatus,
+			ImgPath:      base.ImgPath,
+			CreatedAt:    base.CreatedAt,
+			UpdatedAt:    &now,
+		})
 	}
 	paddlePlan.ID = current.ID
 	paddlePlan.PlanID = current.PlanID

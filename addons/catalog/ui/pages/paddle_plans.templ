@@ -1,0 +1,22 @@
+package pages
+
+import (
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/ui/components"
+)
+
+templ CatalogPaddlePlansPage(plans []*domain.PaddlePlan, loadError string) {
+	<div data-signals="{ plan_form: { id: '' }, modal: { domain: '', action: '' }, error: '', is_loading: false }">
+		<section class="w-full">
+			<div class="mb-6 flex items-center justify-between gap-5"><div>
+				<p class="mb-2 text-sm text-zinc-500"><a href="/v1/catalog/" class="hover:text-black">Catalog</a> / Paddle plans</p><h1 class="text-2xl font-bold tracking-tight text-black">Paddle plans</h1><p class="mt-1.5 text-sm text-zinc-500">Manage products, variations and prices in your Paddle catalog.</p>
+			</div><a href="/v1/catalog/paddle-plans/new" class="rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white">Add plan</a></div>
+			if loadError != "" {
+				<div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{ loadError }</div>
+			}
+			<div data-show="$error != ''" style="display:none" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span data-text="$error"></span></div>
+			@components.PaddlePlanList(plans)
+			@components.DeletePaddlePlanModal()
+		</section>
+	</div>
+}

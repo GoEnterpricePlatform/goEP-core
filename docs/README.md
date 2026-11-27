@@ -13,6 +13,9 @@ Para ver el proceso completo con SQL de ejemplo, consulta
 Para entender el runner y el flujo de ejecución por módulo, consulta
 [Migraciones PostgreSQL](postgresql-migrations.md#aplicar-y-revertir-en-bases-de-datos).
 
+Para elegir entre TypeScript, handlers Go y señales Datastar al implementar la UI,
+consulta [UI: criterios para elegir la capa de interacción](ui-guidelines.md).
+
 ## CLI del repositorio
 
 Desde la raíz del repositorio, ejecuta el CLI sin argumentos para abrir el menú

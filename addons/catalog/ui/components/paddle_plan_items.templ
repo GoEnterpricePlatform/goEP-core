@@ -1,0 +1,50 @@
+package components
+
+import (
+	"strconv"
+)
+
+type PlanItemForm struct {
+	ID string
+	VarOptionIDs []string
+	Combination string
+	Features []string
+}
+
+templ PaddlePlanItems(items []PlanItemForm) {
+	<div id="paddle-plan-items" class="overflow-x-auto">
+		<table class="w-full min-w-[760px] text-left text-sm">
+			<thead class="border-b border-zinc-200 bg-zinc-50"><tr><th class="px-4 py-3">Combination</th><th class="px-4 py-3">Features</th><th class="px-4 py-3">Paddle Price ID</th><th class="px-4 py-3">Status</th></tr></thead>
+			<tbody class="divide-y divide-zinc-200">
+				for i, item := range items {
+					<tr>
+						<td class="px-4 py-4 align-top"><span class="font-medium">{ item.Combination }</span></td>
+						<td class="px-4 py-4">
+							<div class="space-y-2">
+								for featureIndex := range item.Features {
+									<div class="flex gap-2">
+										<input class="w-full rounded-lg border border-zinc-300 px-3 py-2.5" placeholder="e.g. Unlimited projects" { planItemBinding(i, "features."+strconv.Itoa(featureIndex))... } data-attr:disabled="$is_loading"/>
+										<button type="button" aria-label="Remove feature" class="rounded-lg border border-zinc-200 px-3 text-zinc-500 hover:text-red-600" data-attr:disabled="$is_loading" data-on:click={ "@delete('/v1/catalog/paddle-plans/items/"+strconv.Itoa(i)+"/features/"+strconv.Itoa(featureIndex)+"')" }>×</button>
+									</div>
+								}
+								<button type="button" class="text-sm font-medium text-zinc-600 hover:text-black" data-attr:disabled="$is_loading" data-on:click={ "@post('/v1/catalog/paddle-plans/items/"+strconv.Itoa(i)+"/features')" }>+ Add feature</button>
+							</div>
+						</td>
+						<td class="px-4 py-4"><input class="w-full rounded-lg border border-zinc-300 px-3 py-2.5" placeholder="pri_..." { planItemBinding(i, "paddle_price_id")... } data-attr:disabled="$is_loading"/></td>
+						<td class="px-4 py-4">
+							<select class="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5" { planItemBinding(i, "status")... } data-attr:disabled="$is_loading">
+								<option value="active">Active</option>
+								<option value="inactive">Inactive</option>
+								<option value="draft">Draft</option>
+							</select>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+func planItemBinding(itemIndex int, field string) templ.Attributes {
+	return templ.Attributes{"data-bind:plan_form.items." + strconv.Itoa(itemIndex) + "." + field: true}
+}

@@ -1,0 +1,42 @@
+package components
+
+import (
+	"strconv"
+	"github.com/GoEnterpricePlatform/goEP-core/addons/catalog/plans-paddle/domain"
+)
+
+templ PaddlePlanList(plans []*domain.PaddlePlan) {
+	<div id="paddle-plan-list" class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+		<div class="overflow-x-auto">
+			<table class="w-full min-w-[760px] text-left text-sm">
+				<thead class="border-b border-zinc-200 bg-zinc-50"><tr>
+					<th class="px-5 py-3 font-semibold text-zinc-600">Plan</th><th class="px-5 py-3 font-semibold text-zinc-600">Paddle Product ID</th><th class="px-5 py-3 font-semibold text-zinc-600">Items</th><th class="px-5 py-3 font-semibold text-zinc-600">Order</th><th class="px-5 py-3 text-right font-semibold text-zinc-600">Actions</th>
+				</tr></thead>
+				<tbody class="divide-y divide-zinc-200">
+					if len(plans) == 0 {
+						<tr><td colspan="5" class="px-5 py-10 text-center text-sm text-zinc-500">No Paddle plans found. Add your first plan to get started.</td></tr>
+					}
+					for _, plan := range plans {
+						<tr class="hover:bg-zinc-50">
+							<td class="px-5 py-4"><span class="font-medium text-black">{ plan.Name }</span><div class="mt-1 text-xs text-zinc-500">{ description(plan) }</div></td>
+							<td class="px-5 py-4 font-mono text-xs text-zinc-600">{ plan.PaddleProductID }</td><td class="px-5 py-4 text-zinc-600">{ strconv.Itoa(len(plan.Items)) }</td><td class="px-5 py-4 text-zinc-600">{ strconv.Itoa(plan.Order) }</td>
+							<td class="px-5 py-4"><div class="flex items-center justify-end gap-2">
+								<a href={ "/v1/catalog/paddle-plans/" + plan.ID + "/edit" } class="rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:bg-zinc-100">Edit</a>
+								<button type="button" class="rounded-lg bg-black px-3 py-2 text-sm text-white hover:bg-zinc-800" data-on:click={ "$plan_form.id = " + strconv.Quote(plan.ID) + "; $error = ''; $modal.domain = 'paddle-plan'; $modal.action = 'delete';" }>Delete</button>
+							</div></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+func description(p *domain.PaddlePlan) string {
+	if p.Description == nil {
+		return ""
+	}
+	return *p.Description
+}
+
+
